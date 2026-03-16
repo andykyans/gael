@@ -81,20 +81,27 @@ function openCal(e) {
   }
 
   document.getElementById('cal-modal').classList.add('open'); 
+  document.body.classList.add('modal-open');
   document.body.style.overflow='hidden'; 
 }
 
-function closeCal() { document.getElementById('cal-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeCal() { 
+  document.getElementById('cal-modal').classList.remove('open'); 
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow=''; 
+}
 
 // ── QUESTION MODAL ──
 function openQuestionModal(e) {
   if (e) e.preventDefault();
   document.getElementById('question-modal').classList.add('open');
+  document.body.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeQuestionModal() {
   document.getElementById('question-modal').classList.remove('open');
+  document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
 }
 
@@ -102,11 +109,13 @@ function closeQuestionModal() {
 function openInfoModal(e) {
   if (e) e.preventDefault();
   document.getElementById('info-modal').classList.add('open');
+  document.body.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeInfoModal() {
   document.getElementById('info-modal').classList.remove('open');
+  document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
 }
 
@@ -115,6 +124,7 @@ document.querySelectorAll('.modal-overlay').forEach(function(modal) {
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.classList.remove('open');
+      document.body.classList.remove('modal-open');
       document.body.style.overflow = '';
     }
   });
