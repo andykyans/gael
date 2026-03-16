@@ -144,6 +144,11 @@ async function submitCal() {
   var btn = document.querySelector('.cal-submit');
   btn.disabled = true; btn.textContent = 'Envoi...';
 
+  // On combine les nouvelles questions dans un champ "message" ou similaire si les colonnes manquent
+  var notes = "Offre: " + ofr + "\n" +
+              "Energies: " + eType + "\n" +
+              "Installation Elec: " + enormes;
+
   var prospectData = {
     prenom: p,
     nom: n,
@@ -153,9 +158,8 @@ async function submitCal() {
     date_rdv: combinedDate,
     region: qState.region || null,
     statut: st,
-    offre_demandee: ofr,
-    energies: eType,
-    electricite_normes: enormes
+    offre_recommandee: ofr, // Correction du nom de la colonne
+    message: notes // On met les détails ici pour éviter l'erreur de colonne manquante
   };
 
   try {
@@ -363,5 +367,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         timeSelect.appendChild(opt);
       });
     }
+  });
+
+  // ── APP VIEW REVEAL & NAV TRACKING ──
+  var sections = document.querySelectorAll('.app-view');
+  var mNavItems = document.querySelectorAll('.m-nav-item');
+
+  var observerOptions = {
+    threshold: 0.2
+  };
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        
+        // Update Mobile Nav
+        var id = entry.target.getAttribute('id');
+        if (id) {
+          mNavItems.forEach(function(item) {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + id) {
+              item.classList.add('active');
+            }
+          });
+        }
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(function(section) {
+    observer.observe(section);
   });
 });

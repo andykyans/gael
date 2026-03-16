@@ -162,7 +162,7 @@
 
 <!-- HERO -->
 <main>
-<section style="background:#FFFFFF">
+<section id="home" class="app-view visible" style="background:#FFFFFF">
 <div class="hero">
   <div class="hero-l">
     <div class="hero-eyebrow">
@@ -233,7 +233,7 @@
 </div>
 
 <!-- QUALIFICATION -->
-<section id="qualification">
+<section id="qualification" class="app-view">
 <div class="section-wrap" style="max-width:860px">
   <span class="section-eyebrow">Trouvez votre offre</span>
   <h2 class="section-title">Quelle est votre <em>situation</em> ?</h2>
@@ -298,7 +298,7 @@
 </section>
 
 <!-- COMPARE TABLE -->
-<section id="compare">
+<section id="compare" class="app-view">
 <div class="section-wrap">
   <span class="section-eyebrow">Comparaison</span>
   <h2 class="section-title">Votre fournisseur actuel<br><em>vs Gaele XL</em></h2>
@@ -333,7 +333,7 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section id="temoignages">
+<section id="temoignages" class="app-view">
 <div class="section-wrap">
   <span class="section-eyebrow">Avis clients</span>
   <h2 class="section-title">Ils ont d&#233;j&#224; <em style="font-style:italic">&#233;conomis&#233;</em></h2>
@@ -368,7 +368,7 @@
 </section>
 
 <!-- ANDY -->
-<section id="andy">
+<section id="andy" class="app-view">
 <div class="section-wrap">
   <div class="andy-section">
     <span class="andy-eyebrow">Votre conseiller</span>
@@ -390,7 +390,7 @@
 </section>
 
 <!-- FAQ -->
-<section id="faq">
+<section id="faq" class="app-view">
 <div class="section-wrap">
   <span class="section-eyebrow">Questions fr&#233;quentes</span>
   <h2 class="section-title">Tout ce que vous<br><em style="font-style:italic">voulez savoir</em></h2>
@@ -523,6 +523,8 @@
     <div class="fomo-time">Il y a quelques instants</div>
   </div>
 </div>
+
+</nav>
 
 </main>
 
@@ -705,6 +707,26 @@
     </div>
   </div>
 </div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav id="mobile-nav">
+  <a href="#home" class="m-nav-item active">
+    <span class="m-nav-ico">🏠</span>
+    <span class="m-nav-lbl">Accueil</span>
+  </a>
+  <a href="#qualification" class="m-nav-item">
+    <span class="m-nav-ico">⚡</span>
+    <span class="m-nav-lbl">Mon Offre</span>
+  </a>
+  <a href="#faq" class="m-nav-item">
+    <span class="m-nav-ico">❓</span>
+    <span class="m-nav-lbl">FAQ</span>
+  </a>
+  <a href="#" onclick="openCal(event)" class="m-nav-item">
+    <span class="m-nav-ico">📅</span>
+    <span class="m-nav-lbl">RDV</span>
+  </a>
+</nav>
 
 <!-- Scripts retirés de la fin car ils sont gérés avec 'defer' dans le <head> -->
 </body>
