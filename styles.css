@@ -40,6 +40,7 @@ body{font-family:var(--font-body);background:#FFFFFF;color:var(--forest);overflo
 /* ── TEXTURE (disabled) ── */
 body::after{display:none}
 nav,section,footer,main{position:relative;z-index:1}
+.main-nav, #mobile-nav { z-index: 1000; }
 
 /* ══════════════════════════════════════
    LOGO SVG (inline, used in nav + hero)
@@ -47,14 +48,14 @@ nav,section,footer,main{position:relative;z-index:1}
 .logo-svg-wrap svg{display:block}
 
 /* ── NAV ── */
-nav{position:sticky;top:0;z-index:300;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;
+.main-nav{position:sticky;top:0;z-index:300;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;
   background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;
   margin: 12px 24px 0; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05);
   box-shadow: var(--shadow-md);
 }
 @media(max-width:768px){
-  nav{padding:0 16px; margin: 8px 12px 0; height: 64px;}
+  .main-nav{padding:0 16px; margin: 8px 12px 0; height: 64px;}
   .nav-logo-text { display: none; }
 }
 
@@ -582,18 +583,21 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
 /* ── MOBILE APP NAV (FIXED) ── */
 #mobile-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.96);
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: none;
   grid-template-columns: repeat(4, 1fr);
-  padding: 10px 8px calc(14px + env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
-  z-index: 9999;
+  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  z-index: 10000;
+  width: calc(100% - 24px);
+  margin: 0;
 }
 
 .m-nav-item {
@@ -655,13 +659,13 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
     padding-bottom: 80px; /* Space for bottom nav */
   }
   
-  nav {
+  .main-nav {
     margin: 12px 16px 0 !important;
   }
 }
 
 /* ── PREMIUM HEADER FEELS ── */
-nav {
+.main-nav {
   background: rgba(255,255,255,0.75) !important;
   backdrop-filter: blur(25px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
