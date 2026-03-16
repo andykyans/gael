@@ -57,18 +57,19 @@ body::after{display:none}
 @media(max-width:768px){
   .main-nav{
     display: flex !important;
-    padding: 0 12px;
-    margin: 8px 8px 0;
-    height: 56px;
-    justify-content: space-between;
-    align-items: center;
+    padding: 0 16px !important;
+    margin: 8px 12px !important;
+    height: 60px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-radius: 16px !important;
   }
-  .nav-logo-text { display: none; }
-  .nav-right { gap: 8px; }
-  .nav-cta { display: none; } /* Already in bottom nav */
-  .nav-sfpim-tag { display: none; } /* Too wide */
-  .nav-gaele-tag { display: flex !important; padding: 6px 12px; font-size: 11px; }
-  .nav-gaele-tag img { height: 12px; }
+  .nav-logo { display: flex !important; align-items: center; }
+  .nav-logo-mark { width: 32px; height: 32px; }
+  .nav-logo-text { display: none !important; }
+  .nav-right { display: flex !important; gap: 8px !important; align-items: center; }
+  .nav-cta, .nav-links, .nav-sfpim-tag { display: none !important; }
+  .nav-gaele-tag { display: flex !important; }
 }
 
 .nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
@@ -110,12 +111,9 @@ body::after{display:none}
   cursor: not-allowed;
   pointer-events: none;
 }
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .nav-sfpim-tag { display: none; }
-  .nav-gaele-tag { display: flex; }
-}
-@media (max-width: 600px) {
-  .nav-gaele-tag { display: none; }
+  .nav-gaele-tag { display: flex !important; }
 }
 
 .nav-gaele-tag {
@@ -437,11 +435,13 @@ h1 em{font-style:normal;color:var(--gold)}
 .cal-inp::placeholder{color:#9CA3AF;font-weight:400;font-size:14px}
 .cal-inp.full{grid-column:1/-1}
 @media(max-width:480px){
-  .cal-body { padding: 16px; }
-  .cal-inp { padding: 11px 14px; font-size: 14px; }
-  .cal-notice { padding: 10px; font-size: 12px; margin-bottom: 12px; }
-  .cal-form { gap: 10px; }
-  .cal-submit { padding: 14px; font-size: 14px; }
+  .cal-body { padding: 12px; }
+  .cal-inp { padding: 10px 12px; font-size: 14px; margin-bottom: 2px; }
+  .cal-notice { padding: 8px; font-size: 12px; margin-bottom: 8px; }
+  .cal-form { gap: 6px; }
+  .cal-submit { padding: 12px; font-size: 14px; margin-top: 4px; }
+  .cal-box { border-radius: 12px; margin: 0; width: 100%; height: 100%; max-height: 100vh; overflow-y: auto; }
+  .modal-overlay { padding: 0; align-items: flex-end; } /* Slide up feel */
 }
 #cal-date { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231A7A3A' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
 #cal-time { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231A7A3A' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
@@ -622,7 +622,7 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   border: 1px solid rgba(0,0,0,0.08) !important;
   border-radius: 30px !important;
   box-shadow: 0 15px 40px rgba(0,0,0,0.18) !important;
-  z-index: 2147483647 !important; /* Max z-index for absolute priority */
+  z-index: 999 !important; /* Below Modals */
   margin: 0 !important;
 }
 
