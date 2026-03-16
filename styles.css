@@ -55,7 +55,7 @@ body::after{display:none}
   box-shadow: var(--shadow-md);
 }
 @media(max-width:768px){
-  .main-nav{padding:0 16px; margin: 8px 12px 0; height: 64px;}
+  .main-nav{display: none !important;}
   .nav-logo-text { display: none; }
 }
 
