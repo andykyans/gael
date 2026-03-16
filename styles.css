@@ -693,11 +693,12 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
     background: #F3F4F6 !important;
     padding-bottom: 110px;
   }
+  
+  body.modal-open #mobile-nav {
+    display: none !important;
+  }
 }
 
-.modal-open #mobile-nav { 
-  display: none !important; 
-}
 
 .app-view {
   opacity: 0;
