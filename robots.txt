@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Bloquer l'accès aux pages système ou admin si vous en avez un jour
+Disallow: /bureau/
+Disallow: /docs/
+
+# Empêcher l'indexation des versions locales ou de développement
+# Disallow: /*?*
+
+# Indiquer l'emplacement du sitemap pour Google
+Sitemap: https://gaele-advisor.be/sitemap.xml

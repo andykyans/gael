@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaele Advisor &#8212; Andy | &#201;conomisez sur votre &#233;nergie</title>
+
+<!-- SEO Meta -->
+<meta name="description" content="Panneaux solaires + batterie installés gratuitement en Wallonie et Flandre. Tarif fixe 0,265€/kWh pendant 25 ans. Andy, conseiller energie gaele/gaele XL, vous accompagne.">
+<link rel="canonical" href="https://gaele-advisor.be/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_BE">
+<meta property="og:site_name" content="Gaele Advisor · Andy">
+<meta property="og:title" content="Gaele Advisor — Panneaux solaires gratuits + batterie | Belgique">
+<meta property="og:description" content="Installation gratuite de panneaux solaires et batterie en Wallonie et Flandre. Tarif fixe 0,265€/kWh sur 25 ans. Conseiller energie gaele/gaele XL & SFPIM.">
+<meta property="og:url" content="https://gaele-advisor.be/">
+<meta property="og:image" content="https://gaele-advisor.be/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gaele Advisor — Panneaux solaires gratuits + batterie | Belgique">
+<meta name="twitter:description" content="Installation gratuite en Wallonie et Flandre. Tarif fixe 0,265€/kWh sur 25 ans.">
+<meta name="twitter:image" content="https://gaele-advisor.be/og-image.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
+
+<!-- Theme & Geo -->
+<meta name="theme-color" content="#0F3D23">
+<meta name="geo.region" content="BE">
+<meta name="geo.placename" content="Belgique">
+<meta name="content-language" content="fr">
+
+<!-- Fonts & Preconnects -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://adebczvhvxajiyeeyerx.supabase.co" crossorigin>
+
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- Scripts bloquants déplacés après le corps, mais on peut les garder ici avec DEFER -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js" defer></script>
+<script src="script.js" defer></script>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Gaele Advisor · Andy",
+  "description": "Conseiller energie gaele/gaele XL. Installation gratuite de panneaux solaires et batterie en Wallonie et Flandre. Optimisation de contrat énergie pour toute la Belgique.",
+  "url": "https://gaele-advisor.be",
+  "telephone": "+32470432211",
+  "email": "infos@gaele-advisor.be",
+  "areaServed": ["Wallonie", "Flandre", "Bruxelles"],
+  "priceRange": "€",
+  "address": { "@type": "PostalAddress", "addressCountry": "BE" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Pourquoi l'installation est-elle vraiment gratuite ?", "acceptedAnswer": { "@type": "Answer", "text": "Gaele XL installe les panneaux et une batterie sans frais car il gère intelligemment l'énergie stockée sur le marché de l'électricité (marché des déséquilibres)." }},
+    { "@type": "Question", "name": "Y a-t-il des frais à prévoir ?", "acceptedAnswer": { "@type": "Answer", "text": "Un seul paiement unique de 150€ de frais de dossier, intégralement remboursés si l'installation s'avère techniquement impossible." }},
+    { "@type": "Question", "name": "Pourquoi Gaele XL n'est-il pas disponible à Bruxelles ?", "acceptedAnswer": { "@type": "Answer", "text": "La Région bruxelloise traverse une situation financière difficile, ce qui fragilise les mécanismes de soutien aux énergies renouvelables. Gaele Courtier est disponible partout en Belgique." }},
+    { "@type": "Question", "name": "Que se passe-t-il après 25 ans ?", "acceptedAnswer": { "@type": "Answer", "text": "L'installation vous appartient entièrement. Vous pouvez renouveler, changer de fournisseur, ou exploiter votre installation en totale indépendance." }},
+    { "@type": "Question", "name": "Suis-je éligible si je suis locataire ?", "acceptedAnswer": { "@type": "Answer", "text": "Pour Gaele XL, il faut être propriétaire sans panneaux existants. Les locataires peuvent optimiser leur contrat via Gaele Courtier." }},
+    { "@type": "Question", "name": "Mon toit est-il compatible ?", "acceptedAnswer": { "@type": "Answer", "text": "La grande majorité des toits sont compatibles. Les toits en chaume ou en amiante ne sont pas éligibles. Une visite technique gratuite vérifie la compatibilité." }},
+    { "@type": "Question", "name": "Combien de temps prend l'installation ?", "acceptedAnswer": { "@type": "Answer", "text": "Le processus complet prend 8 à 12 semaines entre votre demande et l'installation effective." }},
+    { "@type": "Question", "name": "Les panneaux sont-ils assurés ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Le contrat inclut incendie, grêle, vol, vandalisme et rongeurs. Panneaux certifiés DNV-GL." }},
+    { "@type": "Question", "name": "Quels sont les subsides disponibles pour panneaux solaires en Wallonie 2025 ?", "acceptedAnswer": { "@type": "Answer", "text": "En 2025, la Région wallonne a mis fin aux principales primes directes pour l'achat de panneaux solaires résidentiels. L'immense avantage avec Gaele XL, c'est que l'installation complète (panneaux + batterie) est financée à 100% par nos fonds. Votre investissement de départ est de 0€." }},
+    { "@type": "Question", "name": "Est-ce que les panneaux solaires améliorent mon certificat PEB ?", "acceptedAnswer": { "@type": "Answer", "text": "Absolument. La production d'énergie renouvelable via des panneaux solaires améliore considérablement le score PEB de votre habitation, augmentant sa valeur. Avec Gaele XL, vous valorisez votre patrimoine immobilier de manière significative sans dépense initiale." }},
+    { "@type": "Question", "name": "Gaele XL est-il disponible en Flandre ? (Vlaanderen)", "acceptedAnswer": { "@type": "Answer", "text": "Oui ! L'offre Gaele XL est pleinement opérationnelle et extrêmement avantageuse partout en Flandre (Vlaanderen), tout comme en Wallonie. Le seul endroit où l'offre n'est pas encore déployée est Bruxelles." }},
+    { "@type": "Question", "name": "Quelle est la différence entre les certificats verts et Gaele XL ?", "acceptedAnswer": { "@type": "Answer", "text": "Le système des certificats verts est un ancien mécanisme d'État. Gaele XL est un modèle innovant garanti par des investisseurs. Nous prenons en charge le coût total de vos panneaux et vous garantissons un tarif d'électricité fixe et ultra-bas pendant 25 ans." }},
+    { "@type": "Question", "name": "Qu'est-ce que la prime photovoltaïque et comment Gaele XL s'y compare ?", "acceptedAnswer": { "@type": "Answer", "text": "La prime photovoltaïque classique vous obligeait à avancer des milliers d'euros et remplir des dossiers administratifs lourds. Gaele XL supprime tout ce stress : il n'y a aucun investissement initial. Votre matériel est posé gratuitement et les économies sont immédiates." }}
+  ]
+}
+</script>
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Installation panneaux solaires et batterie",
+    "name": "Gaele XL",
+    "description": "Panneaux solaires + batterie installés gratuitement. Tarif fixe 0,2703€/kWh TVAC pendant 25 ans.",
+    "areaServed": ["Wallonie", "Flandre"],
+    "provider": { "@type": "LocalBusiness", "name": "Gaele Advisor · Andy" },
+    "offers": { "@type": "Offer", "price": "0.2703", "priceCurrency": "EUR", "description": "Par kWh TVAC, tarif fixe 25 ans" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Courtage en énergie",
+    "name": "Gaele Courtier",
+    "description": "Optimisation gratuite de votre contrat énergie. Meilleur tarif négocié pour toute la Belgique.",
+    "areaServed": ["Wallonie", "Flandre", "Bruxelles"],
+    "provider": { "@type": "LocalBusiness", "name": "Gaele Advisor · Andy" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "Service 100% gratuit" }
+  }
+]
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/" aria-label="Retour à l'accueil">
+    <!-- LOGO SVG -->
+    <svg class="nav-logo-mark" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Gaele Advisor">
+      <title>Gaele Advisor</title>
+      <rect width="38" height="38" rx="9" fill="#0F3D23"/>
+      <rect width="38" height="38" rx="9" fill="url(#lg1)" opacity="0.6"/>
+      <!-- Hexagon shape -->
+      <path d="M19 6L30 12.5V25.5L19 32L8 25.5V12.5L19 6Z" stroke="#C9A84C" stroke-width="1.2" fill="none" opacity="0.5"/>
+      <!-- Lightning bolt / energy -->
+      <path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="url(#lg2)"/>
+      <defs>
+        <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#C9A84C" stop-opacity="0.2"/>
+          <stop offset="1" stop-color="#C9A84C" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="lg2" x1="17" y1="8" x2="21" y2="30" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#F0D48A"/>
+          <stop offset="1" stop-color="#C9A84C"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="nav-logo-text">
+      <span class="nav-logo-name">Gaele Advisor</span>
+      <span class="nav-logo-sub">Conseiller energie gaele/gaele XL</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#qualification">Votre offre</a>
+    <a href="#andy">&#192; propos</a>
+    <a href="#faq">FAQ</a>
+    <a href="#" onclick="openCal(event)">Contact</a>
+  </div>
+  <div class="nav-right">
+    <div onclick="openInfoModal(event)" class="nav-gaele-tag">
+      <img src="https://gaele.be/wp-content/themes/gaele/assets/images/logo_gaele.png" alt="Gaele">
+      <span>C'est quoi Gaele ?</span>
+    </div>
+    <a href="https://sfpim.be/fr/3489-2/" target="_blank" class="nav-sfpim-tag" style="text-decoration:none">
+      &#127963;&#65039; SFPIM &#183; &#201;tat belge
+    </a>
+    <button class="nav-cta" onclick="openCal(event)">RDV Andy &#8594;</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<main>
+<section style="background:#FFFFFF">
+<div class="hero">
+  <div class="hero-l">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      <span class="hero-eyebrow-text">Conseiller energie gaele/gaele XL &#183; SFPIM (&#201;tat belge)</span>
+    </div>
+    <h1>R&#233;duisez votre<br>facture &#233;nergie<br><span class="gold"><em>sans investir</em></span></h1>
+    <p class="hero-desc">Panneaux solaires + batterie install&#233;s gratuitement, ou meilleur tarif n&#233;goci&#233; &#8212; selon votre r&#233;gion et votre situation. <strong>Andy vous guide de A &#224; Z.</strong></p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="openCal(event)">&#128197; Analyse gratuite avec Andy</button>
+      <a href="#qualification" class="btn-ghost">Trouver mon offre &#8594;</a>
+    </div>
+
+    <!-- Nouveau : Badge de confiance SFPIM Impactant -->
+    <a href="https://sfpim.be/fr/3489-2/" target="_blank" class="hero-trust-box" style="text-decoration:none">
+      <div class="htb-logo">&#127963;&#65039;</div>
+      <div class="htb-content">
+        <div class="htb-title">Actionnariat certifi&#233; par l'&#201;tat Belge</div>
+        <div class="htb-sub">SFPIM &#183; Fonds Souverain Institutionnel</div>
+      </div>
+    </a>
+
+
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">50 000+</div><div class="hstat-l">clients Gaele (courtier)</div></div>
+      <div class="hstat"><div class="hstat-n">0,270&#8364;</div><div class="hstat-l">par kWh &#8212; 25 ans fixe</div></div>
+      <div class="hstat"><div class="hstat-n">~587&#8364;</div><div class="hstat-l">&#233;conomies / an</div></div>
+    </div>
+  </div>
+
+  <div class="hero-r">
+    <div class="rcard wal" onclick="document.getElementById('qualification').scrollIntoView({behavior:'smooth'})">
+      <div class="rcard-inner">
+        <div class="rcard-top"><span class="rcard-flag">&#127807;</span><span class="rbadge xl">Gaele XL</span></div>
+        <div class="rcard-name">Wallonie</div>
+        <div class="rcard-desc">Min. 8 panneaux + batterie dimensionn&#233;e selon ta conso, install&#233;s gratuitement</div>
+        <div class="rcard-tag">0,2703 &#8364; / kWh &#183; Tarif fixe 25 ans</div>
+      </div>
+    </div>
+    <div class="rcard fla" onclick="document.getElementById('qualification').scrollIntoView({behavior:'smooth'})">
+      <div class="rcard-inner">
+        <div class="rcard-top"><span class="rcard-flag">&#129409;</span><span class="rbadge xl">Gaele XL</span></div>
+        <div class="rcard-name">Flandre</div>
+        <div class="rcard-desc">Min. 8 panneaux + batterie dimensionn&#233;e selon ta conso, install&#233;s gratuitement</div>
+        <div class="rcard-tag">0,2703 &#8364; / kWh &#183; Tarif fixe 25 ans</div>
+      </div>
+    </div>
+    <div class="rcard bxl" onclick="document.getElementById('qualification').scrollIntoView({behavior:'smooth'})">
+      <div class="rcard-inner">
+        <div class="rcard-top"><span class="rcard-flag">&#127963;&#65039;</span><span class="rbadge courtier">Gaele Courtier</span></div>
+        <div class="rcard-name">Bruxelles</div>
+        <div class="rcard-desc">Optimisation de votre contrat &#233;nergie &#8212; propri&#233;taires & locataires</div>
+        <div class="rcard-tag">Tarif n&#233;goci&#233; &#183; Service gratuit</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SOCIAL PROOF BAND -->
+<div id="proof">
+  <div class="proof-wrap">
+    <div class="proof-item"><div class="proof-n">50 000+</div><div class="proof-l">clients Gaele en Belgique</div></div>
+    <div class="proof-item"><div class="proof-n">-40%</div><div class="proof-l">vs tarif fixe classique</div></div>
+    <div class="proof-item"><div class="proof-n">25 ans</div><div class="proof-l">tarif garanti contractuel</div></div>
+    <div class="proof-item"><div class="proof-n">SFPIM</div><div class="proof-l">&#201;tat belge &#183; ~33% Gridlink</div></div>
+  </div>
+</div>
+
+<!-- QUALIFICATION -->
+<section id="qualification">
+<div class="section-wrap" style="max-width:860px">
+  <span class="section-eyebrow">Trouvez votre offre</span>
+  <h2 class="section-title">Quelle est votre <em>situation</em> ?</h2>
+  <p class="section-sub">2 questions &#183; R&#233;sultat instantan&#233; &#183; Andy vous contacte sous 24h</p>
+
+  <div class="qstep-label">01 &#8212; Votre r&#233;gion</div>
+  <div class="qgrid-3" id="q1-grid">
+    <button class="qcard" onclick="selectQ(this,'region','wal')"><span class="qcard-ico">&#127807;</span><span class="qcard-label">Wallonie</span></button>
+    <button class="qcard" onclick="selectQ(this,'region','fla')"><span class="qcard-ico">&#129409;</span><span class="qcard-label">Flandre</span></button>
+    <button class="qcard" onclick="selectQ(this,'region','bxl')"><span class="qcard-ico">&#127963;&#65039;</span><span class="qcard-label">Bruxelles</span></button>
+  </div>
+
+  <div class="qstep-label">02 &#8212; Votre statut</div>
+  <div class="qgrid-2" id="q2-grid">
+    <button class="qcard" onclick="selectQ(this,'statut','proprio')"><span class="qcard-ico">&#127968;</span><span class="qcard-label">Propri&#233;taire</span></button>
+    <button class="qcard" onclick="selectQ(this,'statut','locataire')"><span class="qcard-ico">&#128273;</span><span class="qcard-label">Locataire</span></button>
+  </div>
+  <div class="qual-result-box" id="qual-result" style="display:none; margin-top: 40px;">
+    <!-- Les cartes seront affichées ici via le script -->
+    <div id="card-xl" class="offer-card featured" style="display:none; max-width:450px; margin: 0 auto;">
+      <div class="offer-top-bar" style="background:linear-gradient(90deg,var(--forest3),var(--forest2))"></div>
+      <div class="offer-ico">⚡☀️</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="offer-badge premium">Populaire</span>
+        <span class="offer-badge premium" style="font-size:9px">🏛️ SFPIM · État belge</span>
+      </div>
+      <div class="offer-title" style="color:var(--forest);font-family:var(--font-display)">Gaele XL</div>
+      <span class="offer-region">🌿 Wallonie &nbsp;·&nbsp; 🦁 Flandre · Propriétaires</span>
+      <div class="offer-price" style="color:var(--gold-d);font-family:var(--font-display)">0,2703 €</div>
+      <div class="offer-price-sub" style="color:var(--muted)">/kWh TVAC · Tarif fixe 25 ans</div>
+      <ul class="offer-features">
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Panneaux solaires installés GRATUITEMENT</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Batterie incluse (taille selon visite technique, min. 8 panneaux)</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Tarif fixe 25 ans · indexation max 2%/an</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Compatible et avantageux si vous avez une borne <strong>Sparki</strong></li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Installation + maintenance + assurance incluses</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Certifié DNV-GL · Incendie, grêle, vol, rongeurs</li>
+        <li class="offer-info"><span>ℹ</span>Frais de dossier uniques : 150 € (remboursés si installation impossible)</li>
+      </ul>
+      <button class="offer-cta gold" onclick="openCal(event)">Prendre RDV avec Andy →</button>
+    </div>
+
+    <div id="card-courtier" class="offer-card" style="display:none; max-width:450px; margin: 0 auto;">
+      <div class="offer-top-bar" style="background:linear-gradient(90deg,var(--forest3),var(--forest2))"></div>
+      <div class="offer-ico">⚡🇧🇪</div>
+      <span class="offer-badge courtier">Toute la Belgique</span>
+      <div class="offer-title" style="font-family:var(--font-display)">Gaele Courtier</div>
+      <span class="offer-region" style="color:rgba(14,31,19,0.45)">🌿 Wallonie · 🦁 Flandre · 🌿️ Bruxelles</span>
+      <div class="offer-price" style="color:var(--forest);font-family:var(--font-display)">Gratuit</div>
+      <div class="offer-price-sub" style="color:rgba(14,31,19,0.45)">Service 100% gratuit · Meilleur tarif du marché</div>
+      <ul class="offer-features">
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Audit de votre contrat actuel</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Changement de fournisseur optimisé</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Tarif fixe ou variable selon votre profil</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Accompagnement administratif complet</li>
+        <li class="offer-feature"><span class="feat-check" style="color:var(--forest2)">✓</span>Disponible propriétaires ET locataires</li>
+      </ul>
+      <button class="offer-cta outline-dark" onclick="openCal(event)">Prendre RDV avec Andy →</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- COMPARE TABLE -->
+<section id="compare">
+<div class="section-wrap">
+  <span class="section-eyebrow">Comparaison</span>
+  <h2 class="section-title">Votre fournisseur actuel<br><em>vs Gaele XL</em></h2>
+  <p class="section-sub">Les chiffres parlent d'eux-m&#234;mes</p>
+  <div style="overflow-x:auto">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Crit&#232;re</th>
+        <th>March&#233; classique</th>
+        <th>Gaele XL (Wallonie / Flandre)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>&#128182; Co&#251;t moyen/kWh</td><td>0,4382 &#8364; TVAC (moyenne march&#233;)</td><td>0,2703 &#8364; TVAC</td></tr>
+      <tr><td>&#128197; Dur&#233;e du tarif</td><td>Variable / r&#233;visable</td><td>Fixe 25 ans garanti</td></tr>
+      <tr><td>&#128200; &#201;volution prix</td><td>+3,5%/an en moyenne</td><td>+2%/an max (plafonn&#233; contrat)</td></tr>
+      <tr><td>&#9728;&#65039; Panneaux solaires</td><td><span class="cross">&#10007;</span> Non inclus</td><td>Install&#233;s gratuitement</td></tr>
+      <tr><td>&#128267; Batterie domicile</td><td><span class="cross">&#10007;</span> Non inclus</td><td>incluse gratuitement (dimensionn&#233;e selon ta consommation)</td></tr>
+      <tr><td>&#128295; Maintenance</td><td><span class="cross">&#10007;</span> &#192; votre charge</td><td>Incluse dans le contrat</td></tr>
+      <tr><td>&#128176; &#201;conomies/an (3500 kWh)</td><td>&#8212; (r&#233;f&#233;rence)</td><td>Jusqu'à 587,65 &#8364; / an</td></tr>
+      <tr><td>&#128176; &#201;conomies sur 25 ans</td><td>&#8212; (r&#233;f&#233;rence)</td><td>~14 500 &#8364; estim&#233;s</td></tr>
+      <tr><td>&#128737;&#65039; Assurance panneaux</td><td>&#8212;</td><td>Incendie, gr&#234;le, vol, rongeurs</td></tr>
+      <tr><td>&#128203; Frais d'entr&#233;e</td><td>Aucun</td><td>150 &#8364; dossier (rembours&#233;s si impossible)</td></tr>
+      <tr><td>&#9201;&#65039; D&#233;lai installation</td><td>&#8212;</td><td>8 &#224; 12 semaines</td></tr>
+      <tr><td>&#127963;&#65039; Garantie institutionnelle</td><td>&#8212;</td><td>SFPIM (&#201;tat belge) &#8212; ~33% Gridlink</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:12px;color:var(--muted2);margin-top:14px">* Bas&#233; sur 3500 kWh/an, pointe mensuelle de 6 kW, Fluvius West, TVA 6% et prix moyens de 2025. Gaele XL : 0,2703&#8364;/kWh, indexation max 2%/an. Source : gaele.be/fr/xl.</p>
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="temoignages">
+<div class="section-wrap">
+  <span class="section-eyebrow">Avis clients</span>
+  <h2 class="section-title">Ils ont d&#233;j&#224; <em style="font-style:italic">&#233;conomis&#233;</em></h2>
+  <p class="section-sub">Vrais clients, vrais r&#233;sultats</p>
+  <div class="testi-grid">
+    <div class="tcard">
+      <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tcard-text">"Andy m'a expliqu&#233; le fonctionnement en 20 minutes. J'&#233;conomise maintenant 490&#8364; par an. L'installation s'est faite sans stress."</p>
+      <div class="tcard-author">
+        <div class="tcard-avatar">ML</div>
+        <div><div class="tcard-name">Marie-Lise D.</div><div class="tcard-location">Namur, Wallonie</div><span class="tcard-badge">Gaele XL</span></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tcard-text">"Je ne croyais pas que c'&#233;tait vraiment gratuit. Panneaux install&#233;s, batterie pos&#233;e, facture en baisse de 38% d&#232;s le premier mois."</p>
+      <div class="tcard-author">
+        <div class="tcard-avatar">JP</div>
+        <div><div class="tcard-name">Jean-Pierre V.</div><div class="tcard-location">Gent, Flandre</div><span class="tcard-badge">Gaele XL</span></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tcard-text">"&#192; Bruxelles, Andy m'a aid&#233; &#224; changer de fournisseur via Gaele. R&#233;sultat imm&#233;diat sur ma facture, z&#233;ro d&#233;marche de ma part."</p>
+      <div class="tcard-author">
+        <div class="tcard-avatar">SC</div>
+        <div><div class="tcard-name">Sophie C.</div><div class="tcard-location">Ixelles, Bruxelles</div><span class="tcard-badge" style="background:rgba(14,31,19,0.06);color:var(--forest);border-color:rgba(14,31,19,0.15)">Gaele Courtier</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ANDY -->
+<section id="andy">
+<div class="section-wrap">
+  <div class="andy-section">
+    <span class="andy-eyebrow">Votre conseiller</span>
+    <div class="andy-name">Andy</div>
+    <div class="andy-role">&#9889; Conseiller energie gaele/gaele XL</div>
+    <p class="andy-bio">Conseiller ind&#233;pendant en &#233;nergie bas&#233; en Wallonie, je vous accompagne de A &#224; Z dans votre transition &#233;nerg&#233;tique. Mon objectif : vous faire &#233;conomiser le maximum avec z&#233;ro investissement et z&#233;ro stress administratif.</p>
+    <div class="andy-chips">
+      <span class="chip gold">Gaele XL</span>
+      <span class="chip gold">Gaele Courtier</span>
+      <span class="chip plain">Wallonie</span>
+      <span class="chip plain">Flandre</span>
+      <span class="chip plain">Bruxelles</span>
+    </div>
+    <div class="andy-contact">
+      <button class="contact-btn rdv" onclick="openCal(event)">&#128197; Prendre RDV</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+<div class="section-wrap">
+  <span class="section-eyebrow">Questions fr&#233;quentes</span>
+  <h2 class="section-title">Tout ce que vous<br><em style="font-style:italic">voulez savoir</em></h2>
+  <div class="faq-grid">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">SFPIM : Un investissement de l'&#201;tat Belge dans la transition &#233;nerg&#233;tique ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>La <a href="https://sfpim.be/fr/3489-2/" target="_blank" style="color:var(--forest2);font-weight:700">SFPIM</a> (fonds souverain belge) est actionnaire &#224; hauteur d'environ <strong>un tiers (33%)</strong> de <strong>GRIDLINK</strong>, la holding de Gaele. Investir dans GRIDLINK est une d&#233;cision strat&#233;gique pour l'&#201;tat pour trois raisons :</p>
+          <ul style="margin: 10px 0; padding-left: 20px; color: rgba(14, 31, 19, 0.7);">
+            <li><strong>Expertise :</strong> La connaissance approfondie du secteur de l'&#201;nergie par le groupe.</li>
+            <li><strong>Port&#233;e :</strong> Une base de plus de 50 000 clients et 250 000 contrats g&#233;r&#233;s par an.</li>
+            <li><strong>Impact :</strong> L'utilisation de technologies durables comme les panneaux solaires et batteries domestiques.</li>
+          </ul>
+          <p>En choisissant Gaele, vous b&#233;n&#233;ficiez de la force du leader du courtage en Europe (ENBRO) et d'un installateur majeur (EARTH), le tout soutenu par la solidit&#233; institutionnelle de la Belgique. <a href="https://sfpim.be/fr/3489-2/" target="_blank" style="color:var(--forest2);text-decoration:underline">Lire le communiqu&#233; officiel &#8594;</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Pourquoi l'installation est-elle vraiment gratuite ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Gaele XL installe les panneaux et une batterie (dimensionn&#233;e selon ta consommation) sans frais car il g&#232;re intelligemment l'&#233;nergie stock&#233;e sur le march&#233; de l'&#233;lectricit&#233; (march&#233; des d&#233;s&#233;quilibres). Cette gestion active permet &#224; Gaele de proposer un tarif ultra-comp&#233;titif tout en rentabilisant l'installation.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Y a-t-il des frais &#224; pr&#233;voir ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Un seul paiement unique de <strong>150 &#8364; de frais de dossier</strong> est demand&#233; &#224; la confirmation. Ces frais sont <strong>int&#233;gralement rembours&#233;s</strong> si l'installation s'av&#232;re techniquement impossible chez vous.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Gaele XL est-il disponible en Flandre ? (Vlaanderen)<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p><strong>Oui !</strong> L'offre Gaele XL est pleinement opérationnelle et extrêmement avantageuse partout en Flandre (Vlaanderen), tout comme en Wallonie. Le seul endroit où notre offre n'est pas encore déployée (pour des raisons de régulation de réseau) est la Région de Bruxelles-Capitale.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Quelle est la différence entre les certificats verts et Gaele XL ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Le système des "certificats verts" est un ancien mécanisme d'État (qui n'est d'ailleurs pratiquement plus octroyé pour les nouvelles installations résidentielles). <strong>Gaele XL</strong> est un modèle innovant garanti par des investisseurs (dont 30% par l'État belge). Au lieu de vendre des certificats virtuels, nous prenons en charge le coût total de vos panneaux, et en échange, nous vous garantissons physiquement un tarif d'électricité fixe, ultra-bas (0,270€/kWh) et bouclier contre l'inflation pendant 25 ans.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Qu'est-ce que la prime photovoltaïque et comment Gaele XL s'y compare ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>La prime photovoltaïque classique vous obligeait à puiser dans vos économies pour avancer des milliers d'euros, remplir des dossiers administratifs lourds, et espérer que les budgets de la Région ne soient pas épuisés. <strong>Gaele XL</strong> supprime tout ce stress : il n'y a <strong>aucun investissement initial</strong>. Dès le premier jour, votre matériel est posé gratuitement, et vous commencez à faire des économies immédiates sur le prix de l'énergie.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Pourquoi Gaele XL n'est-il pas disponible &#224; Bruxelles ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>La R&#233;gion bruxelloise traverse une situation financi&#232;re difficile (d&#233;ficit &gt;1,6 milliard &#8364;), ce qui fragilise les m&#233;canismes de soutien aux &#233;nergies renouvelables. Gaele XL n'est donc pas disponible &#224; Bruxelles pour l'instant. En revanche, <strong>Gaele Courtier</strong> est disponible partout en Belgique.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Que se passe-t-il apr&#232;s 25 ans ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Apr&#232;s 25 ans, l'installation (panneaux + batterie) vous appartient enti&#232;rement. Vous pouvez renouveler le contrat Gaele XL, changer de fournisseur, ou exploiter votre installation en totale ind&#233;pendance.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Suis-je &#233;ligible si je suis locataire ou si j'ai d&#233;j&#224; des panneaux ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Pour Gaele XL, il faut &#234;tre <strong>propri&#233;taire</strong> et <strong>ne pas avoir de panneaux existants</strong>. Si vous &#234;tes locataire ou avez d&#233;j&#224; des panneaux, Andy vous aide via <strong>Gaele Courtier</strong> pour optimiser votre contrat &#233;nergie.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Mon toit est-il compatible ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>La grande majorit&#233; des toits sont compatibles. Les toits en <strong>chaume ou en amiante</strong> ne sont pas &#233;ligibles. Une visite technique gratuite v&#233;rifie la compatibilit&#233; avant toute installation.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Combien de temps prend l'installation ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Le processus complet prend <strong>8 à 12 semaines</strong> entre votre demande et l'installation effective. Gaele s'occupe de toutes les démarches administratives.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Les panneaux sont-ils assurés ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Oui. Le contrat inclut incendie, grêle, vol, vandalisme et rongeurs. Les panneaux sont certifiés DNV-GL, garantissant durabilité et rendement sur 25 ans.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">C'est trop beau pour être vrai, quelle est la garantie ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>C'est une offre solide et sécurisée. Gaele XL fait partie du groupe <strong>Gridlink</strong>, dont l'État belge est actionnaire à hauteur de <strong>~33%</strong> via la <strong>SFPIM</strong> (Société Fédérale de Participations et d'Investissement). C'est le même fonds souverain qui gère les parts de l'État dans BNP Paribas Fortis ou Belfius. Les panneaux sont auto-financés par les économies générées sur 25 ans, tout simplement.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">C'est une société jeune, comment avoir confiance ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Gaele XL est une marque de <strong>Gridlink SRL</strong> (BE0778540509), un acteur majeur de l'Énergie en Belgique avec plus de 50 000 clients. La solidité est garantie par la présence de l'État belge (~33% du capital via SFPIM). Le groupe gère aussi le réseau de bornes de recharge Sparki. C'est donc une structure institutionnelle bien plus stable que la plupart des installateurs classiques.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">C'est du leasing déguisé ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>C'est 100% gratuit. Il n'y a pas de loyer pour les panneaux, nous payons tout l'investissement. Vous ne payez que votre consommation à un tarif fixe très avantageux.</p></div></div>
+    </div>
+
+    <!-- Autres Questions -->
+    <div style="grid-column: 1 / -1; margin-top: 40px; border-top: 1px solid rgba(14,31,19,0.1); padding-top: 30px;">
+      <h3 style="font-family:var(--font-display); color:var(--forest); margin-bottom: 20px;">Informations Complémentaires</h3>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Quels sont les subsides disponibles pour panneaux solaires en Wallonie 2025 ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>En 2025, la Région wallonne a mis fin aux principales primes directes pour l'achat de panneaux solaires résidentiels. L'immense avantage avec Gaele XL, c'est que l'installation complète est financée à 100% par nos fonds. Votre investissement de départ est de 0€.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Est-ce que les panneaux solaires améliorent mon certificat PEB ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Absolument. La production d'énergie renouvelable via des panneaux solaires améliore considérablement le score PEB de votre habitation. Cela augmente directement la valeur de votre maison sur le marché immobilier.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Et si les prix de l'énergie baissent ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Tarif fixe 0,2703€/kWh vs 0,4382€ (moyenne du marché). Si le marché descend sous les 0,20€, vous pouvez résilier. Mais historiquement, les prix n'ont jamais tenu 25 ans sous ce seuil.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">L'indexation va me ruiner...<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Max +2%/an vs +3,5%/an sur le marché classique. Sur 25 ans : +28% de hausse chez nous, contre +260% de hausse générale sur le marché. C'est acté dans le contrat.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Je ne veux pas de panneaux sur mon toit<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>L'installation est réversible et réalisée sans trous dans vos tuiles. Le retour à l'état initial est garanti. Option de location de terrain uniquement possible (500€/an).</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Ça marche à Bruxelles ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Compteur digital + consommation inférieure à 100MWh/an = éligible. Fonctionne même en immeuble (sur toit commun). Une étude technique gratuite le confirmera.</p></div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta-final">
+<div class="section-wrap">
+  <h2 class="cta-title">Prenez RDV avec <span class="gold">Andy</span><br>&#8212; c'est gratuit.</h2>
+  <p class="cta-sub">Analyse personnalis&#233;e &#183; Aucun engagement &#183; R&#233;ponse sous 24h</p>
+  <div class="cta-btns">
+    <button class="btn-gold" style="font-size:16px;padding:18px 44px" onclick="openCal(event)">&#128197; R&#233;server mon analyse gratuite</button>
+  </div>
+</div>
+</section>
+
+<!-- MOBILE STICKY CTA -->
+<div id="mobile-cta-band">
+  <button class="mobile-cta-btn" onclick="openCal(event)">&#128197; M'inscrire gratuitement</button>
+</div>
+
+<!-- FOMO NOTIFICATION -->
+<div id="fomo-popup" class="fomo-hidden">
+  <div class="fomo-ico">&#9889;</div>
+  <div class="fomo-content">
+    <div class="fomo-name" id="fomo-text">Quelqu'un vient de r&#233;server...</div>
+    <div class="fomo-time">Il y a quelques instants</div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+<div class="section-wrap">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">
+        <svg width="32" height="32" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="9" fill="#0F3D23"/><path d="M19 6L30 12.5V25.5L19 32L8 25.5V12.5L19 6Z" stroke="#C9A84C" stroke-width="1.2" fill="none" opacity="0.5"/><path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#C9A84C"/></svg>
+        <span style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--forest)">Gaele Advisor &#183; Andy</span>
+      </div>
+      <p class="footer-desc">Conseiller energie gaele/gaele XL. Wallonie, Flandre et Bruxelles. &#201;conomisez sur votre &#233;nergie sans investissement.</p>
+    </div>
+    <div>
+      <span class="footer-col-title">Offres</span>
+      <a class="footer-link" href="#qualification">Gaele XL (Wallonie/Flandre)</a>
+      <a class="footer-link" href="#qualification">Gaele Courtier (Belgique)</a>
+    </div>
+    <div>
+      <span class="footer-link disabled">Formulaire de contact</span>
+      <a class="footer-link" href="#" onclick="openQuestionModal(event)">✉️ infos@gaele-advisor.be</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Gaele Advisor · Andy · Conseiller energie gaele/gaele XL</span>
+  </div>
+</div>
+</footer>
+
+<!-- WA Float Removed -->
+
+<!-- MODAL RDV -->
+<div id="cal-modal" class="modal-overlay">
+  <div class="cal-box">
+    <div class="cal-header">
+      <span class="cal-title">&#128197; Rendez-vous gratuit avec Andy</span>
+      <button class="cal-close" aria-label="Fermer la fenêtre de rendez-vous" onclick="closeCal()">&#10005;</button>
+    </div>
+    <div class="cal-body">
+      <div class="cal-notice">&#9989; Analyse gratuite &#183; Sans engagement &#183; R&#233;ponse sous 24h</div>
+      <div class="cal-form" id="cal-form-inner">
+        <input class="cal-inp" id="cal-prenom" placeholder="Prénom *">
+        <input class="cal-inp" id="cal-nom" placeholder="Nom">
+        <input class="cal-inp full" id="cal-email" type="email" placeholder="Email *">
+        <input class="cal-inp" id="cal-tel" type="tel" placeholder="Téléphone *">
+        <input class="cal-inp" id="cal-cp" type="text" maxlength="4" placeholder="Code postal *">
+        
+        <select class="cal-inp" id="cal-statut">
+          <option value="" disabled selected>Statut de logement *</option>
+          <option value="Propriétaire">Propriétaire</option>
+          <option value="Locataire">Locataire</option>
+        </select>
+        <select class="cal-inp" id="cal-offre">
+          <option value="" disabled selected>Offre envisagée *</option>
+          <option value="Gaele XL">Gaele XL (Solaire gratuit)</option>
+          <option value="Gaele Courtier">Gaele Courtier (Optimisation tarif)</option>
+        </select>
+        
+        <select class="cal-inp" id="cal-energie">
+          <option value="" disabled selected>Énergies actuelles *</option>
+          <option value="Électricité seule">Électricité seule</option>
+          <option value="Électricité + Gaz">Électricité + Gaz</option>
+        </select>
+        <select class="cal-inp" id="cal-elec-normes">
+          <option value="" disabled selected>Installation électrique *</option>
+          <option value="Aux normes">Aux normes</option>
+          <option value="Pas aux normes">Pas aux normes</option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+
+        <input class="cal-inp" id="cal-date" placeholder="Jour du rendez-vous *">
+        <select class="cal-inp" id="cal-time" disabled>
+          <option value="" disabled selected>Heure du rendez-vous *</option>
+        </select>
+        
+        <div class="cal-trust-badge">
+          &#128274; Vos donn&#233;es sont s&#233;curis&#233;es. Aucun spam, aucun engagement. Uniquement un appel courtois de l'&#233;quipe Gaele.
+        </div>
+        
+        <button class="cal-submit" onclick="submitCal()">Confirmer mon rendez-vous &#8594;</button>
+      </div>
+      <div class="cal-success" id="cal-success">
+        <div class="cal-success-ico">🎉</div>
+        <div class="cal-success-title">Demande envoyée !</div>
+        <p class="cal-success-sub">Andy vous contacte dans les 24 heures. Merci !</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL QUESTION -->
+<div id="question-modal" class="modal-overlay">
+  <div class="cal-box">
+    <div class="cal-header">
+      <span class="cal-title">📩 Posez votre question à Andy</span>
+      <button class="cal-close" aria-label="Fermer la fenêtre" onclick="closeQuestionModal()">✕</button>
+    </div>
+    <div class="cal-body">
+      <div class="cal-notice">✅ Réponse sous 24h · Sans engagement</div>
+      <div class="cal-form" id="question-form-inner">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; grid-column: 1/-1;">
+          <input class="cal-inp" id="q-prenom" placeholder="Prénom *">
+          <input class="cal-inp" id="q-nom" placeholder="Nom">
+          <input class="cal-inp full" id="q-email" type="email" placeholder="Votre email *">
+          <input class="cal-inp" id="q-tel" type="tel" placeholder="Téléphone *">
+          <input class="cal-inp" id="q-cp" type="text" maxlength="4" placeholder="Code postal *">
+          
+          <select class="cal-inp full" id="q-statut">
+            <option value="" disabled selected>Vous êtes... *</option>
+            <option value="Propriétaire">Propriétaire</option>
+            <option value="Locataire">Locataire</option>
+          </select>
+          
+          <textarea class="cal-inp full" id="q-message" rows="4" placeholder="Comment Andy peut-il vous aider ? *" style="resize:none; height:120px; grid-column: 1/-1;"></textarea>
+        </div>
+        
+        <div class="cal-trust-badge">
+          🛡️ Vos données sont sécurisées. Andy vous répondra personnellement.
+        </div>
+        
+        <button class="cal-submit" onclick="submitQuestion()">Envoyer ma question →</button>
+      </div>
+      <div class="cal-success" id="question-success" style="display:none;">
+        <div class="cal-success-ico">📧</div>
+        <div class="cal-success-title">Message envoyé !</div>
+        <p class="cal-success-sub">Andy a bien reçu votre question et vous répondra très vite. Merci !</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- INFO MODAL (C'EST QUOI GAELE) -->
+<div class="modal-overlay" id="info-modal">
+  <div class="cal-box" style="max-width:640px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+    <button class="cal-close" onclick="closeInfoModal()" style="top: 24px; right: 24px;">&#10005;</button>
+    <div class="cal-head" style="padding: 40px 40px 20px;">
+      <div class="cal-logo-box" style="margin-bottom: 20px;">
+        <img src="https://gaele.be/wp-content/themes/gaele/assets/images/logo_gaele.png" alt="Gaele" style="height:40px">
+      </div>
+      <h2 class="cal-title" style="font-size: 28px; margin-bottom: 12px;">C'est quoi Gaele ?</h2>
+      <p class="cal-subtitle" style="font-size: 16px; color: var(--muted2);">Votre allié pour une énergie moins chère et plus verte</p>
+    </div>
+    
+    <div class="cal-body" style="padding:0 40px 40px">
+      <div style="display:grid; gap:20px">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px; transition: all 0.3s ease;">
+          <h3 style="color:var(--forest); margin:0 0 12px; font-size:20px; display:flex; align-items:center; gap:10px">
+            <span style="font-size: 24px;">🤝</span> Gaele Courtier
+          </h3>
+          <p style="margin:0; font-size:15px; line-height:1.7; color:#475569">
+            Gaele est avant tout un <strong>conseiller energie gaele/gaele XL</strong> qui gère plus de 50 000 clients en Belgique. Son rôle ? Négocier les meilleurs tarifs pour vous et optimiser vos contrats (gaz/électricité) gratuitement.
+          </p>
+        </div>
+
+        <div style="background: #fffcf2; border: 1px solid #fef3c7; border-radius: 20px; padding: 24px; transition: all 0.3s ease;">
+          <h3 style="color:var(--gold-d); margin:0 0 12px; font-size:20px; display:flex; align-items:center; gap:10px">
+            <span style="font-size: 24px;">⚡☀️</span> Gaele XL
+          </h3>
+          <p style="margin:0; font-size:15px; line-height:1.7; color:#78350f">
+            <strong>Gaele XL</strong> est l'offre révolutionnaire de Gaele. Elle permet aux propriétaires d'installer des panneaux solaires et une batterie <strong>sans aucun investissement initial</strong>. Gaele finance tout et vous garantit un tarif fixe ultra-compétitif pendant 25 ans.
+          </p>
+        </div>
+
+        <div style="margin-top: 10px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+          <ul style="margin:0; padding:0; list-style:none; display:grid; gap:16px">
+            <li style="display:flex; align-items:center; gap:12px; font-size:15px; color: var(--forest);">
+              <span style="background: rgba(15,61,35,0.05); padding: 8px; border-radius: 10px; font-size: 20px;">🏛️</span> <strong>Approuvé par l'État Belge</strong> (via SFPIM)
+            </li>
+            <li style="display:flex; align-items:center; gap:12px; font-size:15px; color: var(--forest);">
+              <span style="background: rgba(15,61,35,0.05); padding: 8px; border-radius: 10px; font-size: 20px;">🛡️</span> Accompagnement de A à Z par Andy
+            </li>
+            <li style="display:flex; align-items:center; gap:12px; font-size:15px; color: var(--forest);">
+              <span style="background: rgba(15,61,35,0.05); padding: 8px; border-radius: 10px; font-size: 20px;">🌍</span> Plus de 50 000 Belges font confiance à Gaele
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <button class="cal-submit" onclick="closeInfoModal()" style="margin-top:32px; width: 100%; height: 56px; font-size: 16px; border-radius: 14px;">J'ai compris, merci !</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts retirés de la fin car ils sont gérés avec 'defer' dans le <head> -->
+</body>
+</html>
+```
