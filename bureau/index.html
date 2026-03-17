@@ -239,8 +239,8 @@
     padding: 24px 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    overflow: hidden;
   }
+
   
   .inbox-sidebar.collapsed {
     width: 60px;
@@ -276,9 +276,14 @@
       border: none;
     }
     .inbox-sidebar.collapsed .sidebar-toggle {
-      left: 40px;
+      left: 20px;
       transform: none;
+      background: var(--forest4);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+
     .list-item {
       padding: 14px 20px;
       gap: 15px;
@@ -628,9 +633,10 @@
 <div class="dashboard" id="dashboard">
   <div class="inbox-wrapper">
     <!-- Sidebar -->
-    <div class="inbox-sidebar collapsed" id="inbox-sidebar">
-      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Réduire/Agrandir">❯</button>
+    <div class="inbox-sidebar" id="inbox-sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Réduire/Agrandir">❮</button>
       <div class="sidebar-nav" id="admin-tabs" style="margin-top:40px">
+
 
 
         <div class="nav-item active" onclick="switchTab('reception')" data-tab="reception">
