@@ -253,9 +253,10 @@
 
   /* Statut Rétracté (Logos Seuls) */
   .inbox-sidebar.collapsed {
-    width: 70px;
-    padding: 24px 8px;
+    width: 60px;
+    padding: 24px 4px;
   }
+
   
   .inbox-sidebar.collapsed .nav-label, 
   .inbox-sidebar.collapsed .nav-badge {
@@ -292,17 +293,15 @@
       box-shadow: 20px 0 50px rgba(0,0,0,0.15);
     }
     .inbox-sidebar.collapsed {
-      width: 260px; /* On mobile, collapsed means OFF-SCREEN */
-      transform: translateX(-100%);
+      left: -260px;
       box-shadow: none;
     }
     
-    /* Le bouton toggle doit être visible même quand c'est caché sur mobile */
-    .inbox-sidebar.collapsed .sidebar-toggle {
-      position: fixed;
-      left: 15px;
+    /* Le bouton toggle doit rester visible */
+    .sidebar-toggle {
+      position: fixed !important;
+      left: 270px;
       top: 85px;
-      transform: none;
       background: var(--forest4);
       color: #fff;
       border: none;
@@ -311,12 +310,13 @@
       border-radius: 50%;
       box-shadow: 0 4px 15px rgba(26, 122, 58, 0.4);
       display: flex;
-      visibility: visible;
+      z-index: 1000;
+      transition: left 0.3s ease;
     }
-    .inbox-sidebar:not(.collapsed) .sidebar-toggle {
-      right: -15px;
-      top: 20px;
+    .inbox-sidebar.collapsed .sidebar-toggle {
+      left: 15px;
     }
+
 
     .list-item { padding: 16px 20px; gap: 15px; }
     .item-date { width: 70px; font-size: 10px; }
