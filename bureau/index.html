@@ -786,9 +786,14 @@
           <span class="nav-badge" id="count-non-traite">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('perdu')" data-tab="perdu">
-          <span class="nav-icon">🗑️</span>
+          <span class="nav-icon">📁</span>
           <span class="nav-label">Perdu / Archive</span>
           <span class="nav-badge" id="count-perdu">0</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('corbeille')" data-tab="corbeille">
+          <span class="nav-icon">🗑️</span>
+          <span class="nav-label">Corbeille</span>
+          <span class="nav-badge" id="count-corbeille">0</span>
         </div>
       </div>
     </div>
@@ -830,17 +835,20 @@
       <!-- Status Picker -->
       <div style="margin-bottom: 24px;">
         <div class="detail-message-label" style="margin-bottom:12px; font-size: 11px;">Changer le statut</div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap">
-          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('reception')">Réception</button>
-          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('traite')">Traité</button>
-          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('recontacte')">Recontacté</button>
-          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('non-traite')">Non-traité</button>
-          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('perdu')">Perdu</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px;" id="status-buttons">
+          <button class="page-btn status-sel" data-val="reception" onclick="selectStatus('reception')">Réception</button>
+          <button class="page-btn status-sel" data-val="traite" onclick="selectStatus('traite')">Traité</button>
+          <button class="page-btn status-sel" data-val="recontacte" onclick="selectStatus('recontacte')">Recontacté</button>
+          <button class="page-btn status-sel" data-val="non-traite" onclick="selectStatus('non-traite')">Non-traité</button>
+          <button class="page-btn status-sel" data-val="perdu" onclick="selectStatus('perdu')">Perdu</button>
+          <button class="page-btn status-sel" data-val="corbeille" onclick="selectStatus('corbeille')">Corbeille</button>
         </div>
+        <button id="btn-save-status" class="page-btn" style="background:var(--forest2); color:white; width:100%; padding:10px; font-weight:700; display:none" onclick="saveStatus()">✅ Valider le nouveau statut</button>
       </div>
 
       <div style="margin-bottom: 24px; padding-top: 20px; border-top: 1px solid #F3F4F6;">
-        <button class="page-btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px;" onclick="deleteProspect()">🗑️ Supprimer définitivement</button>
+        <button id="btn-trash-prospect" class="page-btn" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px;" onclick="moveToTrash()">🗑️ Mettre à la corbeille</button>
+        <button id="btn-delete-prospect" class="page-btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px; display:none; margin-top: 10px;" onclick="deleteProspectPermanently()">🔥 Supprimer définitivement (Valider)</button>
       </div>
 
       <div id="detail-fields"></div>
@@ -960,7 +968,7 @@ async function loadProspects() {
 
 
 function updateTabCounts() {
-  var counts = { reception: 0, traite: 0, recontacte: 0, 'non-traite': 0, perdu: 0 };
+  var counts = { reception: 0, traite: 0, recontacte: 0, 'non-traite': 0, perdu: 0, corbeille: 0 };
   allProspects.forEach(function(p) {
     var s = p.admin_status || 'reception';
     if (counts[s] !== undefined) counts[s]++;
@@ -974,7 +982,14 @@ function updateTabCounts() {
 
 function switchTab(tab) {
   currentTab = tab;
-  var folderNames = { reception: 'Réception', traite: 'Traité', recontacte: 'Recontacté', 'non-traite': 'Non-traité', perdu: 'Perdu' };
+  var folderNames = { 
+    reception: 'Réception', 
+    traite: 'Traité', 
+    recontacte: 'Recontacté', 
+    'non-traite': 'Non-traité', 
+    perdu: 'Perdu',
+    corbeille: 'Corbeille'
+  };
   document.getElementById('current-folder-name').textContent = folderNames[tab];
   
   document.querySelectorAll('.nav-item').forEach(function(el) {
@@ -1094,6 +1109,19 @@ async function openDetail(id) {
   document.getElementById('detail-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
+  // UI Setup for Status
+  var currentS = p.admin_status || 'reception';
+  selectStatus(currentS, true);
+  
+  // Trash vs Delete visibility
+  if (currentTab === 'corbeille') {
+    document.getElementById('btn-trash-prospect').style.display = 'none';
+    document.getElementById('btn-delete-prospect').style.display = 'block';
+  } else {
+    document.getElementById('btn-trash-prospect').style.display = 'block';
+    document.getElementById('btn-delete-prospect').style.display = 'none';
+  }
+
   // Mark as read
   if (!p.is_read) {
     p.is_read = true;
@@ -1102,9 +1130,37 @@ async function openDetail(id) {
   }
 }
 
-async function deleteProspect() {
+var pendingStatus = null;
+function selectStatus(status, isInitial) {
+  pendingStatus = status;
+  document.querySelectorAll('.status-sel').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.val === status);
+    btn.style.borderColor = (btn.dataset.val === status) ? 'var(--forest2)' : '';
+    btn.style.background = (btn.dataset.val === status) ? '#F0FDF4' : '';
+  });
+  
+  var btnSave = document.getElementById('btn-save-status');
+  if (isInitial) {
+    btnSave.style.display = 'none';
+  } else {
+    btnSave.style.display = 'block';
+    btnSave.textContent = "✅ Valider le passage en : " + status.toUpperCase();
+  }
+}
+
+async function saveStatus() {
+  if (!currentOpenId || !pendingStatus) return;
+  await updateProspectStatus(pendingStatus);
+}
+
+async function moveToTrash() {
+  if (!confirm('Envoyer ce prospect à la corbeille ?')) return;
+  await updateProspectStatus('corbeille');
+}
+
+async function deleteProspectPermanently() {
   if (!currentOpenId) return;
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce prospect/avis définitivement ? Cette action est irréversible.')) return;
+  if (!confirm('ATTENTION : Supprimer DÉFINITIVEMENT ce prospect ? Cette action ne peut pas être annulée.')) return;
 
   try {
     const { error } = await _supabase.from('prospects').delete().eq('id', currentOpenId);
