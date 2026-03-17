@@ -245,65 +245,6 @@
   }
   .empty-state span { display: block; font-size: 48px; margin-bottom: 16px; }
 
-  /* ── TABS ── */
-  .admin-tabs {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 2px;
-  }
-  .admin-tab {
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all .2s;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .admin-tab:hover { color: var(--forest); }
-  .admin-tab.active {
-    color: var(--forest);
-    border-bottom-color: var(--forest4);
-  }
-  .tab-count {
-    font-size: 11px;
-    background: rgba(0,0,0,0.06);
-    padding: 2px 8px;
-    border-radius: 100px;
-    color: var(--muted);
-  }
-  .admin-tab.active .tab-count {
-    background: var(--forest4);
-    color: #fff;
-  }
-
-  /* ── UNREAD HIGHLIGHT ── */
-  .prospect-row.unread {
-    background: rgba(26, 122, 58, 0.04) !important;
-    position: relative;
-  }
-  .prospect-row.unread td {
-    font-weight: 600;
-    color: var(--forest);
-  }
-  .prospect-row.unread::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 6px;
-    height: 6px;
-    background: var(--forest4);
-    border-radius: 50%;
-  }
-
 
   /* ── PAGINATION ── */
   .pagination {
@@ -484,52 +425,44 @@
 
 <!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
-  <div class="dash-title">Prospects</div>
-  
-  <div class="admin-tabs" id="admin-tabs">
-    <div class="admin-tab active" onclick="switchTab('reception')" data-tab="reception">Réception <span class="tab-count" id="count-reception">0</span></div>
-    <div class="admin-tab" onclick="switchTab('traite')" data-tab="traite">Traité <span class="tab-count" id="count-traite">0</span></div>
-    <div class="admin-tab" onclick="switchTab('recontacte')" data-tab="recontacte">Recontacté <span class="tab-count" id="count-recontacte">0</span></div>
-    <div class="admin-tab" onclick="switchTab('non-traite')" data-tab="non-traite">Non-traité <span class="tab-count" id="count-non-traite">0</span></div>
-    <div class="admin-tab" onclick="switchTab('perdu')" data-tab="perdu">Perdu <span class="tab-count" id="count-perdu">0</span></div>
-  </div>
+  <div class="inbox-container">
+    <div class="inbox-header">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="dash-title">Flux Prospects</div>
+        <div style="font-size: 13px; color: #9CA3AF;">Total : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
+      </div>
+      
+      <div class="admin-tabs" id="admin-tabs">
+        <div class="admin-tab active" onclick="switchTab('reception')" data-tab="reception">Réception <span class="tab-count" id="count-reception">0</span></div>
+        <div class="admin-tab" onclick="switchTab('traite')" data-tab="traite">Traité <span class="tab-count" id="count-traite">0</span></div>
+        <div class="admin-tab" onclick="switchTab('recontacte')" data-tab="recontacte">Recontacté <span class="tab-count" id="count-recontacte">0</span></div>
+        <div class="admin-tab" onclick="switchTab('non-traite')" data-tab="non-traite">Non-traité <span class="tab-count" id="count-non-traite">0</span></div>
+        <div class="admin-tab" onclick="switchTab('perdu')" data-tab="perdu">Perdu <span class="tab-count" id="count-perdu">0</span></div>
+      </div>
+    </div>
 
-  <div class="dash-stats">
-
-    <div class="stat-card">
-      <div class="stat-n" id="stat-total">0</div>
-      <div class="stat-l">Total prospects</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-n" id="stat-today">0</div>
-      <div class="stat-l">Aujourd'hui</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-n" id="stat-week">0</div>
-      <div class="stat-l">Cette semaine</div>
+    <div class="inbox-scroller">
+      <div class="table-wrap">
+        <table class="prospects-table" id="prospects-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Prospect</th>
+              <th>Contact</th>
+              <th>Code Postal / Région</th>
+              <th>Statut</th>
+              <th>Offre</th>
+              <th>Msg</th>
+            </tr>
+          </thead>
+          <tbody id="prospects-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
     </div>
   </div>
-  <div class="table-wrap">
-    <table class="prospects-table" id="prospects-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Prénom</th>
-          <th>Nom</th>
-          <th>Email</th>
-          <th>Téléphone</th>
-          <th>Code postal</th>
-          <th>Région</th>
-          <th>Statut</th>
-          <th>Offre</th>
-          <th>Msg</th>
-        </tr>
-      </thead>
-      <tbody id="prospects-body"></tbody>
-    </table>
-  </div>
-  <div class="pagination" id="pagination"></div>
 </div>
+
 
 <!-- DETAIL MODAL -->
 <div class="detail-overlay" id="detail-overlay">
@@ -659,20 +592,12 @@ async function loadProspects() {
 
   allProspects = data || [];
 
-  // Stats
-  var now = new Date();
-  var todayStr = now.toISOString().slice(0, 10);
-  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  var todayCount = allProspects.filter(function(p) { return p.created_at && p.created_at.slice(0, 10) === todayStr; }).length;
-  var weekCount = allProspects.filter(function(p) { return p.created_at && p.created_at >= weekAgo; }).length;
-
   document.getElementById('stat-total').textContent = allProspects.length;
-  document.getElementById('stat-today').textContent = todayCount;
-  document.getElementById('stat-week').textContent = weekCount;
 
   updateTabCounts();
   renderPage();
 }
+
 
 function updateTabCounts() {
   var counts = { reception: 0, traite: 0, recontacte: 0, 'non-traite': 0, perdu: 0 };
@@ -722,8 +647,8 @@ function renderPage() {
   var pageData = filtered.slice(start, start + PAGE_SIZE);
 
   tbody.innerHTML = pageData.map(function(p) {
-    var date = p.created_at ? new Date(p.created_at).toLocaleString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
-    var region = regionNames[p.region] || '-';
+    var date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit' }) + ' ' + new Date(p.created_at).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' }) : '-';
+    var region = regionNames[p.region] || p.region || '-';
     var statut = statutNames[p.statut] || p.statut || '-';
     var offreBadge = '';
     if (p.offre_recommandee) {
@@ -735,26 +660,26 @@ function renderPage() {
     } else {
       offreBadge = '-';
     }
-    var emailLink = '<a href="mailto:' + escapeAttr(p.email) + '" onclick="event.stopPropagation()">' + escapeHtml(p.email) + '</a>';
-    var telLink = '<a href="tel:' + escapeAttr(p.telephone) + '" onclick="event.stopPropagation()">' + escapeHtml(p.telephone) + '</a>';
+    
+    var name = '<strong>' + escapeHtml(p.prenom) + ' ' + (escapeHtml(p.nom) || '') + '</strong>';
+    var contact = '<div style="font-size:12px; color:#6B7280">' + escapeHtml(p.email) + '</div><div style="font-size:12px; font-weight:600">' + escapeHtml(p.telephone) + '</div>';
+    var location = '<div>' + escapeHtml(p.code_postal) + '</div><div style="font-size:11px; text-transform:uppercase; color:#9CA3AF">' + region + '</div>';
     var msgIndicator = p.message ? '<span class="has-msg">Oui</span>' : '<span class="no-msg">-</span>';
     
     var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
     var rowClass = isUnread ? 'prospect-row unread' : 'prospect-row';
 
     return '<tr class="' + rowClass + '" onclick="openDetail(\'' + p.id + '\')">' +
-      '<td>' + date + '</td>' +
-      '<td>' + escapeHtml(p.prenom) + '</td>' +
-      '<td>' + escapeHtml(p.nom) + '</td>' +
-      '<td>' + emailLink + '</td>' +
-      '<td>' + telLink + '</td>' +
-      '<td>' + escapeHtml(p.code_postal) + '</td>' +
-      '<td>' + region + '</td>' +
+      '<td style="white-space:nowrap; color:#9CA3AF; font-size:11px">' + date + '</td>' +
+      '<td>' + name + '</td>' +
+      '<td>' + contact + '</td>' +
+      '<td>' + location + '</td>' +
       '<td>' + statut + '</td>' +
       '<td>' + offreBadge + '</td>' +
       '<td>' + msgIndicator + '</td>' +
     '</tr>';
   }).join('');
+
 
 
   // Pagination
