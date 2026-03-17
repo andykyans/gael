@@ -854,8 +854,13 @@
       </div>
 
       <div style="margin-bottom: 24px; padding-top: 20px; border-top: 1px solid #F3F4F6;">
-        <button id="btn-trash-prospect" class="page-btn" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px;" onclick="moveToTrash()">🗑️ Mettre à la corbeille</button>
-        <button id="btn-delete-prospect" class="page-btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px; display:none; margin-top: 10px;" onclick="deleteProspectPermanently()">🔥 Supprimer définitivement (Valider)</button>
+        <!-- Bouton Corbeille (en deux étapes) -->
+        <button id="btn-trash-prospect" class="page-btn" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px;" onclick="prepareTrash()">🗑️ Mettre à la corbeille</button>
+        <button id="btn-trash-valider" class="page-btn" style="background: #991b1b; color: #fff; border: 1px solid #991b1b; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px; display:none;" onclick="confirmMoveToTrash()">✅ Valider la mise à la corbeille</button>
+
+        <!-- Bouton Suppression Définitive (en deux étapes, visible uniquement dans la corbeille) -->
+        <button id="btn-delete-prospect" class="page-btn" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px; display:none;" onclick="prepareDelete()">🔥 Supprimer définitivement</button>
+        <button id="btn-delete-valider" class="page-btn" style="background: #ef4444; color: #fff; border: 2px solid #991b1b; width: 100%; padding: 10px; font-weight: 800; cursor: pointer; border-radius: 8px; display:none; margin-top: 10px;" onclick="confirmDeletePermanently()">🛑 VALIDER LA SUPPRESSION DÉFINITIVE</button>
       </div>
 
       <div id="detail-fields"></div>
@@ -1120,8 +1125,9 @@ async function openDetail(id) {
   var currentS = p.admin_status || 'reception';
   selectStatus(currentS, true);
   
-  // Trash vs Delete visibility
-  if (currentTab === 'corbeille') {
+  // Trash vs Delete vs Restore visibility
+  resetActionButtons();
+  if (currentS === 'corbeille') {
     document.getElementById('btn-trash-prospect').style.display = 'none';
     document.getElementById('btn-delete-prospect').style.display = 'block';
   } else {
@@ -1160,14 +1166,30 @@ async function saveStatus() {
   await updateProspectStatus(pendingStatus);
 }
 
-async function moveToTrash() {
-  if (!confirm('Envoyer ce prospect à la corbeille ?')) return;
+function resetActionButtons() {
+    document.getElementById('btn-trash-prospect').style.display = 'block';
+    document.getElementById('btn-trash-valider').style.display = 'none';
+    document.getElementById('btn-delete-prospect').style.display = 'none';
+    document.getElementById('btn-delete-valider').style.display = 'none';
+    document.getElementById('btn-save-status').style.display = 'none';
+}
+
+function prepareTrash() {
+    document.getElementById('btn-trash-prospect').style.display = 'none';
+    document.getElementById('btn-trash-valider').style.display = 'block';
+}
+
+async function confirmMoveToTrash() {
   await updateProspectStatus('corbeille');
 }
 
-async function deleteProspectPermanently() {
+function prepareDelete() {
+    document.getElementById('btn-delete-prospect').style.display = 'none';
+    document.getElementById('btn-delete-valider').style.display = 'block';
+}
+
+async function confirmDeletePermanently() {
   if (!currentOpenId) return;
-  if (!confirm('ATTENTION : Supprimer DÉFINITIVEMENT ce prospect ? Cette action ne peut pas être annulée.')) return;
 
   try {
     const { error } = await _supabase.from('prospects').delete().eq('id', currentOpenId);
@@ -1218,6 +1240,7 @@ async function updateProspectStatus(status) {
 function closeDetail() {
   document.getElementById('detail-overlay').classList.remove('open');
   document.body.style.overflow = '';
+  resetActionButtons();
 }
 
 document.getElementById('detail-overlay').addEventListener('click', function(e) {
