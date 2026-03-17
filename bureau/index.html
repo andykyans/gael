@@ -38,7 +38,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
   }
+  .admin-header::after {
+    content: 'v1.2';
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    font-size: 9px;
+    color: #eee;
+  }
+
   .admin-logo {
     font-family: var(--font-display);
     font-size: 20px;
@@ -225,10 +235,9 @@
   .inbox-wrapper {
     display: flex;
     height: 100%;
-    width: 100%;
   }
 
-  /* ── SIDEBAR ── */
+  /* ── SIDEBAR DESKTOP ── */
   .inbox-sidebar {
     width: 260px;
     background: #fff;
@@ -237,76 +246,81 @@
     flex-direction: column;
     flex-shrink: 0;
     padding: 24px 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s ease, padding 0.3s ease;
     position: relative;
+    z-index: 50;
   }
 
-  
+  /* Statut Rétracté (Logos Seuls) */
   .inbox-sidebar.collapsed {
-    width: 60px;
-    padding: 24px 6px;
-    overflow: hidden !important;
+    width: 70px;
+    padding: 24px 8px;
   }
-
   
   .inbox-sidebar.collapsed .nav-label, 
   .inbox-sidebar.collapsed .nav-badge {
     display: none !important;
+    opacity: 0;
+    visibility: hidden;
   }
-
   
   .inbox-sidebar.collapsed .nav-item {
-    justify-content: center;
-    padding: 12px 0;
+    justify-content: center !important;
+    padding: 12px 0 !important;
+    margin: 4px 0;
   }
   
   .inbox-sidebar.collapsed .nav-icon {
-    font-size: 18px !important;
+    font-size: 20px !important;
     margin: 0 !important;
-    display: block !important;
-    text-align: center;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
-
-
-
-  /* ── MOBILE ADAPTATION ── */
+  /* ── MOBILE ── */
   @media (max-width: 768px) {
     .inbox-sidebar {
-      position: absolute;
+      position: fixed;
       left: 0;
-      top: 0;
-      height: 100%;
-      z-index: 100;
-      box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+      top: 70px;
+      bottom: 0;
+      height: calc(100vh - 70px);
+      width: 260px;
+      transform: translateX(0);
+      box-shadow: 20px 0 50px rgba(0,0,0,0.15);
     }
     .inbox-sidebar.collapsed {
-      width: 0;
-      padding: 0;
-      border: none;
-      overflow: hidden !important;
+      width: 260px; /* On mobile, collapsed means OFF-SCREEN */
+      transform: translateX(-100%);
+      box-shadow: none;
     }
-
+    
+    /* Le bouton toggle doit être visible même quand c'est caché sur mobile */
     .inbox-sidebar.collapsed .sidebar-toggle {
-      left: 20px;
+      position: fixed;
+      left: 15px;
+      top: 85px;
       transform: none;
       background: var(--forest4);
       color: #fff;
       border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(26, 122, 58, 0.4);
+      display: flex;
+      visibility: visible;
+    }
+    .inbox-sidebar:not(.collapsed) .sidebar-toggle {
+      right: -15px;
+      top: 20px;
     }
 
-    .list-item {
-      padding: 14px 20px;
-      gap: 15px;
-    }
-    .item-date {
-      width: 80px;
-      font-size: 10px;
-    }
-    .item-name {
-      font-size: 14px;
-    }
+    .list-item { padding: 16px 20px; gap: 15px; }
+    .item-date { width: 70px; font-size: 10px; }
+    .item-name { font-size: 14px; }
     .content-header {
       padding: 16px 20px;
     }
