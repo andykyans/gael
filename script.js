@@ -290,8 +290,65 @@ function initFomo() {
   }, 10000);
 }
 
+// ── DYNAMIC REVIEWS ──
+async function loadDynamicReviews() {
+  const testiGrid = document.querySelector('.testi-grid');
+  if (!testiGrid) return;
+
+  try {
+    const { data, error } = await _supabase
+      .from('prospects')
+      .select('*')
+      .eq('admin_status', 'publie')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    if (!data || data.length === 0) return;
+
+    data.forEach(p => {
+      // Extraction de la note (Avis Client X/5)
+      let rating = 5;
+      if (p.nom && p.nom.includes('/5')) {
+        const match = p.nom.match(/(\d)\/5/);
+        if (match) rating = parseInt(match[1]);
+      }
+
+      const newCard = document.createElement('div');
+      newCard.className = 'tcard';
+      
+      let starsHtml = '';
+      for(let i=0; i<5; i++) starsHtml += (i < rating) ? '★' : '☆';
+
+      // On nettoie le message de ses préfixes de stockage
+      let cleanMsg = p.message || '';
+      if (cleanMsg.includes('AVIS:')) {
+        cleanMsg = cleanMsg.split('AVIS:')[1].trim();
+      }
+
+      newCard.innerHTML = `
+        <div class="tcard-stars">${starsHtml}</div>
+        <p class="tcard-text">"${cleanMsg}"</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">${p.prenom.substring(0,2).toUpperCase()}</div>
+          <div>
+            <div class="tcard-name">${p.prenom} ${p.nom.includes('AVIS CLIENT') ? '' : p.nom}</div>
+            <div class="tcard-location">${p.code_postal || ''}</div>
+            <span class="tcard-badge">${p.offre_recommandee || 'Gaele XL'}</span>
+          </div>
+        </div>
+      `;
+      testiGrid.prepend(newCard);
+    });
+  } catch (err) {
+    console.warn('Dynamic reviews load failed:', err);
+  }
+}
+
 // Initialisation Calendrier
 document.addEventListener('DOMContentLoaded', async function() {
+  // Charger les avis dynamiques
+  loadDynamicReviews();
+  
   // Lancer le FOMO
   initFomo();
   
