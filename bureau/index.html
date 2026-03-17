@@ -245,6 +245,66 @@
   }
   .empty-state span { display: block; font-size: 48px; margin-bottom: 16px; }
 
+  /* ── TABS ── */
+  .admin-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+  }
+  .admin-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .admin-tab:hover { color: var(--forest); }
+  .admin-tab.active {
+    color: var(--forest);
+    border-bottom-color: var(--forest4);
+  }
+  .tab-count {
+    font-size: 11px;
+    background: rgba(0,0,0,0.06);
+    padding: 2px 8px;
+    border-radius: 100px;
+    color: var(--muted);
+  }
+  .admin-tab.active .tab-count {
+    background: var(--forest4);
+    color: #fff;
+  }
+
+  /* ── UNREAD HIGHLIGHT ── */
+  .prospect-row.unread {
+    background: rgba(26, 122, 58, 0.04) !important;
+    position: relative;
+  }
+  .prospect-row.unread td {
+    font-weight: 600;
+    color: var(--forest);
+  }
+  .prospect-row.unread::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--forest4);
+    border-radius: 50%;
+  }
+
+
   /* ── PAGINATION ── */
   .pagination {
     display: flex;
@@ -425,7 +485,17 @@
 <!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
   <div class="dash-title">Prospects</div>
+  
+  <div class="admin-tabs" id="admin-tabs">
+    <div class="admin-tab active" onclick="switchTab('reception')" data-tab="reception">Réception <span class="tab-count" id="count-reception">0</span></div>
+    <div class="admin-tab" onclick="switchTab('traite')" data-tab="traite">Traité <span class="tab-count" id="count-traite">0</span></div>
+    <div class="admin-tab" onclick="switchTab('recontacte')" data-tab="recontacte">Recontacté <span class="tab-count" id="count-recontacte">0</span></div>
+    <div class="admin-tab" onclick="switchTab('non-traite')" data-tab="non-traite">Non-traité <span class="tab-count" id="count-non-traite">0</span></div>
+    <div class="admin-tab" onclick="switchTab('perdu')" data-tab="perdu">Perdu <span class="tab-count" id="count-perdu">0</span></div>
+  </div>
+
   <div class="dash-stats">
+
     <div class="stat-card">
       <div class="stat-n" id="stat-total">0</div>
       <div class="stat-l">Total prospects</div>
@@ -473,7 +543,21 @@
     </div>
     <div class="detail-body">
       <div class="detail-actions" id="detail-actions"></div>
+      
+      <!-- Status Picker -->
+      <div style="margin-bottom: 24px;">
+        <div class="detail-message-label" style="margin-bottom:12px; font-size: 11px;">Changer le statut</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('reception')">Réception</button>
+          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('traite')">Traité</button>
+          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('recontacte')">Recontacté</button>
+          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('non-traite')">Non-traité</button>
+          <button class="page-btn" style="padding: 6px 12px; font-size: 12px;" onclick="updateProspectStatus('perdu')">Perdu</button>
+        </div>
+      </div>
+
       <div id="detail-fields"></div>
+
       <div class="detail-message" id="detail-message-wrap">
         <div class="detail-message-label">Message</div>
         <div class="detail-message-text" id="detail-message-text"></div>
@@ -490,8 +574,11 @@ var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var isSignupMode = false;
 var allProspects = [];
+var currentTab = 'reception';
 var currentPage = 1;
 var PAGE_SIZE = 15;
+var currentOpenId = null;
+
 
 function toggleSignup() {
   isSignupMode = !isSignupMode;
@@ -583,30 +670,61 @@ async function loadProspects() {
   document.getElementById('stat-today').textContent = todayCount;
   document.getElementById('stat-week').textContent = weekCount;
 
+  updateTabCounts();
+  renderPage();
+}
+
+function updateTabCounts() {
+  var counts = { reception: 0, traite: 0, recontacte: 0, 'non-traite': 0, perdu: 0 };
+  allProspects.forEach(function(p) {
+    var s = p.admin_status || 'reception';
+    if (counts[s] !== undefined) counts[s]++;
+  });
+  
+  for (var key in counts) {
+    var el = document.getElementById('count-' + key);
+    if (el) el.textContent = counts[key];
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
   currentPage = 1;
   renderPage();
 }
 
 function renderPage() {
   var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
-  var statutNames = { proprio: 'Propriétaire', locataire: 'Locataire' };
+  var statutNames = { 
+    proprio: 'Propriétaire', 
+    locataire: 'Locataire',
+    'Propriétaire': 'Propriétaire',
+    'Locataire': 'Locataire'
+  };
   var tbody = document.getElementById('prospects-body');
 
-  if (allProspects.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><span>\uD83D\uDCED</span>Aucun prospect pour le moment.</div></td></tr>';
+  var filtered = allProspects.filter(function(p) {
+    var s = p.admin_status || 'reception';
+    return s === currentTab;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><span>\uD83D\uDCED</span>Aucun prospect dans cette catégorie.</div></td></tr>';
     document.getElementById('pagination').innerHTML = '';
     return;
   }
 
-  var totalPages = Math.ceil(allProspects.length / PAGE_SIZE);
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   var start = (currentPage - 1) * PAGE_SIZE;
-  var pageData = allProspects.slice(start, start + PAGE_SIZE);
+  var pageData = filtered.slice(start, start + PAGE_SIZE);
 
-  tbody.innerHTML = pageData.map(function(p, idx) {
-    var globalIdx = start + idx;
+  tbody.innerHTML = pageData.map(function(p) {
     var date = p.created_at ? new Date(p.created_at).toLocaleString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
     var region = regionNames[p.region] || '-';
-    var statut = statutNames[p.statut] || '-';
+    var statut = statutNames[p.statut] || p.statut || '-';
     var offreBadge = '';
     if (p.offre_recommandee) {
       var cls = 'badge ';
@@ -620,7 +738,11 @@ function renderPage() {
     var emailLink = '<a href="mailto:' + escapeAttr(p.email) + '" onclick="event.stopPropagation()">' + escapeHtml(p.email) + '</a>';
     var telLink = '<a href="tel:' + escapeAttr(p.telephone) + '" onclick="event.stopPropagation()">' + escapeHtml(p.telephone) + '</a>';
     var msgIndicator = p.message ? '<span class="has-msg">Oui</span>' : '<span class="no-msg">-</span>';
-    return '<tr onclick="openDetail(' + globalIdx + ')">' +
+    
+    var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
+    var rowClass = isUnread ? 'prospect-row unread' : 'prospect-row';
+
+    return '<tr class="' + rowClass + '" onclick="openDetail(\'' + p.id + '\')">' +
       '<td>' + date + '</td>' +
       '<td>' + escapeHtml(p.prenom) + '</td>' +
       '<td>' + escapeHtml(p.nom) + '</td>' +
@@ -633,6 +755,7 @@ function renderPage() {
       '<td>' + msgIndicator + '</td>' +
     '</tr>';
   }).join('');
+
 
   // Pagination
   var pagEl = document.getElementById('pagination');
@@ -652,21 +775,32 @@ function renderPage() {
 }
 
 function goPage(n) {
-  var totalPages = Math.ceil(allProspects.length / PAGE_SIZE);
+  var filtered = allProspects.filter(function(p) {
+    var s = p.admin_status || 'reception';
+    return s === currentTab;
+  });
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   if (n < 1 || n > totalPages) return;
   currentPage = n;
   renderPage();
   document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function openDetail(idx) {
-  var p = allProspects[idx];
+async function openDetail(id) {
+  var p = allProspects.find(function(x) { return x.id == id; });
   if (!p) return;
+  currentOpenId = id;
+
   var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
-  var statutNames = { proprio: 'Propriétaire', locataire: 'Locataire' };
+  var statutNames = { 
+    proprio: 'Propriétaire', 
+    locataire: 'Locataire',
+    'Propriétaire': 'Propriétaire',
+    'Locataire': 'Locataire'
+  };
   var date = p.created_at ? new Date(p.created_at).toLocaleString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
 
-  document.getElementById('detail-name').textContent = p.prenom + ' ' + p.nom;
+  document.getElementById('detail-name').textContent = p.prenom + ' ' + (p.nom || '');
   document.getElementById('detail-date').textContent = date;
 
   document.getElementById('detail-actions').innerHTML =
@@ -676,7 +810,7 @@ function openDetail(idx) {
   var fields = [
     ['Code postal', p.code_postal],
     ['Région', regionNames[p.region] || '-'],
-    ['Statut', statutNames[p.statut] || '-'],
+    ['Statut', statutNames[p.statut] || p.statut || '-'],
     ['Offre', p.offre_recommandee || '-'],
     ['Date RDV', p.date_rdv || '-']
   ];
@@ -694,6 +828,34 @@ function openDetail(idx) {
 
   document.getElementById('detail-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Mark as read
+  if (!p.is_read) {
+    p.is_read = true;
+    _supabase.from('prospects').update({ is_read: true }).eq('id', id);
+    renderPage();
+  }
+}
+
+async function updateProspectStatus(status) {
+  if (!currentOpenId) return;
+  
+  // Optimistic update
+  var p = allProspects.find(function(x) { return x.id == currentOpenId; });
+  if (p) {
+    p.admin_status = status;
+    p.is_read = true;
+  }
+  
+  updateTabCounts();
+  renderPage();
+  
+  var { error } = await _supabase.from('prospects').update({ admin_status: status, is_read: true }).eq('id', currentOpenId);
+  if (error) {
+    console.warn("Update status failed. If column 'admin_status' is missing, please add it to the 'prospects' table.", error);
+  } else {
+    closeDetail();
+  }
 }
 
 function closeDetail() {
