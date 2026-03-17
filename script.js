@@ -410,3 +410,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     observer.observe(section);
   });
 });
+
+// ── WELCOME WALL LOGIC ──
+function closeWelcomeWall() {
+  const wall = document.getElementById('welcome-wall');
+  if (wall) {
+    wall.classList.remove('active');
+    setTimeout(() => {
+      wall.style.display = 'none';
+    }, 800);
+    localStorage.setItem('gaele_welcome_seen', 'true');
+    document.body.style.overflow = '';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const wall = document.getElementById('welcome-wall');
+  const hasSeen = localStorage.getItem('gaele_welcome_seen');
+  
+  if (wall && !hasSeen) {
+    wall.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else if (wall) {
+    wall.style.display = 'none';
+  }
+});

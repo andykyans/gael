@@ -727,3 +727,114 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   transform: translateY(0);
 }
 
+/* ── WELCOME WALL (PROPOSITION 1) ── */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--forest);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+  visibility: hidden;
+  opacity: 0;
+}
+.welcome-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.welcome-content {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  animation: welcomeAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes welcomeAppear {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-logo {
+  margin-bottom: 40px;
+}
+
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 6vw, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 48px;
+}
+.welcome-title .gold { color: var(--gold); }
+
+.welcome-steps {
+  display: grid;
+  gap: 24px;
+  text-align: left;
+  margin-bottom: 60px;
+}
+
+.w-step {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.w-ico {
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.w-txt {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.7);
+}
+.w-txt strong {
+  color: white;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.welcome-btn {
+  background: var(--gold);
+  color: var(--forest);
+  border: none;
+  padding: 18px 40px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 40px rgba(212, 167, 58, 0.3);
+}
+.welcome-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 50px rgba(212, 167, 58, 0.5);
+}
+
+@media (max-width: 480px) {
+  .welcome-title { margin-bottom: 32px; }
+  .welcome-steps { gap: 12px; margin-bottom: 40px; }
+  .w-step { padding: 12px; }
+  .w-ico { width: 40px; height: 40px; font-size: 22px; }
+  .welcome-btn { width: 100%; padding: 16px; }
+}
