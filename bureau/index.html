@@ -237,50 +237,136 @@
     height: 100%;
   }
 
-  /* ── SIDEBAR DESKTOP ── */
+  /* ── SIDEBAR (OUTLOOK STYLE) ── */
   .inbox-sidebar {
-    width: 260px;
-    background: #fff;
-    border-right: 1px solid #E5E7EB;
+    width: 280px;
+    background: #fdfdfd;
+    border-right: 1px solid #e1e4e8;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    padding: 24px 12px;
-    transition: width 0.3s ease, padding 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
     z-index: 50;
   }
 
-  /* Statut Rétracté (Logos Seuls) */
   .inbox-sidebar.collapsed {
-    width: 60px;
-    padding: 24px 4px;
+    width: 68px;
   }
 
-  
-  .inbox-sidebar.collapsed .nav-label, 
-  .inbox-sidebar.collapsed .nav-badge {
-    display: none !important;
+  .sidebar-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+
+  .sidebar-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  .inbox-sidebar.collapsed .sidebar-title {
     opacity: 0;
-    visibility: hidden;
+    pointer-events: none;
   }
-  
-  .inbox-sidebar.collapsed .nav-item {
-    justify-content: center !important;
-    padding: 12px 0 !important;
-    margin: 4px 0;
+
+  /* ── NAVIGATION ITEMS ── */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+    gap: 2px;
   }
-  
-  .inbox-sidebar.collapsed .nav-icon {
-    font-size: 20px !important;
-    margin: 0 !important;
-    display: flex !important;
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+    height: 40px;
+  }
+
+  .nav-item:hover {
+    background: #f3f4f6;
+  }
+
+  .nav-item.active {
+    background: #e6f0e9; /* Light forest tint */
+    color: var(--forest4);
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    width: 24px;
+    margin-right: 12px;
+    font-size: 18px;
+    display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .inbox-sidebar.collapsed .nav-icon {
+    margin-right: 0;
     width: 100%;
   }
 
-  /* ── MOBILE ── */
+  .nav-label {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  .inbox-sidebar.collapsed .nav-label {
+    opacity: 0;
+    width: 0;
+  }
+
+  .nav-badge {
+    font-size: 11px;
+    background: rgba(0,0,0,0.05);
+    padding: 1px 6px;
+    border-radius: 10px;
+    color: #666;
+    margin-left: 8px;
+    opacity: 1;
+  }
+  .inbox-sidebar.collapsed .nav-badge {
+    display: none;
+  }
+
+  /* ── TOGGLE BUTTON ── */
+  .sidebar-toggle {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+    color: #666;
+  }
+  .sidebar-toggle:hover { background: #f0f0f0; border-color: #ccc; }
+
+  /* ── MOBILE ADAPTATION ── */
   @media (max-width: 768px) {
     .inbox-sidebar {
       position: fixed;
@@ -290,40 +376,39 @@
       height: calc(100vh - 70px);
       width: 260px;
       transform: translateX(0);
-      box-shadow: 20px 0 50px rgba(0,0,0,0.15);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.1);
     }
     .inbox-sidebar.collapsed {
-      left: -260px;
-      box-shadow: none;
+      transform: translateX(-100%);
+      width: 260px;
     }
     
-    /* Le bouton toggle doit rester visible */
-    .sidebar-toggle {
-      position: fixed !important;
-      left: 270px;
-      top: 85px;
+    .sidebar-toggle-fixed {
+      position: fixed;
+      left: 15px;
+      bottom: 25px;
+      width: 50px;
+      height: 50px;
       background: var(--forest4);
       color: #fff;
-      border: none;
-      width: 40px;
-      height: 40px;
       border-radius: 50%;
-      box-shadow: 0 4px 15px rgba(26, 122, 58, 0.4);
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 1000;
-      transition: left 0.3s ease;
+      font-size: 20px;
+      cursor: pointer;
     }
-    .inbox-sidebar.collapsed .sidebar-toggle {
-      left: 15px;
-    }
+  }
 
-
-    .list-item { padding: 16px 20px; gap: 15px; }
-    .item-date { width: 70px; font-size: 10px; }
+  .sidebar-toggle-fixed { display: none; }
+  @media (max-width: 768px) { 
+    .sidebar-toggle-fixed { display: flex; } 
+    .item-date { font-size: 10px; width: 80px; }
     .item-name { font-size: 14px; }
-    .content-header {
-      padding: 16px 20px;
-    }
+    .content-header { padding: 16px 20px; }
   }
 
 
@@ -674,39 +759,42 @@
   <div class="inbox-wrapper">
     <!-- Sidebar -->
     <div class="inbox-sidebar" id="inbox-sidebar">
-      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Réduire/Agrandir">❮</button>
-      <div class="sidebar-nav" id="admin-tabs" style="margin-top:40px">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Dossiers</span>
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Réduire/Agrandir">❮</button>
+      </div>
 
-
-
+      <div class="sidebar-nav" id="admin-tabs">
         <div class="nav-item active" onclick="switchTab('reception')" data-tab="reception">
           <span class="nav-icon">📬</span>
-          <span class="nav-label">Réception</span>
+          <span class="nav-label">Boîte de réception</span>
           <span class="nav-badge" id="count-reception">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('traite')" data-tab="traite">
           <span class="nav-icon">✅</span>
-          <span class="nav-label">Traité</span>
+          <span class="nav-label">Traité (Rendez-vous)</span>
           <span class="nav-badge" id="count-traite">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('recontacte')" data-tab="recontacte">
           <span class="nav-icon">📞</span>
-          <span class="nav-label">Recontacté</span>
+          <span class="nav-label">À recontacter</span>
           <span class="nav-badge" id="count-recontacte">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('non-traite')" data-tab="non-traite">
           <span class="nav-icon">❌</span>
-          <span class="nav-label">Non-traité</span>
+          <span class="nav-label">Non-traité (Hors conditions)</span>
           <span class="nav-badge" id="count-non-traite">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('perdu')" data-tab="perdu">
           <span class="nav-icon">🗑️</span>
-          <span class="nav-label">Perdu</span>
+          <span class="nav-label">Perdu / Archive</span>
           <span class="nav-badge" id="count-perdu">0</span>
         </div>
-
       </div>
     </div>
+    
+    <!-- Mobile Fixed Toggle -->
+    <button class="sidebar-toggle-fixed" onclick="toggleSidebar()">📂</button>
 
     <!-- Main List -->
     <div class="inbox-main">
@@ -1013,23 +1101,36 @@ async function openDetail(id) {
 async function updateProspectStatus(status) {
   if (!currentOpenId) return;
   
-  // Optimistic update
-  var p = allProspects.find(function(x) { return x.id == currentOpenId; });
-  if (p) {
-    p.admin_status = status;
-    p.is_read = true;
+  console.log("Updating prospect " + currentOpenId + " to status: " + status);
+  
+  // Optimistic update for UI feel
+  var pIndex = allProspects.findIndex(function(x) { return x.id == currentOpenId; });
+  if (pIndex !== -1) {
+    allProspects[pIndex].admin_status = status;
+    allProspects[pIndex].is_read = true;
   }
   
   updateTabCounts();
   renderPage();
   
-  var { error } = await _supabase.from('prospects').update({ admin_status: status, is_read: true }).eq('id', currentOpenId);
-  if (error) {
-    console.warn("Update status failed. If column 'admin_status' is missing, please add it to the 'prospects' table.", error);
-  } else {
-    closeDetail();
+  try {
+    var { error } = await _supabase
+      .from('prospects')
+      .update({ admin_status: status, is_read: true })
+      .eq('id', currentOpenId);
+      
+    if (error) {
+      console.error("Supabase Error:", error);
+      alert("Erreur de sauvegarde : Vérifiez que les colonnes 'admin_status' et 'is_read' existent dans Supabase.");
+    } else {
+      console.log("Status successfully saved to database.");
+      closeDetail();
+    }
+  } catch (e) {
+    console.error("Critical update error:", e);
   }
 }
+
 
 function closeDetail() {
   document.getElementById('detail-overlay').classList.remove('open');
