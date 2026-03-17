@@ -1206,33 +1206,38 @@ async function confirmDeletePermanently() {
 async function updateProspectStatus(status) {
   if (!currentOpenId) return;
   
-  console.log("Updating prospect " + currentOpenId + " to status: " + status);
-  
-  // Optimistic update for UI feel
-  var pIndex = allProspects.findIndex(function(x) { return x.id == currentOpenId; });
-  if (pIndex !== -1) {
-    allProspects[pIndex].admin_status = status;
-    allProspects[pIndex].is_read = true;
-  }
-  
-  updateTabCounts();
-  renderPage();
+  console.log("Tentative de mise à jour du prospect " + currentOpenId + " vers : " + status);
   
   try {
-    var { error } = await _supabase
+    // On demande à Supabase de nous renvoyer le nombre de lignes touchées
+    const { error, count } = await _supabase
       .from('prospects')
-      .update({ admin_status: status, is_read: true })
+      .update({ admin_status: status, is_read: true }, { count: 'exact' })
       .eq('id', currentOpenId);
       
     if (error) {
       console.error("Supabase Error:", error);
-      alert("Erreur de sauvegarde : Vérifiez que les colonnes 'admin_status' et 'is_read' existent dans Supabase.");
-    } else {
-      console.log("Status successfully saved to database.");
-      closeDetail();
+      alert("❌ Erreur Supabase : " + error.message + "\n\nVérifiez vos règles RLS ou si les colonnes existent.");
+      return;
     }
+
+    if (count === 0) {
+      alert("⚠️ Attention : Le prospect n'a pas pu être mis à jour en base de données.\n\nCela arrive souvent si vous n'avez pas les droits de modification (RLS) sur Supabase.");
+      // On recharge quand même pour remettre l'interface à zéro (puisque la DB n'a pas bougé)
+      await loadProspects();
+      closeDetail();
+      return;
+    }
+
+    console.log("Mise à jour réussie : " + count + " ligne(s) modifiée(s).");
+    
+    // Succès : On ferme le détail et on recharge VRAIMENT les données
+    closeDetail();
+    await loadProspects();
+
   } catch (e) {
     console.error("Critical update error:", e);
+    alert("❌ Erreur critique lors de la communication avec la base de données.");
   }
 }
 
