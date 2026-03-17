@@ -350,7 +350,8 @@ h1 em{font-style:normal;color:var(--gold)}
 @media(max-width:900px){.testi-grid{grid-template-columns:1fr}}
 .tcard{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:32px;transition:all .2s}
 .tcard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.06);border-color:var(--forest2)}
-.tcard-stars{color:var(--gold);font-size:15px;letter-spacing:2px;margin-bottom:16px}
+.tcard-stars{color:#ddd;font-size:15px;letter-spacing:2px;margin-bottom:16px}
+.tcard-stars .star-filled{color:var(--gold)}
 .tcard-text{font-family:var(--font-body);font-size:16px;line-height:1.7;color:var(--forest);font-style:normal;margin-bottom:24px}
 .tcard-author{display:flex;align-items:center;gap:12px}
 .tcard-avatar{width:42px;height:42px;border-radius:50%;background:var(--forest2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
