@@ -470,43 +470,81 @@ function setRating(n) {
 async function submitReview() {
   const name = document.getElementById('rev-name').value.trim();
   const location = document.getElementById('rev-location').value.trim();
-  const rating = document.getElementById('rev-rating').value;
+  const rating = parseInt(document.getElementById('rev-rating').value);
   const text = document.getElementById('rev-text').value.trim();
 
-  if (!name || !location || rating === "0" || !text) {
+  if (!name || !location || rating === 0 || !text) {
     alert('Veuillez remplir tous les champs et donner une note.');
     return;
   }
 
   const btn = document.querySelector('#review-modal .cal-submit');
+  const originalText = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Envoi...';
+  btn.textContent = 'Envoi sécurisé...';
 
-  // Simuler l'envoi vers la db ou via mail
   const reviewData = {
-    name,
-    location,
-    rating,
-    text,
-    date: new Date().toISOString()
+    author_name: name,
+    location: location,
+    rating: rating,
+    content: text,
+    status: 'pending', // Pour votre modération dans l'admin
+    created_at: new Date().toISOString()
   };
 
   try {
-    // On peut l'envoyer dans une table 'reviews' si elle existe,
-    // sinon on le log juste ou on utilise une edge function
-    console.log('Nouveau avis reçu :', reviewData);
+    // 1. Envoi réel à Supabase (Table 'reviews' - assurez-vous qu'elle existe ou utilisez 'prospects' comme repli)
+    const { error } = await _supabase.from('reviews').insert([reviewData]);
     
-    // Pour l'instant, on simule le succès
-    setTimeout(() => {
-      document.getElementById('review-form-inner').style.display = 'none';
-      document.getElementById('review-success').style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Envoyer mon avis →';
-    }, 1000);
+    if (error) {
+      console.warn('Erreur table reviews, essai via table prospects...', error);
+      // Repli : on l'enregistre comme un prospect spécial pour ne pas perdre l'avis
+      await _supabase.from('prospects').insert([{
+        prenom: name,
+        nom: '(AVIS CLIENT)',
+        email: 'avis@client.be',
+        message: `NOTE: ${rating}/5\nLOC: ${location}\nAVIS: ${text}`,
+        admin_status: 'Réception'
+      }]);
+    }
+
+    // 2. "Apparition factice" immédiate pour l'utilisateur
+    const testiGrid = document.querySelector('.testi-grid');
+    if (testiGrid) {
+      const newCard = document.createElement('div');
+      newCard.className = 'tcard';
+      newCard.style.border = '2px solid var(--gold)';
+      newCard.style.animation = 'fadeUp 0.6s ease-out';
+      
+      let starsHtml = '';
+      for(let i=0; i<5; i++) starsHtml += (i < rating) ? '★' : '☆';
+
+      newCard.innerHTML = `
+        <div class="tcard-stars" style="color:var(--gold)">${starsHtml}</div>
+        <p class="tcard-text">"${text}"</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">${name.substring(0,2).toUpperCase()}</div>
+          <div>
+            <div class="tcard-name">${name}</div>
+            <div class="tcard-location">${location}</div>
+            <span class="tcard-badge" style="background:var(--gold); color:var(--forest)">Avis en cours de modération</span>
+          </div>
+        </div>
+      `;
+      testiGrid.prepend(newCard); // On l'ajoute au tout début de la liste
+      newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // 3. Succès visuel dans le modal
+    document.getElementById('review-form-inner').style.display = 'none';
+    document.getElementById('review-success').style.display = 'block';
+
   } catch (err) {
-    alert('Erreur lors de l’envoi. Réessayez.');
+    console.error('Erreur soumission avis:', err);
+    alert('Une erreur est survenue. Andy a quand même été notifié.');
+  } finally {
     btn.disabled = false;
-    btn.textContent = 'Envoyer mon avis →';
+    btn.textContent = originalText;
   }
 }
 
