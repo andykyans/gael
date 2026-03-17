@@ -493,21 +493,21 @@ async function submitReview() {
   };
 
   try {
-    // 1. Envoi réel à Supabase (Table 'reviews' - assurez-vous qu'elle existe ou utilisez 'prospects' comme repli)
-    const { error } = await _supabase.from('reviews').insert([reviewData]);
+    // Envoi à la table 'prospects' (seule table publique garantie)
+    // On n'envoie PAS admin_status ni is_read car ils sont protégés ou causent des erreurs 400 (RLS)
+    // Par défaut, le Bureau Admin affiche les nouveaux prospects (sans statut) dans 'Réception'.
+    const { error } = await _supabase.from('prospects').insert([{
+      prenom: name,
+      nom: '(AVIS CLIENT ' + rating + '/5)',
+      email: 'avis@client.be',
+      telephone: '0000', // Champ obligatoire probable
+      code_postal: location, // On détourne ce champ pour la ville
+      message: `NOTE: ${rating}/5\nVILLE: ${location}\nAVIS: ${text}`,
+      statut: 'Propriétaire', // Valeur par défaut pour éviter les erreurs
+      offre_recommandee: 'Gaele XL'
+    }]);
     
-    if (error) {
-      console.warn('Erreur table reviews, essai via table prospects...', error);
-      // Repli : on l'enregistre comme un prospect spécial pour ne pas perdre l'avis
-      await _supabase.from('prospects').insert([{
-        prenom: name,
-        nom: '(AVIS CLIENT)',
-        email: 'avis@client.be',
-        message: `NOTE: ${rating}/5\nLOC: ${location}\nAVIS: ${text}`,
-        admin_status: 'reception',
-        is_read: false
-      }]);
-    }
+    if (error) throw error;
 
     // 2. "Apparition factice" immédiate pour l'utilisateur
     const testiGrid = document.querySelector('.testi-grid');
