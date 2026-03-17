@@ -839,6 +839,10 @@
         </div>
       </div>
 
+      <div style="margin-bottom: 24px; padding-top: 20px; border-top: 1px solid #F3F4F6;">
+        <button class="page-btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; width: 100%; padding: 10px; font-weight: 700; cursor: pointer; border-radius: 8px;" onclick="deleteProspect()">🗑️ Supprimer définitivement</button>
+      </div>
+
       <div id="detail-fields"></div>
 
       <div class="detail-message" id="detail-message-wrap">
@@ -1095,6 +1099,22 @@ async function openDetail(id) {
     p.is_read = true;
     _supabase.from('prospects').update({ is_read: true }).eq('id', id);
     renderPage();
+  }
+}
+
+async function deleteProspect() {
+  if (!currentOpenId) return;
+  if (!confirm('Êtes-vous sûr de vouloir supprimer ce prospect/avis définitivement ? Cette action est irréversible.')) return;
+
+  try {
+    const { error } = await _supabase.from('prospects').delete().eq('id', currentOpenId);
+    if (error) throw error;
+    
+    closeDetail();
+    await loadProspects();
+  } catch (err) {
+    console.error('Erreur suppression:', err);
+    alert('Erreur lors de la suppression.');
   }
 }
 
