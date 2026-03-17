@@ -838,3 +838,14 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   .w-ico { width: 40px; height: 40px; font-size: 22px; }
   .welcome-btn { width: 100%; padding: 16px; }
 }
+
+.rating-stars span {
+  transition: color 0.1s;
+}
+.rating-stars span.star-filled {
+  color: var(--gold) !important;
+}
+.rating-stars span:hover {
+  transform: scale(1.1);
+}
+

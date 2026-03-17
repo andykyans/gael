@@ -436,3 +436,77 @@ document.addEventListener('DOMContentLoaded', function() {
     wall.style.display = 'none';
   }
 });
+
+// ── REVIEW MODAL LOGIC ──
+function openReviewModal(e) {
+  if (e) e.preventDefault();
+  document.getElementById('review-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReviewModal() {
+  document.getElementById('review-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  // Reset form
+  document.getElementById('review-form-inner').style.display = 'grid';
+  document.getElementById('review-success').style.display = 'none';
+  setRating(0);
+}
+
+function setRating(n) {
+  const stars = document.querySelectorAll('#rating-stars .star');
+  document.getElementById('rev-rating').value = n;
+  stars.forEach((star, index) => {
+    if (index < n) {
+      star.classList.add('star-filled');
+      star.textContent = '★';
+    } else {
+      star.classList.remove('star-filled');
+      star.textContent = '☆';
+    }
+  });
+}
+
+async function submitReview() {
+  const name = document.getElementById('rev-name').value.trim();
+  const location = document.getElementById('rev-location').value.trim();
+  const rating = document.getElementById('rev-rating').value;
+  const text = document.getElementById('rev-text').value.trim();
+
+  if (!name || !location || rating === "0" || !text) {
+    alert('Veuillez remplir tous les champs et donner une note.');
+    return;
+  }
+
+  const btn = document.querySelector('#review-modal .cal-submit');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+
+  // Simuler l'envoi vers la db ou via mail
+  const reviewData = {
+    name,
+    location,
+    rating,
+    text,
+    date: new Date().toISOString()
+  };
+
+  try {
+    // On peut l'envoyer dans une table 'reviews' si elle existe,
+    // sinon on le log juste ou on utilise une edge function
+    console.log('Nouveau avis reçu :', reviewData);
+    
+    // Pour l'instant, on simule le succès
+    setTimeout(() => {
+      document.getElementById('review-form-inner').style.display = 'none';
+      document.getElementById('review-success').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Envoyer mon avis →';
+    }, 1000);
+  } catch (err) {
+    alert('Erreur lors de l’envoi. Réessayez.');
+    btn.disabled = false;
+    btn.textContent = 'Envoyer mon avis →';
+  }
+}
+

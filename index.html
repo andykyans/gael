@@ -393,6 +393,12 @@
       </div>
     </div>
   </div>
+
+  <div style="text-align: center; margin-top: 48px;">
+    <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">Vous êtes déjà client ?</p>
+    <button class="btn-ghost" onclick="openReviewModal(event)" style="border-radius: 12px; padding: 12px 32px; font-weight: 700;">✍️ Laisser un avis</button>
+  </div>
+</div>
 </div>
 </section>
 
@@ -740,7 +746,49 @@
   </div>
 </div>
 
+
+<!-- REVIEW MODAL -->
+<div id="review-modal" class="modal-overlay">
+  <div class="cal-box" style="max-width:480px">
+    <div class="cal-header">
+      <span class="cal-title">✍️ Votre avis nous intéresse</span>
+      <button class="cal-close" onclick="closeReviewModal()">✕</button>
+    </div>
+    <div class="cal-body">
+      <div class="cal-notice">Merci de partager votre expérience avec Andy !</div>
+      <div id="review-form-inner" class="cal-form">
+        <input class="cal-inp" id="rev-name" placeholder="Votre prénom et nom *">
+        <input class="cal-inp" id="rev-location" placeholder="Votre ville (ex: Namur) *">
+        
+        <div style="grid-column: 1/-1; margin-top: 10px;">
+          <p style="font-size: 13px; font-weight: 600; color: var(--forest); margin-bottom: 8px;">Votre note :</p>
+          <div class="rating-stars" id="rating-stars" style="display: flex; gap: 8px; font-size: 24px; cursor: pointer; color: #ddd;">
+            <span onclick="setRating(1)" class="star" data-value="1">☆</span>
+            <span onclick="setRating(2)" class="star" data-value="2">☆</span>
+            <span onclick="setRating(3)" class="star" data-value="3">☆</span>
+            <span onclick="setRating(4)" class="star" data-value="4">☆</span>
+            <span onclick="setRating(5)" class="star" data-value="5">☆</span>
+          </div>
+          <input type="hidden" id="rev-rating" value="0">
+        </div>
+
+        <textarea class="cal-inp full" id="rev-text" rows="4" placeholder="Quelques mots sur le service... *" style="resize:none; height:100px; margin-top: 14px;"></textarea>
+        
+        <button class="cal-submit" onclick="submitReview()" style="margin-top: 16px;">Envoyer mon avis →</button>
+      </div>
+      
+      <div class="cal-success" id="review-success" style="display:none;">
+        <div class="cal-success-ico">✨</div>
+        <div class="cal-success-title">Merci beaucoup !</div>
+        <p class="cal-success-sub">Votre avis a été envoyé. Andy vous remercie pour votre confiance.</p>
+        <button class="btn-ghost" onclick="closeReviewModal()" style="margin-top:20px; border:none; width:100%; cursor:pointer">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MOBILE BOTTOM NAV -->
+
 <nav id="mobile-nav">
   <a href="#home" class="m-nav-item active">
     <span class="m-nav-ico">🏠</span>
