@@ -811,7 +811,11 @@
     <!-- Main List -->
     <div class="inbox-main">
       <div class="content-header">
-        <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
+        <div style="display:flex; align-items:center; gap:20px">
+          <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
+          <input type="text" id="search-inp" placeholder="Rechercher un prospect..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 13px; width: 250px; outline: none;" oninput="renderPage()">
+          <button class="btn-logout" style="background:#f3f4f6; border:1px solid #ddd; margin-left:10px" onclick="exportCSV()">📊 Exporter CSV</button>
+        </div>
         <div style="font-size: 13px; color: #9CA3AF;">Prospects : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
       </div>
       
@@ -1014,10 +1018,19 @@ function switchTab(tab) {
 function renderPage() {
   var tbody = document.getElementById('prospects-body');
 
+  var q = document.getElementById('search-inp') ? document.getElementById('search-inp').value.toLowerCase() : '';
+
   var filtered = allProspects.filter(function(p) {
     var s = p.admin_status || 'reception';
-    return s === currentTab;
+    if (s !== currentTab) return false;
+    
+    if (q) {
+      var full = (p.prenom + ' ' + (p.nom || '') + ' ' + (p.email || '')).toLowerCase();
+      return full.indexOf(q) !== -1;
+    }
+    return true;
   });
+
 
   if (filtered.length === 0) {
     tbody.innerHTML = '<div class="empty-state"><span>📬</span>Aucun prospect dans ce dossier.</div>';
@@ -1036,9 +1049,21 @@ function renderPage() {
     var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
     var itemClass = isUnread ? 'list-item item-unread' : 'list-item';
 
+    // Type Detection
+    var typeLabel = 'Question';
+    var typeClass = 'badge-courtier';
+    if (p.nom && p.nom.indexOf('(AVIS CLIENT') !== -1) {
+      typeLabel = 'Avis';
+      typeClass = 'badge-yolk';
+    } else if (p.date_rdv) {
+      typeLabel = 'RDV';
+      typeClass = 'badge-xl';
+    }
+
     return '<div class="' + itemClass + '" onclick="openDetail(\'' + p.id + '\')">' +
       '<div class="item-date">' + dateShort + ' <span style="opacity:0.6; margin-left:4px">' + timeShort + '</span></div>' +
-      '<div class="item-name">' + escapeHtml(p.prenom) + ' ' + (escapeHtml(p.nom) || '') + '</div>' +
+      '<div class="item-name" style="flex-grow:1">' + escapeHtml(p.prenom) + ' ' + (escapeHtml(p.nom) || '') + '</div>' +
+      '<div class="badge ' + typeClass + '">' + typeLabel + '</div>' +
     '</div>';
   }).join('');
 
@@ -1259,7 +1284,48 @@ function escapeHtml(str) {
 }
 
 function escapeAttr(str) {
-  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str ? str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+}
+
+function exportCSV() {
+  var filtered = allProspects.filter(function(p) {
+    var s = p.admin_status || 'reception';
+    return s === currentTab;
+  });
+  
+  if (filtered.length === 0) { alert('Aucune donnée à exporter.'); return; }
+
+  var csvRows = [];
+  var headers = ['Date', 'Prénom', 'Nom', 'Email', 'Téléphone', 'CP', 'Région', 'Statut', 'Offre', 'RDV', 'Message'];
+  csvRows.push(headers.join(';')); // Point-virgule pour Excel FR
+
+  filtered.forEach(function(p) {
+    var row = [
+      p.created_at,
+      p.prenom,
+      p.nom,
+      p.email,
+      p.telephone,
+      p.code_postal,
+      p.region,
+      p.statut,
+      p.offre_recommandee,
+      p.date_rdv,
+      (p.message || '').replace(/\n/g, ' ')
+    ];
+    csvRows.push(row.map(function(v) { return '"' + (v || '') + '"'; }).join(';'));
+  });
+
+  var csvString = csvRows.join('\n');
+  var blob = new Blob(["\ufeff" + csvString], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement("a");
+  var url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", "prospects_" + currentTab + "_" + new Date().toISOString().slice(0,10) + ".csv");
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 // Check existing session on load
