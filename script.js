@@ -504,7 +504,8 @@ async function submitReview() {
         nom: '(AVIS CLIENT)',
         email: 'avis@client.be',
         message: `NOTE: ${rating}/5\nLOC: ${location}\nAVIS: ${text}`,
-        admin_status: 'Réception'
+        admin_status: 'reception',
+        is_read: false
       }]);
     }
 
