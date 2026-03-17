@@ -247,18 +247,21 @@
     padding: 24px 6px;
   }
   
-  .inbox-sidebar.collapsed .nav-item span:first-child {
-    font-size: 18px;
-    margin-right: 0;
-  }
-  .inbox-sidebar.collapsed .nav-badge, 
-  .inbox-sidebar.collapsed .nav-item span:not(:first-child) {
+  .inbox-sidebar.collapsed .nav-label, 
+  .inbox-sidebar.collapsed .nav-badge {
     display: none;
   }
+  
   .inbox-sidebar.collapsed .nav-item {
     justify-content: center;
     padding: 12px 0;
   }
+  
+  .inbox-sidebar.collapsed .nav-icon {
+    font-size: 20px;
+    margin: 0;
+  }
+
 
   /* ── MOBILE ADAPTATION ── */
   @media (max-width: 768px) {
@@ -349,6 +352,20 @@
   .nav-item.active { background: rgba(26, 122, 58, 0.08); color: var(--forest4); }
 
   .nav-item i { font-style: normal; font-size: 18px; margin-right: 12px; }
+  
+  .nav-icon {
+    font-size: 18px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .nav-label {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   
   .nav-badge {
     font-size: 11px;
@@ -640,25 +657,31 @@
 
 
         <div class="nav-item active" onclick="switchTab('reception')" data-tab="reception">
-          <span>📬 Réception</span>
+          <span class="nav-icon">📬</span>
+          <span class="nav-label">Réception</span>
           <span class="nav-badge" id="count-reception">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('traite')" data-tab="traite">
-          <span>✅ Traité</span>
+          <span class="nav-icon">✅</span>
+          <span class="nav-label">Traité</span>
           <span class="nav-badge" id="count-traite">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('recontacte')" data-tab="recontacte">
-          <span>📞 Recontacté</span>
+          <span class="nav-icon">📞</span>
+          <span class="nav-label">Recontacté</span>
           <span class="nav-badge" id="count-recontacte">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('non-traite')" data-tab="non-traite">
-          <span>❌ Non-traité</span>
+          <span class="nav-icon">❌</span>
+          <span class="nav-label">Non-traité</span>
           <span class="nav-badge" id="count-non-traite">0</span>
         </div>
         <div class="nav-item" onclick="switchTab('perdu')" data-tab="perdu">
-          <span>🗑️ Perdu</span>
+          <span class="nav-icon">🗑️</span>
+          <span class="nav-label">Perdu</span>
           <span class="nav-badge" id="count-perdu">0</span>
         </div>
+
       </div>
     </div>
 
