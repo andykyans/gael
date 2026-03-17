@@ -416,12 +416,12 @@ function closeWelcomeWall() {
   const wall = document.getElementById('welcome-wall');
   if (wall) {
     wall.classList.remove('active');
+    openInfoModal(); // Appel immédiat pour qu'il soit prêt
     setTimeout(() => {
       wall.style.display = 'none';
-      openInfoModal(); // Ouvre automatiquement la fiche d'info après le rideau
     }, 800);
     localStorage.setItem('gaele_welcome_seen', 'true');
-    document.body.style.overflow = '';
+    // On ne réinitialise PAS l'overflow ici car openInfoModal s'en occupe
   }
 }
 
