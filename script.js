@@ -12,11 +12,11 @@ function selectQ(btn, key, val) {
   qState[key] = val;
   
   if (key === 'region') {
-    var step2 = document.getElementById('q-step-2');
-    if (step2) {
+    var nextStep = document.getElementById('q2-grid');
+    if (nextStep) {
       setTimeout(function() {
-        step2.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 200);
+        nextStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     }
   }
   
