@@ -237,9 +237,54 @@
     flex-direction: column;
     flex-shrink: 0;
     padding: 24px 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .inbox-sidebar.collapsed {
+    width: 60px;
+    padding: 24px 6px;
+  }
+  
+  .inbox-sidebar.collapsed .nav-item span:first-child {
+    font-size: 20px;
+    margin-right: 0;
+  }
+  .inbox-sidebar.collapsed .nav-badge, 
+  .inbox-sidebar.collapsed .nav-item span:not(:first-child) {
+    display: none;
+  }
+  .inbox-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .sidebar-toggle {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 10;
+    transition: all 0.2s;
+  }
+  .sidebar-toggle:hover { background: #f3f4f6; }
+  .inbox-sidebar.collapsed .sidebar-toggle {
+    right: 50%;
+    transform: translateX(50%);
   }
 
   .sidebar-nav {
+
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -547,8 +592,10 @@
 <div class="dashboard" id="dashboard">
   <div class="inbox-wrapper">
     <!-- Sidebar -->
-    <div class="inbox-sidebar">
-      <div class="sidebar-nav" id="admin-tabs">
+    <div class="inbox-sidebar" id="inbox-sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Réduire/Agrandir">❮</button>
+      <div class="sidebar-nav" id="admin-tabs" style="margin-top:40px">
+
         <div class="nav-item active" onclick="switchTab('reception')" data-tab="reception">
           <span>📬 Réception</span>
           <span class="nav-badge" id="count-reception">0</span>
@@ -638,6 +685,12 @@ var currentPage = 1;
 var PAGE_SIZE = 15;
 var currentOpenId = null;
 
+function toggleSidebar() {
+  var sb = document.getElementById('inbox-sidebar');
+  var btn = sb.querySelector('.sidebar-toggle');
+  sb.classList.toggle('collapsed');
+  btn.textContent = sb.classList.contains('collapsed') ? '❯' : '❮';
+}
 
 function toggleSignup() {
   isSignupMode = !isSignupMode;
