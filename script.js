@@ -418,6 +418,7 @@ function closeWelcomeWall() {
     wall.classList.remove('active');
     setTimeout(() => {
       wall.style.display = 'none';
+      openInfoModal(); // Ouvre automatiquement la fiche d'info après le rideau
     }, 800);
     localStorage.setItem('gaele_welcome_seen', 'true');
     document.body.style.overflow = '';
