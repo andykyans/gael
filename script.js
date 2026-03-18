@@ -320,6 +320,7 @@ async function submitCal() {
   
   var typeBat = document.getElementById('cal-type-batiment') ? document.getElementById('cal-type-batiment').value : null;
   var accordCopro = document.getElementById('cal-accord-copro') ? document.getElementById('cal-accord-copro').checked : false;
+  var accordCoproPending = document.getElementById('cal-accord-copro-pending') ? document.getElementById('cal-accord-copro-pending').checked : false;
   var msgExtra = document.getElementById('cal-message-extra') ? document.getElementById('cal-message-extra').value : "";
   var entreprise = document.getElementById('cal-entreprise') ? document.getElementById('cal-entreprise').value : "";
 
@@ -331,8 +332,8 @@ async function submitCal() {
     alert('Veuillez préciser le type de bâtiment (Maison/Appartement).'); return;
   }
 
-  if (typeBat === 'Appartement' && document.getElementById('cal-accord-copro-wrap').style.display !== 'none' && !accordCopro) {
-    alert('L\'accord de la co-propriété est requis pour un appartement.'); return;
+  if (typeBat === 'Appartement' && document.getElementById('cal-accord-copro-wrap').style.display !== 'none' && !accordCopro && !accordCoproPending) {
+    alert('Veuillez cocher soit "J\'ai l\'accord" soit "Démarche en cours" pour la co-propriété.'); return;
   }
   
   if (document.getElementById('cal-entreprise').style.display !== 'none' && !entreprise) {
@@ -352,12 +353,13 @@ async function submitCal() {
 
   // Fix: Move missing columns plus new panneaux field to message
   var panneauxVal = document.getElementById('cal-panneaux') ? document.getElementById('cal-panneaux').value : 'Non';
+  var accordCoproStr = accordCopro ? "Oui" : (accordCoproPending ? "En cours" : "Non");
   var notes = msgExtra + (entreprise ? "Entreprise: " + entreprise + "\n" : "") + 
               "Offre: " + ofr + "\n" +
               "Energies: " + eType + "\n" +
               "Installation Elec: " + enormes + "\n" +
               "Type Batiment: " + (typeBat || "N/A") + "\n" +
-              "Accord Copro: " + (accordCopro ? "Oui" : "Non") + "\n" +
+              "Accord Copro: " + accordCoproStr + "\n" +
               "Panneaux existants: " + (panneauxVal || "Non");
 
   var prospectData = {
@@ -585,6 +587,13 @@ document.addEventListener('DOMContentLoaded', async function() {
           accordCoproWrap.style.display = 'none';
         }
       });
+      
+      var c1 = document.getElementById('cal-accord-copro');
+      var c2 = document.getElementById('cal-accord-copro-pending');
+      if (c1 && c2) {
+        c1.addEventListener('change', function() { if (this.checked) c2.checked = false; });
+        c2.addEventListener('change', function() { if (this.checked) c1.checked = false; });
+      }
     }
 
     var panneauxSelect = document.getElementById('cal-panneaux');
@@ -686,11 +695,15 @@ document.addEventListener('DOMContentLoaded', async function() {
       blockedDates = data.map(function(item) {
         return item.date_rdv;
       });
-    } else {
-      console.warn("Erreur ou dates non trouvées via RPC:", error);
     }
+    
+    // Fusionner avec le cache local des blocages admin
+    blockedDatesCache.forEach(function(d) {
+      if (blockedDates.indexOf(d) === -1) blockedDates.push(d);
+    });
+    
   } catch (err) {
-    console.warn("Impossible de lire les dates réservées via RPC.", err);
+    console.warn("Impossible de lire les dates réservées.", err);
   }
 
   // Générateur des crénaux horaires 09:00 -> 18:30 (Tranches de 30 min)
@@ -722,9 +735,16 @@ document.addEventListener('DOMContentLoaded', async function() {
       timeSelect.disabled = false;
 
       // Boucler sur tous les créneaux
+      // Conversion de dateStr "DD/MM/YYYY" -> "YYYY-MM-DD" pour la comparaison
+      var dp = dateStr.split('/');
+      var isoDate = dp[2] + '-' + dp[1] + '-' + dp[0];
+      
       allTimeSlots.forEach(function(time) {
-        var combined = dateStr + " " + time;
-        var isBooked = blockedDates.includes(combined);
+        var combinedDB = isoDate + " " + time;
+        var combinedFR = dateStr + " " + time;
+        
+        var isBooked = (blockedDates.indexOf(combinedDB) !== -1) || 
+                       (blockedDates.indexOf(combinedFR) !== -1);
         
         var opt = document.createElement("option");
         opt.value = time;

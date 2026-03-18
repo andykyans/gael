@@ -1775,14 +1775,22 @@ function renderCalendar() {
         var pid = info.event.extendedProps.prospectId;
         var isBlock = info.event.extendedProps.isBlock;
         if (isBlock) {
-          var confirmDel = confirm('Supprimer ce blocage : "' + info.event.title + '" ?');
+          var confirmDel = confirm('Supprimer ce blocage : "' + info.event.title.replace('\u26d4 ', '') + '" ?');
           if (confirmDel && pid) {
             _supabase.from('prospects').delete().eq('id', pid).then(function() {
               loadProspects();
             });
           }
-        } else if (pid) {
-          openDetail(pid);
+        }
+      },
+      eventDidMount: function(info) {
+        if (!info.event.extendedProps.isBlock) {
+          info.el.title = 'Double-cliquer pour ouvrir la fiche';
+          info.el.style.cursor = 'pointer';
+          info.el.addEventListener('dblclick', function() {
+            var pid = info.event.extendedProps.prospectId;
+            if (pid) openDetail(pid);
+          });
         }
       }
     });
