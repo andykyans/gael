@@ -649,7 +649,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <input class="cal-inp" id="cal-nom" placeholder="Nom">
         <input class="cal-inp full" id="cal-email" type="email" placeholder="Email *">
         <input class="cal-inp" id="cal-tel" type="tel" placeholder="Téléphone *">
-        <input class="cal-inp" id="cal-cp" type="text" maxlength="4" placeholder="Code postal *">
+        <div style="position:relative">
+          <input class="cal-inp" id="cal-cp" type="text" maxlength="4" placeholder="Code postal *" style="width:100%">
+          <div id="cal-cp-feedback" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:700; color:var(--forest2); pointer-events:none; display:none"></div>
+        </div>
         <input class="cal-inp full" id="cal-entreprise" placeholder="Nom de l'entreprise *" style="display:none">
         
         <select class="cal-inp" id="cal-statut">
@@ -725,7 +728,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <input class="cal-inp" id="q-nom" placeholder="Nom">
           <input class="cal-inp full" id="q-email" type="email" placeholder="Votre email *">
           <input class="cal-inp" id="q-tel" type="tel" placeholder="Téléphone *">
-          <input class="cal-inp" id="q-cp" type="text" maxlength="4" placeholder="Code postal *">
+          <div style="position:relative">
+            <input class="cal-inp" id="q-cp" type="text" maxlength="4" placeholder="Code postal *" style="width:100%">
+            <div id="q-cp-feedback" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:700; color:var(--forest2); pointer-events:none; display:none"></div>
+          </div>
           
           <select class="cal-inp full" id="q-statut">
             <option value="" disabled selected>Vous êtes... *</option>

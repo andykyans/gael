@@ -1269,6 +1269,15 @@ async function openDetail(id) {
   var p = allProspects.find(function(x) { return x.id == id; });
   if (!p) return;
   currentOpenId = id;
+  
+  // PARSER for missing columns in message
+  if (p.message && (!p.type_batiment || p.type_batiment === '-')) {
+    var tbMatch = p.message.match(/Type Batiment:\s*(.*)/);
+    if (tbMatch) p.type_batiment = tbMatch[1].trim();
+    
+    var acMatch = p.message.match(/Accord Copro:\s*(.*)/);
+    if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
+  }
 
   var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
   var statutNames = { 

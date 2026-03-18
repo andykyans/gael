@@ -461,32 +461,49 @@ document.addEventListener('DOMContentLoaded', async function() {
       }
     });
 
-    // RECONNAISSANCE CODE POSTAL
     var cpInp = document.getElementById('cal-cp');
     if (cpInp) {
       cpInp.addEventListener('input', function() {
         var cp = this.value;
+        var feedback = document.getElementById('cal-cp-feedback');
         if (cp.length === 4) {
           var detectedRegion = getRegionByCP(cp);
           if (detectedRegion) {
             qState.region = detectedRegion;
-            forceLocataireLogic(); // Re-apply logic based on new region
+            forceLocataireLogic();
+            if (feedback) {
+              var names = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
+              feedback.textContent = names[detectedRegion];
+              feedback.style.display = 'block';
+            }
           }
+        } else if (feedback) {
+          feedback.style.display = 'none';
         }
       });
     }
   }
 
-  var qCpInp = document.getElementById('q-cp');
-  if (qCpInp) {
-    qCpInp.addEventListener('input', function() {
-      var cp = this.value;
-      if (cp.length === 4) {
-        var detectedRegion = getRegionByCP(cp);
-        if (detectedRegion) qState.region = detectedRegion;
-      }
-    });
-  }
+    var qCpInp = document.getElementById('q-cp');
+    if (qCpInp) {
+      qCpInp.addEventListener('input', function() {
+        var cp = this.value;
+        var feedback = document.getElementById('q-cp-feedback');
+        if (cp.length === 4) {
+          var detectedRegion = getRegionByCP(cp);
+          if (detectedRegion) {
+            qState.region = detectedRegion;
+            if (feedback) {
+              var names = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
+              feedback.textContent = names[detectedRegion];
+              feedback.style.display = 'block';
+            }
+          }
+        } else if (feedback) {
+          feedback.style.display = 'none';
+        }
+      });
+    }
 
   var blockedDates = [];
 
