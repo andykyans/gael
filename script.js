@@ -3,6 +3,17 @@ var SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZWJjenZodnhhaml5ZWV5ZXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2MDIsImV4cCI6MjA4NzQ0NzYwMn0._wGnpo7sHJeGYHLLdATgWxss8ySVnCZ0UQU5VB6nhhY';
 var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+var blockedDatesCache = [];
+async function loadBlockedDates() {
+  try {
+    var res = await _supabase.from('prospects').select('date_rdv').eq('admin_status', 'blocked');
+    if (res.data) {
+      blockedDatesCache = res.data.map(function(d) { return d.date_rdv; }).filter(Boolean);
+    }
+  } catch(e) { console.warn("Could not fetch blocked dates:", e); }
+}
+setTimeout(loadBlockedDates, 500);
+
 var qState = {};
 
 function getRegionByCP(cp) {
@@ -330,6 +341,11 @@ async function submitCal() {
 
   // Combinaison de la date "d/m/Y" et de l'heure "H:i" pour correspondre exactement à l'ancien format Supabase
   var combinedDate = d + " " + h;
+  
+  if (blockedDatesCache.indexOf(combinedDate) !== -1 || blockedDatesCache.indexOf(d) !== -1) {
+    alert("Désolé, ce créneau horaire ou cette journée est indisponible (déjà pris ou bloqué). Veuillez choisir un autre moment.");
+    return;
+  }
 
   var btn = document.querySelector('.cal-submit');
   btn.disabled = true; btn.textContent = 'Envoi...';

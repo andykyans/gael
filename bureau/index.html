@@ -17,6 +17,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
 <style>
   :root {
     --forest: #0A2E1A;
@@ -852,6 +853,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="nav-label">Témoignages (Publiés)</span>
           <span class="nav-badge" id="count-publie">0</span>
         </div>
+        <div class="nav-item" onclick="switchTab('calendrier')" data-tab="calendrier" style="border-top:1px solid #eee; margin-top:10px">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">Calendrier & Blocages</span>
+        </div>
       </div>
     </div>
     
@@ -886,6 +891,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
             <input type="text" id="search-inp" placeholder="Rechercher un prospect..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 13px; width: 250px; outline: none;" oninput="renderPage()">
             <button class="btn-logout" style="background:#f3f4f6; border:1px solid #ddd; margin-left:10px; color:#4B5563" onclick="exportCSV()">📊 Exporter CSV</button>
+            <button class="page-btn" style="background:var(--forest2); color:#fff; border:none; padding: 8px 16px; font-weight:700; border-radius:8px; margin-left:10px; cursor:pointer;" onclick="openEncodeModal()">➕ Nouvel encodage</button>
             <button id="btn-empty-trash" class="page-btn" style="background:#ef4444; color:#fff; border:none; padding: 8px 16px; font-weight:700; border-radius:8px; display:none; margin-left:10px; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'" onclick="emptyTrash()">🗑️ Vider la corbeille</button>
           </div>
           <div style="font-size: 13px; color: #9CA3AF;">Nombre d'éléments : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
@@ -915,12 +921,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- Items will be injected here -->
       </div>
       
+      <div class="content-list" id="calendar-body" style="display:none; padding: 20px;">
+        <div id="calendar-container" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #E5E7EB; min-height: 600px;"></div>
+      </div>
+      
       <div class="pagination" id="pagination" style="padding: 20px; border-top: 1px solid #F3F4F6;"></div>
     </div>
   </div>
 </div>
 
-
+<!-- ENCODAGE MODAL -->
+<div class="detail-overlay" id="encode-overlay">
+  <div class="detail-box">
+    <div class="detail-header">
+      <div class="detail-name">Nouvel encodage ou Blocage</div>
+      <button class="detail-close" onclick="closeEncodeModal()">&times;</button>
+    </div>
+    <div class="detail-body">
+      <div style="font-size:13px; color:#6B7280; margin-bottom:20px;">
+        💡 Pour bloquer une date dans le calendrier, choisissez "Bloquer Calendrier" dans le statut.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <input class="login-input" style="margin:0" id="enc-prenom" placeholder="Prénom (ou Motif si blocage)">
+        <input class="login-input" style="margin:0" id="enc-nom" placeholder="Nom">
+        <input class="login-input" style="margin:0" id="enc-email" placeholder="Email">
+        <input class="login-input" style="margin:0" id="enc-tel" placeholder="Téléphone">
+        <input class="login-input" style="margin:0" id="enc-cp" placeholder="Code Postal">
+        <select class="login-input" style="margin:0" id="enc-status">
+          <option value="reception">Statut: Nouveau</option>
+          <option value="rdv_fixe">Statut: RDV fixé</option>
+          <option value="blocked" style="color:red; font-weight:bold;">⛔ Bloquer Calendrier</option>
+        </select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+        <div>
+          <label style="font-size:11px; font-weight:bold;">Date (JJ/MM/AAAA ou Format YYYY-MM-DD)</label>
+          <input class="login-input" type="date" id="enc-date" style="margin:0; margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:bold;">Heure (HH:MM)</label>
+          <input class="login-input" type="time" id="enc-time" style="margin:0; margin-top:4px;">
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <textarea id="enc-message" placeholder="Message ou Notes additionnelles" class="login-input" style="height:80px; resize:vertical;"></textarea>
+      </div>
+      <button class="login-btn" onclick="saveEncodeModal()">Enregistrer Prospect</button>
+    </div>
+  </div>
+</div>
 
 <!-- DETAIL MODAL -->
 <div class="detail-overlay" id="detail-overlay">
@@ -953,7 +1002,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="page-btn status-sel" data-val="signé" onclick="selectStatus('signé')">Signé 🟢</button>
           <button class="page-btn status-sel" data-val="perdu" onclick="selectStatus('perdu')">Perdu 🔴</button>
           <button class="page-btn status-sel" data-val="corbeille" onclick="selectStatus('corbeille')">Corbeille</button>
-        </div>
         </div>
         <button id="btn-save-status" class="page-btn" style="background:var(--forest2); color:white; width:100%; padding:10px; font-weight:700; display:none" onclick="saveStatus()">✅ Valider le nouveau statut</button>
       </div>
@@ -1156,7 +1204,8 @@ function switchTab(tab) {
     signé: 'Signés 🟢', 
     perdu: 'Perdus 🔴',
     corbeille: 'Corbeille',
-    publie: 'Témoignages Publiés'
+    publie: 'Témoignages Publiés',
+    calendrier: 'Calendrier & Blocages'
   };
   document.getElementById('current-folder-name').textContent = folderNames[tab];
   
@@ -1166,7 +1215,21 @@ function switchTab(tab) {
   selectedIds = [];
   currentPage = 1;
   document.getElementById('btn-empty-trash').style.display = (tab === 'corbeille') ? 'block' : 'none';
-  renderPage();
+  
+  if (tab === 'calendrier') {
+    document.getElementById('prospects-body').style.display = 'none';
+    document.getElementById('pagination').style.display = 'none';
+    document.getElementById('calendar-body').style.display = 'block';
+    document.querySelector('.bulk-action-bar').style.display = 'none';
+    renderCalendar();
+  } else {
+    document.getElementById('prospects-body').style.display = '';
+    document.getElementById('pagination').style.display = '';
+    document.getElementById('calendar-body').style.display = 'none';
+    document.querySelector('.bulk-action-bar').style.display = 'flex';
+    renderPage();
+  }
+  
   document.getElementById('check-all').checked = false;
   updateBulkActionUI();
 }
@@ -1684,6 +1747,122 @@ function exportCSV() {
   link.click();
   document.body.removeChild(link);
 }
+
+var calendar;
+function renderCalendar() {
+  if (!calendar) {
+    var calendarEl = document.getElementById('calendar-container');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      locale: 'fr',
+      allDaySlot: false,
+      slotMinTime: '08:00:00',
+      slotMaxTime: '20:00:00',
+      initialDate: new Date(),
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'timeGridWeek,timeGridDay'
+      },
+      events: getCalendarEvents()
+    });
+    calendar.render();
+  } else {
+    calendar.removeAllEvents();
+    calendar.addEventSource(getCalendarEvents());
+    calendar.render();
+  }
+}
+
+function getCalendarEvents() {
+  var events = [];
+  allProspects.forEach(function(p) {
+    if (p.date_rdv && p.date_rdv.trim() !== '') {
+      var dateParts = p.date_rdv.split(/[\sT]+/);
+      var dStr = dateParts[0] || ''; // YYYY-MM-DD
+      var tStr = dateParts[1] || '09:00'; // HH:MM
+      
+      if (dStr.indexOf('/') !== -1) {
+        var dp = dStr.split('/');
+        if (dp.length === 3) dStr = dp[2] + '-' + dp[1] + '-' + dp[0];
+      }
+      
+      var isBlock = (p.admin_status === 'blocked');
+      var evColor = isBlock ? '#EF4444' : 'var(--forest2)';
+      var title = isBlock ? '⛔ Bloqué: ' + (p.prenom || '') : 'RDV: ' + (p.prenom || '-') + ' ' + (p.nom || '');
+      
+      events.push({
+        title: title,
+        start: dStr + 'T' + tStr + ':00',
+        backgroundColor: evColor,
+        borderColor: evColor,
+        extendedProps: { prospectId: p.id, isBlock: isBlock }
+      });
+    }
+  });
+  return events;
+}
+
+function openEncodeModal() {
+  document.getElementById('encode-overlay').classList.add('open');
+  document.getElementById('enc-prenom').value = '';
+  document.getElementById('enc-nom').value = '';
+  document.getElementById('enc-email').value = '';
+  document.getElementById('enc-tel').value = '';
+  document.getElementById('enc-cp').value = '';
+  document.getElementById('enc-status').value = 'reception';
+  document.getElementById('enc-date').value = '';
+  document.getElementById('enc-time').value = '';
+  document.getElementById('enc-message').value = '';
+}
+
+function closeEncodeModal() {
+  document.getElementById('encode-overlay').classList.remove('open');
+}
+
+async function saveEncodeModal() {
+  var pr = document.getElementById('enc-prenom').value.trim();
+  var nom = document.getElementById('enc-nom').value.trim();
+  var e = document.getElementById('enc-email').value.trim();
+  var t = document.getElementById('enc-tel').value.trim();
+  var cp = document.getElementById('enc-cp').value.trim();
+  var status = document.getElementById('enc-status').value;
+  var dt = document.getElementById('enc-date').value;
+  var hr = document.getElementById('enc-time').value;
+  var msg = document.getElementById('enc-message').value.trim();
+  
+  if (!pr) { alert('Veuillez remplir au moins le Prénom (ou le motif du blocage).'); return; }
+  if (status === 'blocked' && (!dt || !hr)) { alert('Pour bloquer, vous devez préciser une date et une heure.'); return; }
+  if (!e && status !== 'blocked') { e = 'admin@gaele-advisor.be'; }
+  if (status === 'blocked' && !nom) { nom = 'Indisponible'; }
+  
+  var combinedDate = null;
+  if (dt && hr) combinedDate = dt + ' ' + hr;
+  else if (dt) combinedDate = dt;
+  
+  var newProspect = {
+    prenom: pr,
+    nom: nom,
+    email: e || 'admin@gaele-advisor.be',
+    telephone: t,
+    code_postal: cp,
+    date_rdv: combinedDate,
+    message: msg,
+    admin_status: status
+  };
+  
+  try {
+    var response = await _supabase.from('prospects').insert(newProspect);
+    if (response.error) throw response.error;
+    
+    closeEncodeModal();
+    alert('Opération réussie !');
+    loadProspects(); // Reload all data
+  } catch (err) {
+    alert('Erreur: ' + err.message);
+  }
+}
+
 
 // Check existing session on load
 (async function() {
