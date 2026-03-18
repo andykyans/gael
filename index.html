@@ -266,6 +266,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </section>
 
+<!-- SECTION PROFESSIONNELS -->
+<section id="professionnels" class="app-view">
+  <div class="section-wrap" style="background: var(--cream2); border-radius: 24px; padding: 48px; border: 1px solid var(--border); margin-top: 40px; margin-bottom: 40px;">
+    <div style="display:flex; align-items:center; gap:40px; flex-wrap:wrap">
+      <div style="flex:1.2; min-width:300px">
+        <span class="section-eyebrow">Offre Entreprise</span>
+        <h2 class="section-title" style="margin-top:10px">Vous êtes un <span class="gold">Professionnel ?</span></h2>
+        <p class="section-sub" style="text-align:left; margin: 20px 0; font-size:16px; line-height:1.6">Gaele XL accompagne aussi les entreprises dans leur transition énergétique. Pour en bénéficier, vous devez être <strong>propriétaire du bâtiment</strong> ou avoir la gestion complète de la toiture.</p>
+        <ul style="list-style:none; padding:0; margin-bottom:32px; display:grid; gap:16px">
+          <li style="display:flex; align-items:center; gap:12px; font-size:15px; color:var(--forest)"><span style="color:var(--forest2); font-weight:bold">✓</span> Installation gratuite · Aucun impact sur votre trésorerie</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:15px; color:var(--forest)"><span style="color:var(--forest2); font-weight:bold">✓</span> Tarif fixe garanti · Protection contre la volatilité</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:15px; color:var(--forest)"><span style="color:var(--forest2); font-weight:bold">✓</span> Valorisation immédiate de votre actif immobilier</li>
+        </ul>
+        <button class="btn-gold" style="padding: 18px 36px; font-size: 16px" onclick="openCal(event); document.getElementById('cal-message-extra').value = 'PRO : '">Demander une étude pro &#8594;</button>
+      </div>
+      <div style="flex:0.8; min-width:300px; text-align:center">
+        <div style="background:var(--white); padding:40px; border-radius:24px; box-shadow:0 20px 40px rgba(0,0,0,0.05); border:1px solid var(--border)">
+          <div style="font-size:48px; margin-bottom:20px">🏢🏭</div>
+          <div style="font-weight:700; font-size:20px; color:var(--forest)">Propriétaire du bâtiment</div>
+          <p style="font-size:14px; color:var(--muted); margin-top:12px; line-height:1.5">L'offre est réservée aux propriétaires fonciers ou de bâtiments industriels/commerciaux / résidentiels.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- SOCIAL PROOF BAND -->
 <div id="proof">
   <div class="proof-wrap">
@@ -616,8 +642,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="cal-body">
       <div class="cal-notice">&#9989; Analyse gratuite &#183; Sans engagement &#183; R&#233;ponse sous 24h</div>
-      <div class="cal-form" id="cal-form-inner">
-        <input class="cal-inp" id="cal-prenom" placeholder="Prénom *">
+        <div class="cal-form" id="cal-form-inner">
+          <input type="hidden" id="cal-message-extra" value="">
+          <input class="cal-inp" id="cal-prenom" placeholder="Prénom *">
         <input class="cal-inp" id="cal-nom" placeholder="Nom">
         <input class="cal-inp full" id="cal-email" type="email" placeholder="Email *">
         <input class="cal-inp" id="cal-tel" type="tel" placeholder="Téléphone *">
@@ -628,6 +655,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <option value="Propriétaire">Propriétaire</option>
           <option value="Locataire">Locataire</option>
         </select>
+        
+        <!-- Nouveaux champs pour Propriétaire -->
+        <select class="cal-inp" id="cal-type-batiment" style="display:none">
+          <option value="" disabled selected>Type de bâtiment *</option>
+          <option value="Maison">Maison</option>
+          <option value="Appartement">Appartement</option>
+        </select>
+
+        <div id="cal-accord-copro-wrap" style="display:none; grid-column: 1 / -1; margin-top: 5px;">
+          <label style="display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--forest); cursor:pointer">
+            <input type="checkbox" id="cal-accord-copro" style="margin-top:2px">
+            <span>J'ai l'accord de la co-propriété pour l'installation sur le toit commun. *</span>
+          </label>
+        </div>
         <select class="cal-inp" id="cal-offre">
           <option value="" disabled selected>Offre envisagée *</option>
           <option value="Gaele XL">Gaele XL (Solaire gratuit)</option>

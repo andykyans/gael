@@ -62,7 +62,18 @@ function showQualResult() {
 function forceLocataireLogic() {
   var statSelect = document.getElementById('cal-statut');
   var offreSelect = document.getElementById('cal-offre');
+  var typeBatSelect = document.getElementById('cal-type-batiment');
+  var accordCoproWrap = document.getElementById('cal-accord-copro-wrap');
   
+  // Nouveaux champs : Afficher si Propriétaire
+  if (statSelect && statSelect.value === 'Propriétaire') {
+    typeBatSelect.style.display = 'block';
+  } else {
+    typeBatSelect.style.display = 'none';
+    typeBatSelect.value = '';
+    accordCoproWrap.style.display = 'none';
+  }
+
   // Règle 1 : Un locataire n'a jamais droit à Gaele XL
   if (statSelect && offreSelect && statSelect.value === 'Locataire') {
     offreSelect.value = 'Gaele Courtier';
@@ -153,9 +164,21 @@ async function submitCal() {
   var ofr = document.getElementById('cal-offre') ? document.getElementById('cal-offre').value : null;
   var eType = document.getElementById('cal-energie') ? document.getElementById('cal-energie').value : null;
   var enormes = document.getElementById('cal-elec-normes') ? document.getElementById('cal-elec-normes').value : null;
+  
+  var typeBat = document.getElementById('cal-type-batiment') ? document.getElementById('cal-type-batiment').value : null;
+  var accordCopro = document.getElementById('cal-accord-copro') ? document.getElementById('cal-accord-copro').checked : false;
+  var msgExtra = document.getElementById('cal-message-extra') ? document.getElementById('cal-message-extra').value : "";
 
   if(!p || !e || !cp || !t || !d || !h || !st || !ofr || !eType || !enormes){ 
     alert('Veuillez remplir tous les champs obligatoires (*).'); return; 
+  }
+
+  if (st === 'Propriétaire' && !typeBat) {
+    alert('Veuillez préciser le type de bâtiment (Maison/Appartement).'); return;
+  }
+
+  if (typeBat === 'Appartement' && !accordCopro) {
+    alert('L\'accord de la co-propriété est requis pour un appartement.'); return;
   }
 
   // Combinaison de la date "d/m/Y" et de l'heure "H:i" pour correspondre exactement à l'ancien format Supabase
@@ -165,7 +188,7 @@ async function submitCal() {
   btn.disabled = true; btn.textContent = 'Envoi...';
 
   // On combine les nouvelles questions dans un champ "message" ou similaire si les colonnes manquent
-  var notes = "Offre: " + ofr + "\n" +
+  var notes = msgExtra + "Offre: " + ofr + "\n" +
               "Energies: " + eType + "\n" +
               "Installation Elec: " + enormes;
 
@@ -178,8 +201,10 @@ async function submitCal() {
     date_rdv: combinedDate,
     region: qState.region || null,
     statut: st,
-    offre_recommandee: ofr, // Correction du nom de la colonne
-    message: notes // On met les détails ici pour éviter l'erreur de colonne manquante
+    type_batiment: typeBat,
+    accord_copro: accordCopro,
+    offre_recommandee: ofr,
+    message: notes 
   };
 
   try {
@@ -367,6 +392,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   var offreSelect = document.getElementById('cal-offre');
   if (statSelect && offreSelect) {
     statSelect.addEventListener('change', forceLocataireLogic);
+    
+    var typeBatSelect = document.getElementById('cal-type-batiment');
+    var accordCoproWrap = document.getElementById('cal-accord-copro-wrap');
+    if (typeBatSelect && accordCoproWrap) {
+      typeBatSelect.addEventListener('change', function() {
+        if (this.value === 'Appartement') {
+          accordCoproWrap.style.display = 'block';
+        } else {
+          accordCoproWrap.style.display = 'none';
+        }
+      });
+    }
+
     offreSelect.addEventListener('change', function() {
       if (qState.region === 'bxl' && this.value === 'Gaele XL') {
         alert("L'offre Gaele XL n'est pas disponible pour la r\u00E9gion de Bruxelles-Capitale. R\u00E9orientation vers Gaele Courtier.");

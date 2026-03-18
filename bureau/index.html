@@ -13,6 +13,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="robots" content="noindex, nofollow">
 <title>Gaele Advisor</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
@@ -848,6 +851,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
           <input type="text" id="search-inp" placeholder="Rechercher un prospect..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 13px; width: 250px; outline: none;" oninput="renderPage()">
           <button class="btn-logout" style="background:#f3f4f6; border:1px solid #ddd; margin-left:10px" onclick="exportCSV()">📊 Exporter CSV</button>
+          <button id="btn-empty-trash" class="page-btn" style="background:#ef4444; color:#fff; border:none; padding: 8px 16px; font-weight:700; border-radius:8px; display:none; margin-left:10px; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'" onclick="emptyTrash()">🗑️ Vider la corbeille</button>
         </div>
         <div style="font-size: 13px; color: #9CA3AF;">Prospects : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
       </div>
@@ -1069,6 +1073,7 @@ function switchTab(tab) {
   });
   selectedIds = [];
   currentPage = 1;
+  document.getElementById('btn-empty-trash').style.display = (tab === 'corbeille') ? 'block' : 'none';
   renderPage();
   document.getElementById('check-all').checked = false;
   updateBulkActionUI();
@@ -1191,6 +1196,8 @@ async function openDetail(id) {
     ['Code postal', p.code_postal],
     ['Région', regionNames[p.region] || p.region || '-'],
     ['Statut', statutNames[p.statut] || p.statut || '-'],
+    ['Type bâtiment', p.type_batiment || '-'],
+    ['Accord Co-pro', p.accord_copro === true ? 'Oui' : (p.accord_copro === false ? 'Non' : '-')],
     ['Offre recommandée', p.offre_recommandee || '-'],
     ['Date souhaitée RDV', p.date_rdv || '-']
   ];
@@ -1406,6 +1413,25 @@ async function applyBulkStatus() {
   } catch (err) {
     console.error("Erreur bulk status:", err);
     alert("Erreur lors de la mise à jour multiple.");
+  }
+}
+
+async function emptyTrash() {
+  if (!confirm("⚠️ Voulez-vous vraiment VIDER DÉFINITIVEMENT la corbeille ?\nCette action est irréversible.")) return;
+
+  try {
+    const { error } = await _supabase
+      .from('prospects')
+      .delete()
+      .eq('admin_status', 'corbeille');
+
+    if (error) throw error;
+    
+    alert("Corbeille vidée avec succès.");
+    await loadProspects();
+  } catch (err) {
+    console.error('Erreur vider corbeille:', err);
+    alert('Erreur lors du vidage de la corbeille.');
   }
 }
 
