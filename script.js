@@ -171,12 +171,18 @@ function openCal(e, mode) {
   var accordCoproWrap = document.getElementById('cal-accord-copro-wrap');
   var entrepriseInp = document.getElementById('cal-entreprise');
   var msgExtra = document.getElementById('cal-message-extra');
+  var panneauxSelect = document.getElementById('cal-panneaux');
+  var panneauxInfo = document.getElementById('cal-panneaux-info');
+  var cpInp = document.getElementById('cal-cp');
+  var cpFeedback = document.getElementById('cal-cp-feedback');
 
   // Reset fields
   if (entrepriseInp) { entrepriseInp.style.display = 'none'; entrepriseInp.value = ''; }
   if (statSelect) { statSelect.style.display = 'block'; }
-  if (typeBatSelect) { typeBatSelect.style.display = 'none'; }
+  if (typeBatSelect) { typeBatSelect.style.display = 'none'; typeBatSelect.value = ''; }
   if (accordCoproWrap) { accordCoproWrap.style.display = 'none'; }
+  if (panneauxSelect) { panneauxSelect.style.display = 'none'; panneauxSelect.value = ''; }
+  if (panneauxInfo) { panneauxInfo.style.display = 'none'; }
   if (msgExtra) { msgExtra.value = ''; }
 
   if (mode === 'pro') {
@@ -185,9 +191,33 @@ function openCal(e, mode) {
     if (msgExtra) { msgExtra.value = 'PRO : '; }
     if (offreSelect) { offreSelect.value = 'Gaele XL'; }
   } else if (statSelect && offreSelect) {
-    if (qState.statut === 'proprio') statSelect.value = 'Propriétaire';
-    else if (qState.statut === 'locataire') statSelect.value = 'Locataire';
-    
+    // PRE-FILL from qualification answers
+    if (qState.statut === 'proprio') {
+      statSelect.value = 'Propriétaire';
+      if (typeBatSelect) typeBatSelect.style.display = 'block';
+      if (panneauxSelect) panneauxSelect.style.display = 'block';
+      // Pre-fill panneaux
+      if (qState.panneaux === 'oui' && panneauxSelect) {
+        panneauxSelect.value = 'Oui';
+        if (panneauxInfo) panneauxInfo.style.display = 'block';
+      } else if (qState.panneaux === 'non' && panneauxSelect) {
+        panneauxSelect.value = 'Non';
+      }
+    } else if (qState.statut === 'locataire') {
+      statSelect.value = 'Locataire';
+    }
+
+    // Pre-fill CP from qualification search
+    var qCpSearch = document.getElementById('q-cp-search');
+    if (qCpSearch && qCpSearch.value && cpInp) {
+      cpInp.value = qCpSearch.value;
+      var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
+      if (cpFeedback && qState.region) {
+        cpFeedback.textContent = regionNames[qState.region] || '';
+        cpFeedback.style.display = 'block';
+      }
+    }
+
     var recOffer = getOffreRecommandee();
     if (recOffer === 'Gaele XL') offreSelect.value = 'Gaele XL';
     else if (recOffer === 'Gaele Courtier') offreSelect.value = 'Gaele Courtier';

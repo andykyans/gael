@@ -1308,9 +1308,9 @@ async function openDetail(id) {
     '<a class="detail-action tel" href="tel:' + escapeAttr(p.telephone) + '">' + escapeHtml(p.telephone) + '</a>';
 
   var fields = [
-    ['Email', p.email],
-    ['Téléphone', p.telephone],
-    ['Code postal', p.code_postal],
+    ['Email', p.email || '-'],
+    ['Téléphone', p.telephone || '-'],
+    ['Code postal', p.code_postal || '-'],
     ['Région', regionNames[p.region] || p.region || '-'],
     ['Statut', statutNames[p.statut] || p.statut || '-'],
     ['Entreprise', p.entreprise || '-'],
@@ -1322,7 +1322,7 @@ async function openDetail(id) {
   ];
 
   document.getElementById('detail-fields').innerHTML = fields.map(function(f) {
-    return '<div class="detail-row"><div class="detail-label">' + f[0] + '</div><div class="detail-value">' + escapeHtml(f[1]) + '</div></div>';
+    return '<div class="detail-row"><div class="detail-label">' + f[0] + '</div><div class="detail-value">' + String(f[1]) + '</div></div>';
   }).join('');
 
   var msgWrap = document.getElementById('detail-message-wrap');
