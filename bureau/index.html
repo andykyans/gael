@@ -845,6 +845,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div style="font-size: 13px; color: #9CA3AF;">Prospects : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
       </div>
       
+      <div class="bulk-action-bar" style="padding: 12px 40px; border-bottom: 1px solid #E5E7EB; background: #F9FAFB; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display:flex; align-items:center; gap: 10px;">
+          <input type="checkbox" id="check-all" onclick="toggleAll()">
+          <label for="check-all" style="font-size: 13px; font-weight: 600; color: #4B5563; cursor: pointer; user-select: none;">Tout sélectionner</label>
+        </div>
+        <div id="bulk-actions" style="display: none; align-items: center; gap: 10px;">
+          <select id="bulk-status" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #E5E7EB; font-size: 13px; outline: none; background: #fff;">
+            <option value="">-- Changer le statut --</option>
+            <option value="reception">Réception</option>
+            <option value="traite">Traité (Rendez-vous)</option>
+            <option value="recontacte">À recontacter</option>
+            <option value="non-traite">Non-traité (Hors conditions)</option>
+            <option value="perdu">Perdu / Archive</option>
+            <option value="corbeille">Corbeille</option>
+          </select>
+          <button class="page-btn" style="padding: 6px 16px; background: var(--forest2); color: #fff; border:none; border-radius: 6px;" onclick="applyBulkStatus()">Appliquer</button>
+        </div>
+      </div>
+
       <div class="content-list" id="prospects-body">
         <!-- Items will be injected here -->
       </div>
@@ -913,6 +932,7 @@ var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var isSignupMode = false;
 var allProspects = [];
+var selectedIds = [];
 var currentTab = 'reception';
 var currentPage = 1;
 var PAGE_SIZE = 15;
@@ -1040,8 +1060,11 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-item').forEach(function(el) {
     el.classList.toggle('active', el.dataset.tab === tab);
   });
+  selectedIds = [];
   currentPage = 1;
   renderPage();
+  document.getElementById('check-all').checked = false;
+  updateBulkActionUI();
 }
 
 function renderPage() {
@@ -1089,7 +1112,10 @@ function renderPage() {
       typeClass = 'badge-xl';
     }
 
+    var isChecked = selectedIds.indexOf(p.id) !== -1 ? 'checked' : '';
+
     return '<div class="' + itemClass + '" onclick="openDetail(\'' + p.id + '\')">' +
+      '<div style="margin-right:16px"><input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)"></div>' +
       '<div class="item-date">' + dateShort + ' <span style="opacity:0.6; margin-left:4px">' + timeShort + '</span></div>' +
       '<div class="item-name" style="flex-grow:1">' + escapeHtml(p.prenom) + ' ' + (escapeHtml(p.nom) || '') + '</div>' +
       '<div class="badge ' + typeClass + '">' + typeLabel + '</div>' +
@@ -1114,6 +1140,8 @@ function renderPage() {
   html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')"' + (currentPage === totalPages ? ' disabled' : '') + '>Suiv. &rarr;</button>';
   html += '<span class="page-info">' + allProspects.length + ' prospects</span>';
   pagEl.innerHTML = html;
+  
+  updateBulkActionUI();
 }
 
 function goPage(n) {
@@ -1200,7 +1228,9 @@ async function openDetail(id) {
   // Mark as read
   if (!p.is_read) {
     p.is_read = true;
-    _supabase.from('prospects').update({ is_read: true }).eq('id', id);
+    _supabase.from('prospects').update({ is_read: true }).eq('id', id).then(function(res) {
+      if (res.error) console.error("Could not mark as read", res.error);
+    });
     renderPage();
   }
 }
@@ -1300,6 +1330,75 @@ async function updateProspectStatus(status) {
   } catch (e) {
     console.error("Critical update error:", e);
     alert("❌ Erreur critique lors de la communication avec la base de données.");
+  }
+}
+
+function toggleRowCheck(cb) {
+  if (cb.checked) {
+    if (selectedIds.indexOf(cb.value) === -1) selectedIds.push(cb.value);
+  } else {
+    selectedIds = selectedIds.filter(function(id) { return id !== cb.value; });
+  }
+  updateBulkActionUI();
+}
+
+function toggleAll() {
+  var checkAll = document.getElementById('check-all');
+  var checkboxes = document.querySelectorAll('.row-checkbox');
+  
+  if (checkAll.checked) {
+    checkboxes.forEach(function(cb) {
+      cb.checked = true;
+      if (selectedIds.indexOf(cb.value) === -1) selectedIds.push(cb.value);
+    });
+  } else {
+    checkboxes.forEach(function(cb) {
+      cb.checked = false;
+      selectedIds = selectedIds.filter(function(id) { return id !== cb.value; });
+    });
+  }
+  updateBulkActionUI();
+}
+
+function updateBulkActionUI() {
+  var bulkActions = document.getElementById('bulk-actions');
+  var checkAll = document.getElementById('check-all');
+  var checkboxes = document.querySelectorAll('.row-checkbox');
+  
+  bulkActions.style.display = selectedIds.length > 0 ? 'flex' : 'none';
+  
+  if (checkboxes.length > 0) {
+    var allChecked = true;
+    checkboxes.forEach(function(cb) { if (!cb.checked) allChecked = false; });
+    checkAll.checked = allChecked;
+  } else {
+    checkAll.checked = false;
+  }
+}
+
+async function applyBulkStatus() {
+  var status = document.getElementById('bulk-status').value;
+  if (!status) return;
+  if (selectedIds.length === 0) return;
+  
+  if (!confirm("Voulez-vous vraiment passer ces " + selectedIds.length + " prospects en : " + status + " ?")) return;
+
+  try {
+    var { error, count } = await _supabase
+      .from('prospects')
+      .update({ admin_status: status })
+      .in('id', selectedIds);
+      
+    if (error) { throw error; }
+    
+    selectedIds = [];
+    document.getElementById('check-all').checked = false;
+    document.getElementById('bulk-status').value = "";
+    updateBulkActionUI();
+    await loadProspects();
+  } catch (err) {
+    console.error("Erreur bulk status:", err);
+    alert("Erreur lors de la mise à jour multiple.");
   }
 }
 
