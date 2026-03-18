@@ -646,22 +646,20 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   var blockedDates = [];
 
-  // Essayer de récupérer les dates de rendez-vous depuis Supabase
+  // Récupérer les dates de rendez-vous via la fonction sécurisée Supabase (RPC)
   try {
-    var { data, error } = await _supabase
-      .from('prospects')
-      .select('date_rdv')
-      .not('date_rdv', 'is', null);
+    var { data, error } = await _supabase.rpc('get_booked_dates');
 
     if (!error && data) {
-      // Formater pour flatpickr (ex: "18/03/2026 10:30" => le même mais traité comme date javascript)
+      // Formater pour flatpickr
       blockedDates = data.map(function(item) {
-        // Le format stocké est "d/m/Y H:i"
         return item.date_rdv;
       });
+    } else {
+      console.warn("Erreur ou dates non trouvées via RPC:", error);
     }
   } catch (err) {
-    console.warn("Impossible de lire les dates réservées. RLS bloque peut-être la lecture.", err);
+    console.warn("Impossible de lire les dates réservées via RPC.", err);
   }
 
   // Générateur des crénaux horaires 09:00 -> 18:30 (Tranches de 30 min)
