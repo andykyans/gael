@@ -989,21 +989,6 @@ var currentPage = 1;
 var PAGE_SIZE = 15;
 var currentOpenId = null;
 
-function escapeHtml(str) {
-  if (str === null || str === undefined) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function escapeAttr(str) {
-  if (str === null || str === undefined) return '';
-  return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-}
-
 function lockBody() {
   var top = window.pageYOffset || document.documentElement.scrollTop;
   document.body.style.position = 'fixed';
@@ -1281,111 +1266,106 @@ function goPage(n) {
 
 
 async function openDetail(id) {
-  var p = allProspects.find(function(x) { return x.id == id; });
-  if (!p) return;
-  currentOpenId = id;
-  
-  // PARSER for missing columns in message
-  if (p.message) {
-    if (!p.type_batiment || p.type_batiment === '-' || p.type_batiment === 'N/A') {
-      var tbMatch = p.message.match(/Type Batiment:\s*(.*)/);
-      if (tbMatch) p.type_batiment = tbMatch[1].trim();
+  try {
+    var p = allProspects.find(function(x) { return x.id == id; });
+    if (!p) return;
+    currentOpenId = id;
+    
+    // PARSER for missing columns in message
+    if (p.message) {
+      if (!p.type_batiment || p.type_batiment === '-' || p.type_batiment === 'N/A') {
+        var tbMatch = String(p.message).match(/Type Batiment:\s*(.*)/);
+        if (tbMatch) p.type_batiment = tbMatch[1].trim();
+      }
+      if (p.accord_copro === null || p.accord_copro === undefined || p.accord_copro === '-') {
+        var acMatch = String(p.message).match(/Accord Copro:\s*(.*)/);
+        if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
+      }
+      var pannMatch = String(p.message).match(/Panneaux existants:\s*(.*)/);
+      if (pannMatch) p.panneaux_existants = pannMatch[1].trim();
     }
-    if (p.accord_copro === null || p.accord_copro === undefined || p.accord_copro === '-') {
-      var acMatch = p.message.match(/Accord Copro:\s*(.*)/);
-      if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
-    }
-    // New: panneaux existants
-    var pannMatch = p.message.match(/Panneaux existants:\s*(.*)/);
-    if (pannMatch) p.panneaux_existants = pannMatch[1].trim();
-  }
 
-  var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
-  var statutNames = { 
-    proprio: 'Propriétaire', 
-    locataire: 'Locataire',
-    'Propriétaire': 'Propriétaire',
-    'Locataire': 'Locataire'
-  };
-  var date = p.created_at ? new Date(p.created_at).toLocaleString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+    var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
+    var statutNames = { 
+      proprio: 'Propriétaire', 
+      locataire: 'Locataire',
+      'Propriétaire': 'Propriétaire',
+      'Locataire': 'Locataire'
+    };
+    var date = p.created_at ? new Date(p.created_at).toLocaleString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
 
-  document.getElementById('detail-name').textContent = (p.prenom || '-') + ' ' + (p.nom || '');
-  document.getElementById('detail-date').textContent = date;
+    document.getElementById('detail-name').textContent = (p.prenom || '-') + ' ' + (p.nom || '');
+    document.getElementById('detail-date').textContent = date;
 
-  // WHATSAPP
-  var waPhone = p.telephone ? p.telephone.replace(/\s+/g, '').replace(/^0/, '+32') : '';
-  if (!waPhone.startsWith('+')) waPhone = '+32' + waPhone; // Default to BE if no prefix
-  var waMsg = "Bonjour " + (p.prenom || '') + ", c'est Andy de Gaele Advisor. Je vous contacte suite à votre demande sur gaele-advisor.be concernant l'offre " + (p.offre_recommandee || "Gaele XL") + ".";
-  document.getElementById('det-wa-btn').href = "https://wa.me/" + waPhone + "?text=" + encodeURIComponent(waMsg);
+    // WHATSAPP
+    var rawPhone = String(p.telephone || '');
+    var waPhone = rawPhone.replace(/\s+/g, '').replace(/^0/, '+32');
+    if (waPhone && !waPhone.startsWith('+')) waPhone = '+32' + waPhone; 
+    var waMsg = "Bonjour " + (p.prenom || '') + ", c'est Andy de Gaele Advisor. Je vous contacte suite à votre demande sur gaele-advisor.be concernant l'offre " + (p.offre_recommandee || "Gaele XL") + ".";
+    document.getElementById('det-wa-btn').href = "https://wa.me/" + waPhone + "?text=" + encodeURIComponent(waMsg);
 
-  document.getElementById('detail-actions').innerHTML =
-    '<a class="detail-action email" href="mailto:' + escapeAttr(p.email) + '">' + escapeHtml(p.email) + '</a>' +
-    '<a class="detail-action tel" href="tel:' + escapeAttr(p.telephone) + '">' + escapeHtml(p.telephone) + '</a>';
+    document.getElementById('detail-actions').innerHTML =
+      '<a class="detail-action email" href="mailto:' + escapeAttr(p.email) + '">' + escapeHtml(p.email || '-') + '</a>' +
+      '<a class="detail-action tel" href="tel:' + escapeAttr(p.telephone) + '">' + escapeHtml(p.telephone || '-') + '</a>';
 
-  var fields = [
-    ['Email', p.email || '-'],
-    ['Téléphone', p.telephone || '-'],
-    ['Code postal', p.code_postal || '-'],
-    ['Région', regionNames[p.region] || p.region || '-'],
-    ['Statut', statutNames[p.statut] || p.statut || '-'],
-    ['Entreprise', p.entreprise || '-'],
-    ['Panneaux existants', p.panneaux_existants || '-'],
-    ['Type bâtiment', p.type_batiment || '-'],
-    ['Accord Co-pro', p.accord_copro === true ? 'Oui' : (p.accord_copro === false ? 'Non' : '-')],
-    ['Offre recommandée', p.offre_recommandee || '-'],
-    ['Date souhaitée RDV', p.date_rdv || '-']
-  ];
+    var fields = [
+      ['Email', p.email || '-'],
+      ['Téléphone', p.telephone || '-'],
+      ['Code postal', p.code_postal || '-'],
+      ['Région', regionNames[p.region] || p.region || '-'],
+      ['Statut', statutNames[p.statut] || p.statut || '-'],
+      ['Entreprise', p.entreprise || '-'],
+      ['Panneaux existants', p.panneaux_existants || '-'],
+      ['Type bâtiment', p.type_batiment || '-'],
+      ['Accord Co-pro', p.accord_copro === true ? 'Oui' : (p.accord_copro === false ? 'Non' : '-')],
+      ['Offre recommandée', p.offre_recommandee || '-'],
+      ['Date souhaitée RDV', p.date_rdv || '-']
+    ];
 
-  document.getElementById('detail-fields').innerHTML = fields.map(function(f) {
-    return '<div class="detail-row"><div class="detail-label">' + f[0] + '</div><div class="detail-value">' + String(f[1]) + '</div></div>';
-  }).join('');
+    document.getElementById('detail-fields').innerHTML = fields.map(function(f) {
+      return '<div class="detail-row"><div class="detail-label">' + f[0] + '</div><div class="detail-value">' + escapeHtml(String(f[1] || '-')) + '</div></div>';
+    }).join('');
 
-  var msgWrap = document.getElementById('detail-message-wrap');
-  if (p.message) {
-    document.getElementById('detail-message-text').textContent = p.message;
-    msgWrap.style.display = '';
-  } else {
-    msgWrap.style.display = 'none';
-  }
-
-  // NOTES ADMIN
-  document.getElementById('det-notes-admin').value = p.notes_admin || '';
-
-  // Show Modal
-  document.getElementById('detail-overlay').classList.add('open');
-  lockBody();
-
-  // UI Setup for Status
-  var currentS = p.admin_status || 'reception';
-  selectStatus(currentS, true);
-  
-  // Trash vs Delete vs Restore visibility
-  resetActionButtons();
-  if (currentS === 'corbeille') {
-    document.getElementById('btn-trash-prospect').style.display = 'none';
-    document.getElementById('btn-delete-prospect').style.display = 'block';
-  } else {
-    document.getElementById('btn-trash-prospect').style.display = 'block';
-    document.getElementById('btn-delete-prospect').style.display = 'none';
-  }
-
-  // Show "Publier" only if it looks like an review (Check if .btn-publier exists first)
-  var btnP = document.querySelector('.btn-publier');
-  if (btnP) {
-    if (p.nom && p.nom.indexOf('(AVIS CLIENT') !== -1) {
-      btnP.style.display = 'block';
+    var msgWrap = document.getElementById('detail-message-wrap');
+    if (p.message) {
+      document.getElementById('detail-message-text').textContent = p.message;
+      msgWrap.style.display = '';
     } else {
-      btnP.style.display = 'none';
+      msgWrap.style.display = 'none';
     }
-  }
 
-  // Mark as read
-  if (!p.is_read) {
-    p.is_read = true;
-    _supabase.from('prospects').update({ is_read: true }).eq('id', id).then(function(res) {
-      if (res.error) console.error("Could not mark as read", res.error);
-    });
-    renderPage();
+    document.getElementById('det-notes-admin').value = p.notes_admin || '';
+
+    // Show Modal
+    document.getElementById('detail-overlay').classList.add('open');
+    lockBody();
+
+    var currentS = p.admin_status || 'reception';
+    selectStatus(currentS, true);
+    
+    resetActionButtons();
+    if (currentS === 'corbeille') {
+      document.getElementById('btn-trash-prospect').style.display = 'none';
+      document.getElementById('btn-delete-prospect').style.display = 'block';
+    } else {
+      document.getElementById('btn-trash-prospect').style.display = 'block';
+      document.getElementById('btn-delete-prospect').style.display = 'none';
+    }
+
+    var btnP = document.querySelector('.btn-publier');
+    if (btnP) {
+      if (p.nom && String(p.nom).indexOf('(AVIS CLIENT') !== -1) btnP.style.display = 'block';
+      else btnP.style.display = 'none';
+    }
+
+    if (!p.is_read) {
+      p.is_read = true;
+      _supabase.from('prospects').update({ is_read: true }).eq('id', id).catch(function(e){ console.error(e); });
+      renderPage();
+    }
+  } catch (err) {
+    console.error("Critical error in openDetail:", err);
+    alert("Impossible d'ouvrir le détail : " + err.message);
   }
 }
 
