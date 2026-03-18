@@ -178,7 +178,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .login-toggle a:hover { text-decoration: underline; }
 
   /* ── DASHBOARD ── */
-  .dashboard { display: none; padding: 32px 48px; max-width: 1400px; margin: 0 auto; }
+  .dashboard { display: none; }
   .dash-title {
     font-family: var(--font-display);
     font-size: 32px;
@@ -245,7 +245,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .prospects-table tr:hover td { background: #F9FAFB; }
   /* ── INBOX LAYOUT (MODERN SIDEBAR) ── */
-  .dashboard { display: none; height: calc(100vh - 70px); background: #fdfdfd; }
+  .dashboard { display: none; height: calc(100vh - 70px); background: #fdfdfd; padding: 0; }
   
   .inbox-wrapper {
     display: flex;
@@ -519,10 +519,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .content-header {
     padding: 24px 40px;
     border-bottom: 1px solid #E5E7EB;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .content-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff;
+    width: 100%;
   }
 
   .content-list {
@@ -855,32 +862,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="inbox-main">
       <div class="content-header">
         <!-- DASHBOARD STATS -->
-        <div id="stats-dashboard" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; margin-bottom:25px;">
-          <div class="stat-card" style="background:var(--white); padding:20px; border-radius:12px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <span style="font-size:11px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Total Prospects</span>
-            <span id="stat-total-crm" style="font-size:24px; font-weight:800; color:var(--forest)">0</span>
+        <div id="stats-dashboard" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:20px; width: 100%;">
+          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Total Prospects</span>
+            <span id="stat-total-crm" style="font-size:20px; font-weight:800; color:var(--forest)">0</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:20px; border-radius:12px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <span style="font-size:11px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Nouveaux (7j)</span>
-            <span id="stat-new-7d" style="font-size:24px; font-weight:800; color:#3B82F6">0</span>
+          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Nouveaux (7j)</span>
+            <span id="stat-new-7d" style="font-size:20px; font-weight:800; color:#3B82F6">0</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:20px; border-radius:12px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <span style="font-size:11px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Taux Signature</span>
-            <span id="stat-conv-rate" style="font-size:24px; font-weight:800; color:#10B981">0%</span>
+          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Signature</span>
+            <span id="stat-conv-rate" style="font-size:20px; font-weight:800; color:#10B981">0%</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:20px; border-radius:12px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <span style="font-size:11px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Perdus</span>
-            <span id="stat-lost" style="font-size:24px; font-weight:800; color:#EF4444">0</span>
+          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Perdus</span>
+            <span id="stat-lost" style="font-size:20px; font-weight:800; color:#EF4444">0</span>
           </div>
         </div>
 
-        <div style="display:flex; align-items:center; gap:20px">
-          <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
-          <input type="text" id="search-inp" placeholder="Rechercher un prospect..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 13px; width: 250px; outline: none;" oninput="renderPage()">
-          <button class="btn-logout" style="background:#f3f4f6; border:1px solid #ddd; margin-left:10px" onclick="exportCSV()">📊 Exporter CSV</button>
-          <button id="btn-empty-trash" class="page-btn" style="background:#ef4444; color:#fff; border:none; padding: 8px 16px; font-weight:700; border-radius:8px; display:none; margin-left:10px; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'" onclick="emptyTrash()">🗑️ Vider la corbeille</button>
+        <div class="content-header-row">
+          <div style="display:flex; align-items:center; flex-wrap:wrap; gap:20px">
+            <div class="dash-title" id="current-folder-name" style="margin:0">Réception</div>
+            <input type="text" id="search-inp" placeholder="Rechercher un prospect..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #E5E7EB; font-size: 13px; width: 250px; outline: none;" oninput="renderPage()">
+            <button class="btn-logout" style="background:#f3f4f6; border:1px solid #ddd; margin-left:10px; color:#4B5563" onclick="exportCSV()">📊 Exporter CSV</button>
+            <button id="btn-empty-trash" class="page-btn" style="background:#ef4444; color:#fff; border:none; padding: 8px 16px; font-weight:700; border-radius:8px; display:none; margin-left:10px; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'" onclick="emptyTrash()">🗑️ Vider la corbeille</button>
+          </div>
+          <div style="font-size: 13px; color: #9CA3AF;">Nombre d'éléments : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
         </div>
-        <div style="font-size: 13px; color: #9CA3AF; margin-top:10px">Nombre d'éléments : <strong id="stat-total" style="color:var(--forest)">0</strong></div>
       </div>
       
       <div class="bulk-action-bar" style="padding: 12px 40px; border-bottom: 1px solid #E5E7EB; background: #F9FAFB; display: flex; justify-content: space-between; align-items: center;">
@@ -1194,7 +1203,7 @@ function renderPage() {
   var pageData = filtered.slice(start, start + PAGE_SIZE);
 
     tbody.innerHTML = pageData.map(function(p) {
-      var dateShort = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-BE', { day: '2-digit', month: 'short' }) : '-';
+      var dateFull = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
       var timeShort = p.created_at ? new Date(p.created_at).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' }) : '';
       
       var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
@@ -1225,11 +1234,39 @@ function renderPage() {
 
       var statusBadge = '<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; color:'+statusColor+'; background:'+statusBg+'; margin-left:10px; border:1px solid currentColor">' + statusLabel + '</span>';
 
-      return '<div class="' + itemClass + '" onclick="openDetail(\'' + p.id + '\')">' +
-        '<div style="margin-right:16px"><input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)"></div>' +
-        '<div class="item-date">' + dateShort + ' <span style="opacity:0.6; margin-left:4px">' + timeShort + '</span></div>' +
-        '<div class="item-name" style="flex-grow:1">' + escapeHtml(p.prenom || '-') + ' ' + (escapeHtml(p.nom || '') || '') + statusBadge + '</div>' +
-        '<div class="badge ' + typeClass + '">' + typeLabel + '</div>' +
+      return '<div class="' + itemClass + '" onclick="openDetail(\'' + p.id + '\')" style="display:flex; flex-direction:column; padding:20px 40px; border-bottom:1px solid #eee; gap:12px">' +
+        '<div style="display:flex; align-items:center; justify-content:space-between; width:100%">' +
+          '<div style="display:flex; align-items:center; gap:16px">' +
+            '<input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)">' +
+            '<div style="font-size:12px; color:#9CA3AF; font-weight:600">' + dateFull + ' <span style="opacity:0.6; margin-left:4px">' + timeShort + '</span></div>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; gap:10px">' +
+            statusBadge +
+            '<div class="badge ' + typeClass + '">' + typeLabel + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; width:100%">' +
+          '<div>' +
+            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Prospect</div>' +
+            '<div style="font-size:16px; font-weight:700; color:var(--forest)">' + escapeHtml(p.prenom || '-') + ' ' + (escapeHtml(p.nom || '') || '') + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Email</div>' +
+            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.email || '-') + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Téléphone</div>' +
+            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.telephone || '-') + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Localité</div>' +
+            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.code_postal || '-') + (p.region ? ' (' + escapeHtml(p.region) + ')' : '') + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Offre</div>' +
+            '<div style="font-size:14px; font-weight:600; color:var(--forest2)">' + escapeHtml(p.offre_recommandee || 'Gaele XL') + '</div>' +
+          '</div>' +
+        '</div>' +
       '</div>';
     }).join('');
 
