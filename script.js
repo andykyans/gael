@@ -4,6 +4,8 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var blockedDatesCache = [];
+var citiesCache = null;
+
 async function loadBlockedDates() {
   try {
     var res = await _supabase.from('prospects').select('date_rdv').eq('admin_status', 'blocked');
@@ -12,7 +14,18 @@ async function loadBlockedDates() {
     }
   } catch(e) { console.warn("Could not fetch blocked dates:", e); }
 }
-setTimeout(loadBlockedDates, 500);
+
+async function loadCities() {
+  try {
+    var resp = await fetch('https://raw.githubusercontent.com/jief/zipcode-belgium/master/zipcode-belgium.json');
+    citiesCache = await resp.json();
+  } catch(e) { console.warn("Cities list unavailable"); }
+}
+
+setTimeout(function() {
+  loadBlockedDates();
+  loadCities();
+}, 500);
 
 var qState = {};
 
@@ -625,7 +638,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             forceLocataireLogic();
             if (feedback) {
               var names = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
-              feedback.textContent = names[detectedRegion];
+              var regionName = names[detectedRegion] || '';
+              var cityName = "";
+              if (citiesCache) {
+                var match = citiesCache.find(function(item) { return item.zip === cp; });
+                if (match) cityName = match.city + " \u00B7 ";
+              }
+              feedback.textContent = cityName + regionName;
               feedback.style.display = 'block';
             }
           }

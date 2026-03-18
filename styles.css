@@ -181,10 +181,8 @@ h1 em{font-style:normal;color:var(--gold)}
 
 /* Hero right — region cards */
 .hero-r{display:flex;flex-direction:column;gap:14px}
-.rcard{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:var(--r);padding:24px 26px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.rcard{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:var(--r);padding:24px 26px;transition:all .25s;position:relative;overflow:hidden}
 .rcard::before{display:none}
-.rcard:hover{border-color:var(--forest2);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
-.rcard:hover::before{opacity:0}
 .rcard-inner{position:relative;z-index:1}
 .rcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .rcard-flag{font-size:24px}
