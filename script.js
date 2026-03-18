@@ -365,6 +365,14 @@ async function submitCal() {
     // Show success immediately
     document.getElementById('cal-form-inner').style.display='none';
     document.getElementById('cal-success').style.display='block';
+    
+    // Facebook Pixel Tracking - RDV Confirmé
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', {
+        content_name: 'Prise de RDV',
+        content_category: ofr // ex: 'Gaele XL' ou 'Gaele Courtier'
+      });
+    }
 
     // Send email notification in background (never blocks, never fails visibly)
     _supabase.functions.invoke('notify-prospect', { body: prospectData })
@@ -418,6 +426,13 @@ async function submitQuestion() {
 
     document.getElementById('question-form-inner').style.display = 'none';
     document.getElementById('question-success').style.display = 'block';
+
+    // Facebook Pixel Tracking - Question envoyée
+    if (typeof fbq === 'function') {
+      fbq('track', 'Contact', {
+        content_name: 'Question Form'
+      });
+    }
 
     // Notification Andy
     _supabase.functions.invoke('notify-prospect', { body: questionData })
