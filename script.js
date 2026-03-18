@@ -476,7 +476,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   var allTimeSlots = ["09:00", "12:00", "15:00", "18:00"];
 
   flatpickr("#cal-date", {
-    enableTime: false, // On désactive le choix de l'heure intégré
+    static: true, // Crucial for fixed modals
+    monthSelectorType: 'static',
+    enableTime: false,
     dateFormat: "d/m/Y",
     minDate: "today",
     locale: "fr",

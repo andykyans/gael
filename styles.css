@@ -476,7 +476,13 @@ span.flatpickr-weekday{color:rgba(255,255,255,0.7) !important;background:var(--f
 /* Highlight available dates/times */
 .flatpickr-day:not(.flatpickr-disabled):not(.selected) { background: #F0FDF4; border-color: #D1FAE5; color: var(--forest) !important; font-weight: 600; }
 .flatpickr-day.flatpickr-disabled { background: #f9fafb !important; color: #d1d5db !important; }
-.flatpickr-time input { background: #F0FDF4 !important; color: var(--forest2) !important; font-weight: 700; border-radius: 4px; }
+.flatpickr-calendar {
+  z-index: 10100 !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 12px !important;
+}
+
 .flatpickr-time input:hover { background: #D1FAE5 !important; }
 
 
