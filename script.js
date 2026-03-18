@@ -504,6 +504,33 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
       });
     }
+    var qSearch = document.getElementById('q-cp-search');
+    if (qSearch) {
+      qSearch.addEventListener('input', function() {
+        var cp = this.value;
+        var feedback = document.getElementById('q-cp-search-feedback');
+        if (cp.length === 4) {
+          var detectedRegion = getRegionByCP(cp);
+          if (detectedRegion) {
+            qState.region = detectedRegion;
+            var regionCards = document.querySelectorAll('#q1-grid .qcard');
+            regionCards.forEach(function(card) {
+              var oc = card.getAttribute('onclick');
+              if (oc && (oc.indexOf("'" + detectedRegion + "'") !== -1 || oc.indexOf('"' + detectedRegion + '"') !== -1)) {
+                selectQ(card, 'region', detectedRegion);
+              }
+            });
+            if (feedback) {
+              var names = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
+              feedback.textContent = names[detectedRegion];
+              feedback.style.display = 'block';
+            }
+          }
+        } else if (feedback) {
+          feedback.style.display = 'none';
+        }
+      });
+    }
 
   var blockedDates = [];
 

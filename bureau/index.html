@@ -1271,12 +1271,15 @@ async function openDetail(id) {
   currentOpenId = id;
   
   // PARSER for missing columns in message
-  if (p.message && (!p.type_batiment || p.type_batiment === '-')) {
-    var tbMatch = p.message.match(/Type Batiment:\s*(.*)/);
-    if (tbMatch) p.type_batiment = tbMatch[1].trim();
-    
-    var acMatch = p.message.match(/Accord Copro:\s*(.*)/);
-    if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
+  if (p.message) {
+    if (!p.type_batiment || p.type_batiment === '-' || p.type_batiment === 'N/A') {
+      var tbMatch = p.message.match(/Type Batiment:\s*(.*)/);
+      if (tbMatch) p.type_batiment = tbMatch[1].trim();
+    }
+    if (p.accord_copro === null || p.accord_copro === undefined || p.accord_copro === '-') {
+      var acMatch = p.message.match(/Accord Copro:\s*(.*)/);
+      if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
+    }
   }
 
   var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
