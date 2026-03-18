@@ -1196,6 +1196,7 @@ async function openDetail(id) {
     ['Code postal', p.code_postal],
     ['Région', regionNames[p.region] || p.region || '-'],
     ['Statut', statutNames[p.statut] || p.statut || '-'],
+    ['Entreprise', p.entreprise || '-'],
     ['Type bâtiment', p.type_batiment || '-'],
     ['Accord Co-pro', p.accord_copro === true ? 'Oui' : (p.accord_copro === false ? 'Non' : '-')],
     ['Offre recommandée', p.offre_recommandee || '-'],

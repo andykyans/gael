@@ -85,12 +85,29 @@ function forceLocataireLogic() {
   }
 }
 
-function openCal(e) { 
+function openCal(e, mode) { 
   if(e) e.preventDefault(); 
   
   var statSelect = document.getElementById('cal-statut');
   var offreSelect = document.getElementById('cal-offre');
-  if (statSelect && offreSelect) {
+  var typeBatSelect = document.getElementById('cal-type-batiment');
+  var accordCoproWrap = document.getElementById('cal-accord-copro-wrap');
+  var entrepriseInp = document.getElementById('cal-entreprise');
+  var msgExtra = document.getElementById('cal-message-extra');
+
+  // Reset fields
+  if (entrepriseInp) { entrepriseInp.style.display = 'none'; entrepriseInp.value = ''; }
+  if (statSelect) { statSelect.style.display = 'block'; }
+  if (typeBatSelect) { typeBatSelect.style.display = 'none'; }
+  if (accordCoproWrap) { accordCoproWrap.style.display = 'none'; }
+  if (msgExtra) { msgExtra.value = ''; }
+
+  if (mode === 'pro') {
+    if (statSelect) { statSelect.style.display = 'none'; statSelect.value = 'Propriétaire'; }
+    if (entrepriseInp) { entrepriseInp.style.display = 'block'; }
+    if (msgExtra) { msgExtra.value = 'PRO : '; }
+    if (offreSelect) { offreSelect.value = 'Gaele XL'; }
+  } else if (statSelect && offreSelect) {
     if (qState.statut === 'proprio') statSelect.value = 'Propriétaire';
     else if (qState.statut === 'locataire') statSelect.value = 'Locataire';
     
@@ -168,17 +185,22 @@ async function submitCal() {
   var typeBat = document.getElementById('cal-type-batiment') ? document.getElementById('cal-type-batiment').value : null;
   var accordCopro = document.getElementById('cal-accord-copro') ? document.getElementById('cal-accord-copro').checked : false;
   var msgExtra = document.getElementById('cal-message-extra') ? document.getElementById('cal-message-extra').value : "";
+  var entreprise = document.getElementById('cal-entreprise') ? document.getElementById('cal-entreprise').value : "";
 
   if(!p || !e || !cp || !t || !d || !h || !st || !ofr || !eType || !enormes){ 
     alert('Veuillez remplir tous les champs obligatoires (*).'); return; 
   }
 
-  if (st === 'Propriétaire' && !typeBat) {
+  if (st === 'Propriétaire' && document.getElementById('cal-type-batiment').style.display !== 'none' && !typeBat) {
     alert('Veuillez préciser le type de bâtiment (Maison/Appartement).'); return;
   }
 
-  if (typeBat === 'Appartement' && !accordCopro) {
+  if (typeBat === 'Appartement' && document.getElementById('cal-accord-copro-wrap').style.display !== 'none' && !accordCopro) {
     alert('L\'accord de la co-propriété est requis pour un appartement.'); return;
+  }
+  
+  if (document.getElementById('cal-entreprise').style.display !== 'none' && !entreprise) {
+    alert('Veuillez renseigner le nom de l\'entreprise.'); return;
   }
 
   // Combinaison de la date "d/m/Y" et de l'heure "H:i" pour correspondre exactement à l'ancien format Supabase
@@ -188,7 +210,8 @@ async function submitCal() {
   btn.disabled = true; btn.textContent = 'Envoi...';
 
   // On combine les nouvelles questions dans un champ "message" ou similaire si les colonnes manquent
-  var notes = msgExtra + "Offre: " + ofr + "\n" +
+  var notes = msgExtra + (entreprise ? "Entreprise: " + entreprise + "\n" : "") + 
+              "Offre: " + ofr + "\n" +
               "Energies: " + eType + "\n" +
               "Installation Elec: " + enormes;
 

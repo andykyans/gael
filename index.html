@@ -280,7 +280,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li style="display:flex; align-items:center; gap:12px; font-size:15px; color:var(--forest)"><span style="color:var(--forest2); font-weight:bold">✓</span> Protection contre la volatilité des marchés pendant 25 ans</li>
           <li style="display:flex; align-items:center; gap:12px; font-size:15px; color:var(--forest)"><span style="color:var(--forest2); font-weight:bold">✓</span> Valorisation immédiate de votre actif immobilier</li>
         </ul>
-        <button class="btn-gold" style="padding: 18px 36px; font-size: 16px" onclick="openCal(event); document.getElementById('cal-message-extra').value = 'PRO : '">Demander une étude pro &#8594;</button>
+        <button class="btn-gold" style="padding: 18px 36px; font-size: 16px" onclick="openCal(event, 'pro')">Demander une étude pro &#8594;</button>
       </div>
       <div style="flex:0.8; min-width:300px; text-align:center">
         <div style="background:var(--white); padding:40px; border-radius:24px; box-shadow:0 20px 40px rgba(0,0,0,0.05); border:1px solid var(--border)">
@@ -650,6 +650,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <input class="cal-inp full" id="cal-email" type="email" placeholder="Email *">
         <input class="cal-inp" id="cal-tel" type="tel" placeholder="Téléphone *">
         <input class="cal-inp" id="cal-cp" type="text" maxlength="4" placeholder="Code postal *">
+        <input class="cal-inp full" id="cal-entreprise" placeholder="Nom de l'entreprise *" style="display:none">
         
         <select class="cal-inp" id="cal-statut">
           <option value="" disabled selected>Statut de logement *</option>
