@@ -28,17 +28,55 @@ function selectQ(btn, key, val) {
       }, 100);
     }
   }
+
+  // When statut is selected
+  if (key === 'statut') {
+    var q3Label = document.getElementById('q-step-3');
+    var q3Grid = document.getElementById('q3-grid');
+    if (val === 'proprio') {
+      // Show panel question for owners
+      if (q3Label) q3Label.style.display = 'block';
+      if (q3Grid) q3Grid.style.display = 'grid';
+      // Reset panneaux
+      qState.panneaux = null;
+      document.getElementById('q-panneaux-info').style.display = 'none';
+      // Don't show result yet - wait for panel answer
+      return;
+    } else {
+      // Locataire: hide panel question, show result directly
+      if (q3Label) q3Label.style.display = 'none';
+      if (q3Grid) q3Grid.style.display = 'none';
+      document.getElementById('q-panneaux-info').style.display = 'none';
+    }
+  }
+
+  // Handle panel answer
+  if (key === 'panneaux') {
+    var info = document.getElementById('q-panneaux-info');
+    if (val === 'oui') {
+      if (info) info.style.display = 'block';
+      // Force courtier
+      qState.region = qState.region || 'wal';
+    } else {
+      if (info) info.style.display = 'none';
+    }
+  }
   
-  if (qState.region && qState.statut) { showQualResult(); }
+  if (qState.region && qState.statut) {
+    // For owner: wait for panel answer
+    if (qState.statut === 'proprio' && key !== 'panneaux' && !qState.panneaux) return;
+    showQualResult();
+  }
 }
 
 function getOffreRecommandee() {
   var r = qState.region;
   var s = qState.statut;
+  var p = qState.panneaux;
   if (!r || !s) return null;
-  if (r === 'bxl') {
-    return 'Gaele Courtier';
-  }
+  if (r === 'bxl') return 'Gaele Courtier';
+  if (s === 'locataire') return 'Gaele Courtier';
+  if (p === 'oui') return 'Gaele Courtier'; // Already has panels
   if (s === 'proprio') return 'Gaele XL';
   return 'Gaele Courtier';
 }
@@ -73,22 +111,34 @@ function forceLocataireLogic() {
   var offreSelect = document.getElementById('cal-offre');
   var typeBatSelect = document.getElementById('cal-type-batiment');
   var accordCoproWrap = document.getElementById('cal-accord-copro-wrap');
+  var panneauxSelect = document.getElementById('cal-panneaux');
+  var panneauxInfo = document.getElementById('cal-panneaux-info');
   
-  // Nouveaux champs : Afficher si Propriétaire
-  if (statSelect && statSelect.value === 'Propriétaire') {
-    typeBatSelect.style.display = 'block';
+  // Show panneaux field only for Propriétaires
+  if (statSelect && statSelect.value === 'Propri\u00E9taire') {
+    if (typeBatSelect) typeBatSelect.style.display = 'block';
+    if (panneauxSelect) panneauxSelect.style.display = 'block';
   } else {
-    typeBatSelect.style.display = 'none';
-    typeBatSelect.value = '';
-    accordCoproWrap.style.display = 'none';
+    if (typeBatSelect) { typeBatSelect.style.display = 'none'; typeBatSelect.value = ''; }
+    if (accordCoproWrap) accordCoproWrap.style.display = 'none';
+    if (panneauxSelect) { panneauxSelect.style.display = 'none'; panneauxSelect.value = ''; }
+    if (panneauxInfo) panneauxInfo.style.display = 'none';
   }
 
-  // Règle 1 : Un locataire n'a jamais droit à Gaele XL
+  // Handle panneaux selection info
+  if (panneauxSelect && panneauxSelect.value === 'Oui') {
+    if (panneauxInfo) panneauxInfo.style.display = 'block';
+    if (offreSelect) offreSelect.value = 'Gaele Courtier';
+  } else {
+    if (panneauxInfo) panneauxInfo.style.display = 'none';
+  }
+
+  // R\u00e8gle 1 : locataire -> Gaele Courtier
   if (statSelect && offreSelect && statSelect.value === 'Locataire') {
     offreSelect.value = 'Gaele Courtier';
   }
   
-  // Règle 2 : À Bruxelles, personne n'a droit à Gaele XL
+  // R\u00e8gle 2 : Bruxelles -> Gaele Courtier
   if (qState.region === 'bxl' && offreSelect) {
     offreSelect.value = 'Gaele Courtier';
   }
@@ -229,13 +279,15 @@ async function submitCal() {
   var btn = document.querySelector('.cal-submit');
   btn.disabled = true; btn.textContent = 'Envoi...';
 
-  // Fix: Move missing columns to message field
+  // Fix: Move missing columns plus new panneaux field to message
+  var panneauxVal = document.getElementById('cal-panneaux') ? document.getElementById('cal-panneaux').value : 'Non';
   var notes = msgExtra + (entreprise ? "Entreprise: " + entreprise + "\n" : "") + 
               "Offre: " + ofr + "\n" +
               "Energies: " + eType + "\n" +
               "Installation Elec: " + enormes + "\n" +
               "Type Batiment: " + (typeBat || "N/A") + "\n" +
-              "Accord Copro: " + (accordCopro ? "Oui" : "Non");
+              "Accord Copro: " + (accordCopro ? "Oui" : "Non") + "\n" +
+              "Panneaux existants: " + (panneauxVal || "Non");
 
   var prospectData = {
     prenom: p,
@@ -447,6 +499,11 @@ document.addEventListener('DOMContentLoaded', async function() {
           accordCoproWrap.style.display = 'none';
         }
       });
+    }
+
+    var panneauxSelect = document.getElementById('cal-panneaux');
+    if (panneauxSelect) {
+      panneauxSelect.addEventListener('change', forceLocataireLogic);
     }
 
     offreSelect.addEventListener('change', function() {

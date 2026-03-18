@@ -1280,6 +1280,9 @@ async function openDetail(id) {
       var acMatch = p.message.match(/Accord Copro:\s*(.*)/);
       if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
     }
+    // New: panneaux existants
+    var pannMatch = p.message.match(/Panneaux existants:\s*(.*)/);
+    if (pannMatch) p.panneaux_existants = pannMatch[1].trim();
   }
 
   var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
@@ -1311,6 +1314,7 @@ async function openDetail(id) {
     ['Région', regionNames[p.region] || p.region || '-'],
     ['Statut', statutNames[p.statut] || p.statut || '-'],
     ['Entreprise', p.entreprise || '-'],
+    ['Panneaux existants', p.panneaux_existants || '-'],
     ['Type bâtiment', p.type_batiment || '-'],
     ['Accord Co-pro', p.accord_copro === true ? 'Oui' : (p.accord_copro === false ? 'Non' : '-')],
     ['Offre recommandée', p.offre_recommandee || '-'],

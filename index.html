@@ -330,6 +330,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="qcard" onclick="selectQ(this,'statut','proprio')"><span class="qcard-ico">&#127968;</span><span class="qcard-label">Propri&#233;taire</span></button>
     <button class="qcard" onclick="selectQ(this,'statut','locataire')"><span class="qcard-ico">&#128273;</span><span class="qcard-label">Locataire</span></button>
   </div>
+
+  <div class="qstep-label" id="q-step-3" style="display:none">03 &#8212; Panneaux solaires</div>
+  <div class="qgrid-2" id="q3-grid" style="display:none">
+    <button class="qcard" onclick="selectQ(this,'panneaux','non')"><span class="qcard-ico">&#9728;&#65039;</span><span class="qcard-label">Non, pas encore</span></button>
+    <button class="qcard" onclick="selectQ(this,'panneaux','oui')"><span class="qcard-ico">&#128994;</span><span class="qcard-label">Oui, j'en ai d&#233;j&#224;</span></button>
+  </div>
+  <div id="q-panneaux-info" style="display:none; margin:16px auto; max-width:450px; background:#FFF7ED; border:1px solid #FED7AA; border-radius:14px; padding:16px 20px; font-size:14px; color:#92400E;">
+    &#9888;&#65039; <strong>Gaele XL est r&#233;serv&#233; aux installations vierges.</strong> Andy vous orientera vers <strong>Gaele Courtier</strong> ou l'ajout d'une <strong>batterie Earth</strong> &#224; votre installation actuelle.
+  </div>
+
   <div class="qual-result-box" id="qual-result" style="display:none; margin-top: 40px;">
     <!-- Les cartes seront affichées ici via le script -->
     <div id="card-xl" class="offer-card featured" style="display:none; max-width:450px; margin: 0 auto;">
@@ -547,7 +557,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="faq-a"><div class="faq-a-inner"><p>Gaele XL est une marque de <strong>Gridlink SRL</strong> (BE0778540509), un acteur majeur de l'Énergie en Belgique avec plus de 50 000 clients. La solidité est garantie par la présence de l'État belge (~33% du capital via SFPIM). Le groupe gère aussi le réseau de bornes de recharge Sparki. C'est donc une structure institutionnelle bien plus stable que la plupart des installateurs classiques.</p></div></div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">C'est du leasing déguisé ?<span class="faq-arrow">+</span></div>
+      <div class="faq-q">J'ai d&#233;j&#224; des panneaux solaires, puis-je b&#233;n&#233;ficier de Gaele ?<span class="faq-arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Gaele XL est r&#233;serv&#233; aux propri&#233;taires <strong>sans installation solaire existante</strong>. Si vous avez d&#233;j&#224; des panneaux, Andy peut vous aider de deux fa&#231;ons : (1) optimiser votre contrat &#233;nergie gratuitement via <strong>Gaele Courtier</strong>, ou (2) ajouter une <strong>batterie Earth</strong> &#224; votre installation pour maximiser votre autoconsommation. Contactez Andy pour une &#233;tude personnalis&#233;e.</p></div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">C'est du leasing d&#233;guis&#233; ?<span class="faq-arrow">+</span></div>
       <div class="faq-a"><div class="faq-a-inner"><p>C'est 100% gratuit. Il n'y a pas de loyer pour les panneaux, nous payons tout l'investissement. Vous ne payez que votre consommation à un tarif fixe très avantageux.</p></div></div>
     </div>
 
@@ -668,6 +682,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <option value="Propriétaire">Propriétaire</option>
           <option value="Locataire">Locataire</option>
         </select>
+
+        <select class="cal-inp" id="cal-panneaux" style="display:none">
+          <option value="" disabled selected>Panneaux solaires existants ? *</option>
+          <option value="Non">Non, pas encore</option>
+          <option value="Oui">Oui, j'en ai d&#233;j&#224;</option>
+        </select>
+        <div id="cal-panneaux-info" style="display:none; grid-column:1/-1; background:#FFF7ED; border:1px solid #FED7AA; border-radius:12px; padding:12px 16px; font-size:13px; color:#92400E;">
+          &#9888;&#65039; Andy vous orientera vers Gaele Courtier ou une batterie Earth.
+        </div>
         
         <!-- Nouveaux champs pour Propriétaire -->
         <select class="cal-inp" id="cal-type-batiment" style="display:none">
