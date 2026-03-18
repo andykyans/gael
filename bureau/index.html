@@ -35,55 +35,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: var(--font-body); background: #FFFFFF; color: var(--forest); min-height: 100vh; }
 
-  /* ── HEADER ── */
   .admin-header {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    padding: 0 48px;
+    background: var(--forest);
+    padding: 0 40px;
     height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
+    border-bottom: 2px solid rgba(201, 168, 76, 0.2);
   }
   .admin-header::after {
-    content: 'v1.2';
+    content: 'v1.3';
     position: absolute;
-    bottom: 0;
-    right: 10px;
-    font-size: 9px;
-    color: #eee;
+    bottom: 4px;
+    right: 12px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
   }
 
   .admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--forest);
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
   }
   .admin-logo span {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .16em;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .2em;
     text-transform: uppercase;
-    color: #9CA3AF;
-    margin-left: 12px;
+    color: #C9A84C;
+    background: rgba(201, 168, 76, 0.15);
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-left: 8px;
   }
   .btn-logout {
-    background: rgba(0,0,0,0.04);
-    border: 1px solid #E5E7EB;
-    color: var(--forest);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
     font-family: var(--font-body);
     font-size: 13px;
-    font-weight: 500;
-    padding: 8px 20px;
+    font-weight: 600;
+    padding: 8px 24px;
     border-radius: 100px;
     cursor: pointer;
     transition: all .2s;
   }
-  .btn-logout:hover { background: rgba(0,0,0,0.08); }
+  .btn-logout:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
 
   /* ── LOGIN ── */
   .login-wrap {
@@ -471,7 +476,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   .nav-item:hover { background: #F3F4F6; color: var(--forest); }
-  .nav-item.active { background: rgba(26, 122, 58, 0.08); color: var(--forest4); }
+  .nav-item.active { background: var(--forest2); color: #fff; box-shadow: 0 4px 12px rgba(15, 61, 35, 0.15); }
 
   .nav-item i { font-style: normal; font-size: 18px; margin-right: 12px; }
   
@@ -491,12 +496,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   .nav-badge {
     font-size: 11px;
+    font-weight: 700;
     background: rgba(0,0,0,0.05);
     padding: 2px 8px;
     border-radius: 100px;
     color: #6B7280;
   }
-  .nav-item.active .nav-badge { background: var(--forest4); color: #fff; }
+  .nav-item.active .nav-badge { background: #fff; color: var(--forest2); }
 
   /* ── CONTENT AREA ── */
   .inbox-main {
@@ -762,7 +768,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- HEADER -->
 <header class="admin-header">
   <div class="admin-logo">
-    Gaele Advisor <span>Admin</span>
+    <svg width="32" height="32" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="9" fill="#0F3D23"/><path d="M19 6L30 12.5V25.5L19 32L8 25.5V12.5L19 6Z" stroke="#C9A84C" stroke-width="1.2" fill="none" opacity="0.5"/><path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#C9A84C"/></svg>
+    Gaele Advisor <span>Bureau</span>
   </div>
   <button class="btn-logout" id="btn-logout" style="display:none" onclick="logout()">Déconnexion</button>
 </header>
