@@ -85,6 +85,24 @@ function forceLocataireLogic() {
   }
 }
 
+function lockBody() {
+  var top = window.pageYOffset || document.documentElement.scrollTop;
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + top + 'px';
+  document.body.style.width = '100%';
+  document.body.classList.add('modal-open');
+  document.body.setAttribute('data-scroll', top);
+}
+
+function unlockBody() {
+  var top = document.body.getAttribute('data-scroll');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  document.body.classList.remove('modal-open');
+  if (top) window.scrollTo(0, parseInt(top));
+}
+
 function openCal(e, mode) { 
   if(e) e.preventDefault(); 
   
@@ -119,42 +137,36 @@ function openCal(e, mode) {
   }
 
   document.getElementById('cal-modal').classList.add('open'); 
-  document.body.classList.add('modal-open');
-  document.body.style.overflow='hidden'; 
+  lockBody();
 }
 
 function closeCal() { 
   document.getElementById('cal-modal').classList.remove('open'); 
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow=''; 
+  unlockBody();
 }
 
 // ── QUESTION MODAL ──
 function openQuestionModal(e) {
   if (e) e.preventDefault();
   document.getElementById('question-modal').classList.add('open');
-  document.body.classList.add('modal-open');
-  document.body.style.overflow = 'hidden';
+  lockBody();
 }
 
 function closeQuestionModal() {
   document.getElementById('question-modal').classList.remove('open');
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
+  unlockBody();
 }
 
 // ── INFO MODAL ──
 function openInfoModal(e) {
   if (e) e.preventDefault();
   document.getElementById('info-modal').classList.add('open');
-  document.body.classList.add('modal-open');
-  document.body.style.overflow = 'hidden';
+  lockBody();
 }
 
 function closeInfoModal() {
   document.getElementById('info-modal').classList.remove('open');
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
+  unlockBody();
 }
 
 // Click outside logic for both
@@ -162,8 +174,7 @@ document.querySelectorAll('.modal-overlay').forEach(function(modal) {
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.classList.remove('open');
-      document.body.classList.remove('modal-open');
-      document.body.style.overflow = '';
+      unlockBody();
     }
   });
 });
@@ -559,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (wall && !hasSeen) {
     wall.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    lockBody();
   } else if (wall) {
     wall.style.display = 'none';
   }
@@ -569,12 +580,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function openReviewModal(e) {
   if (e) e.preventDefault();
   document.getElementById('review-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  lockBody();
 }
 
 function closeReviewModal() {
   document.getElementById('review-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  unlockBody();
   // Reset form
   document.getElementById('review-form-inner').style.display = 'grid';
   document.getElementById('review-success').style.display = 'none';

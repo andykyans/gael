@@ -749,9 +749,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .admin-header { padding: 0 15px; height: 60px; }
     .admin-logo { font-size: 16px; }
     .admin-logo span { font-size: 9px; margin-left: 6px; }
-    .inbox-sidebar { top: 60px; height: calc(100vh - 60px); }
+    .inbox-sidebar { top: 60px; height: calc(100dvh - 60px); }
     .dashboard { padding: 0; }
     .login-box { padding: 36px 24px; }
+    
+    body.modal-open {
+      overflow: hidden !important;
+      height: 100dvh !important;
+      position: fixed !important;
+      width: 100% !important;
+    }
   }
   .status-sel.active {
     border-color: var(--forest2) !important;
@@ -981,6 +988,24 @@ var currentTab = 'reception';
 var currentPage = 1;
 var PAGE_SIZE = 15;
 var currentOpenId = null;
+
+function lockBody() {
+  var top = window.pageYOffset || document.documentElement.scrollTop;
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + top + 'px';
+  document.body.style.width = '100%';
+  document.body.classList.add('modal-open');
+  document.body.setAttribute('data-scroll', top);
+}
+
+function unlockBody() {
+  var top = document.body.getAttribute('data-scroll');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  document.body.classList.remove('modal-open');
+  if (top) window.scrollTo(0, parseInt(top));
+}
 
 function toggleSidebar() {
   var sb = document.getElementById('inbox-sidebar');
@@ -1297,7 +1322,7 @@ async function openDetail(id) {
 
   // Show Modal
   document.getElementById('detail-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  lockBody();
 
   // UI Setup for Status
   var currentS = p.admin_status || 'reception';
@@ -1549,7 +1574,7 @@ async function emptyTrash() {
 
 function closeDetail() {
   document.getElementById('detail-overlay').classList.remove('open');
-  document.body.style.overflow = '';
+  unlockBody();
   resetActionButtons();
 }
 
