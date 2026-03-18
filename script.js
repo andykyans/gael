@@ -162,6 +162,20 @@ function unlockBody() {
   if (top) window.scrollTo(0, parseInt(top));
 }
 
+function lockField(el) {
+  if (el) {
+    el.disabled = true;
+    el.classList.add('locked-field');
+  }
+}
+
+function unlockField(el) {
+  if (el) {
+    el.disabled = false;
+    el.classList.remove('locked-field');
+  }
+}
+
 function openCal(e, mode) { 
   if(e) e.preventDefault(); 
   
@@ -176,7 +190,13 @@ function openCal(e, mode) {
   var cpInp = document.getElementById('cal-cp');
   var cpFeedback = document.getElementById('cal-cp-feedback');
 
-  // Reset fields
+  // Reset fields & Unlock by default
+  unlockField(statSelect);
+  unlockField(offreSelect);
+  unlockField(typeBatSelect);
+  unlockField(panneauxSelect);
+  unlockField(cpInp);
+
   if (entrepriseInp) { entrepriseInp.style.display = 'none'; entrepriseInp.value = ''; }
   if (statSelect) { statSelect.style.display = 'block'; }
   if (typeBatSelect) { typeBatSelect.style.display = 'none'; typeBatSelect.value = ''; }
@@ -186,31 +206,36 @@ function openCal(e, mode) {
   if (msgExtra) { msgExtra.value = ''; }
 
   if (mode === 'pro') {
-    if (statSelect) { statSelect.style.display = 'none'; statSelect.value = 'Propriétaire'; }
+    if (statSelect) { statSelect.style.display = 'none'; statSelect.value = 'Propriétaire'; lockField(statSelect); }
     if (entrepriseInp) { entrepriseInp.style.display = 'block'; }
     if (msgExtra) { msgExtra.value = 'PRO : '; }
-    if (offreSelect) { offreSelect.value = 'Gaele XL'; }
+    if (offreSelect) { offreSelect.value = 'Gaele XL'; lockField(offreSelect); }
   } else if (statSelect && offreSelect) {
     // PRE-FILL from qualification answers
     if (qState.statut === 'proprio') {
       statSelect.value = 'Propriétaire';
+      lockField(statSelect);
       if (typeBatSelect) typeBatSelect.style.display = 'block';
       if (panneauxSelect) panneauxSelect.style.display = 'block';
       // Pre-fill panneaux
       if (qState.panneaux === 'oui' && panneauxSelect) {
         panneauxSelect.value = 'Oui';
+        lockField(panneauxSelect);
         if (panneauxInfo) panneauxInfo.style.display = 'block';
       } else if (qState.panneaux === 'non' && panneauxSelect) {
         panneauxSelect.value = 'Non';
+        lockField(panneauxSelect);
       }
     } else if (qState.statut === 'locataire') {
       statSelect.value = 'Locataire';
+      lockField(statSelect);
     }
 
     // Pre-fill CP from qualification search
     var qCpSearch = document.getElementById('q-cp-search');
     if (qCpSearch && qCpSearch.value && cpInp) {
       cpInp.value = qCpSearch.value;
+      lockField(cpInp);
       var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
       if (cpFeedback && qState.region) {
         cpFeedback.textContent = regionNames[qState.region] || '';
@@ -219,8 +244,8 @@ function openCal(e, mode) {
     }
 
     var recOffer = getOffreRecommandee();
-    if (recOffer === 'Gaele XL') offreSelect.value = 'Gaele XL';
-    else if (recOffer === 'Gaele Courtier') offreSelect.value = 'Gaele Courtier';
+    if (recOffer === 'Gaele XL') { offreSelect.value = 'Gaele XL'; lockField(offreSelect); }
+    else if (recOffer === 'Gaele Courtier') { offreSelect.value = 'Gaele Courtier'; lockField(offreSelect); }
 
     forceLocataireLogic();
   }
