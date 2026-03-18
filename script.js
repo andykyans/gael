@@ -3,8 +3,17 @@ var SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZWJjenZodnhhaml5ZWV5ZXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2MDIsImV4cCI6MjA4NzQ0NzYwMn0._wGnpo7sHJeGYHLLdATgWxss8ySVnCZ0UQU5VB6nhhY';
 var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── QUALIFICATION ──
 var qState = {};
+
+function getRegionByCP(cp) {
+  if (!cp || cp.length < 4) return null;
+  var n = parseInt(cp);
+  if (isNaN(n)) return null;
+  if (n >= 1000 && n <= 1299) return 'bxl';
+  if ((n >= 1300 && n <= 1499) || (n >= 4000 && n <= 7999)) return 'wal';
+  if ((n >= 1500 && n <= 3999) || (n >= 8000 && n <= 9999)) return 'fla';
+  return null;
+}
 
 function selectQ(btn, key, val) {
   btn.parentElement.querySelectorAll('.qcard').forEach(function(b){ b.classList.remove('selected'); });
@@ -220,11 +229,13 @@ async function submitCal() {
   var btn = document.querySelector('.cal-submit');
   btn.disabled = true; btn.textContent = 'Envoi...';
 
-  // On combine les nouvelles questions dans un champ "message" ou similaire si les colonnes manquent
+  // Fix: Move missing columns to message field
   var notes = msgExtra + (entreprise ? "Entreprise: " + entreprise + "\n" : "") + 
               "Offre: " + ofr + "\n" +
               "Energies: " + eType + "\n" +
-              "Installation Elec: " + enormes;
+              "Installation Elec: " + enormes + "\n" +
+              "Type Batiment: " + (typeBat || "N/A") + "\n" +
+              "Accord Copro: " + (accordCopro ? "Oui" : "Non");
 
   var prospectData = {
     prenom: p,
@@ -233,10 +244,8 @@ async function submitCal() {
     telephone: t,
     code_postal: cp,
     date_rdv: combinedDate,
-    region: qState.region || null,
+    region: qState.region || getRegionByCP(cp),
     statut: st,
-    type_batiment: typeBat,
-    accord_copro: accordCopro,
     offre_recommandee: ofr,
     message: notes 
   };
@@ -289,6 +298,7 @@ async function submitQuestion() {
     email: e,
     telephone: t,
     code_postal: cp,
+    region: getRegionByCP(cp),
     statut: st,
     message: msg
   };
@@ -440,14 +450,40 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     offreSelect.addEventListener('change', function() {
-      if (qState.region === 'bxl' && this.value === 'Gaele XL') {
+      if ((qState.region === 'bxl' || getRegionByCP(document.getElementById('cal-cp').value)) === 'bxl' && this.value === 'Gaele XL') {
         alert("L'offre Gaele XL n'est pas disponible pour la r\u00E9gion de Bruxelles-Capitale. R\u00E9orientation vers Gaele Courtier.");
         this.value = 'Gaele Courtier';
-        return; // Stoppe l'exécution ici
+        return;
       }
       if (statSelect.value === 'Locataire' && this.value === 'Gaele XL') {
         alert("L'offre Gaele XL est strictement r\u00E9serv\u00E9e aux propri\u00E9taires. R\u00E9orientation vers Gaele Courtier.");
         this.value = 'Gaele Courtier';
+      }
+    });
+
+    // RECONNAISSANCE CODE POSTAL
+    var cpInp = document.getElementById('cal-cp');
+    if (cpInp) {
+      cpInp.addEventListener('input', function() {
+        var cp = this.value;
+        if (cp.length === 4) {
+          var detectedRegion = getRegionByCP(cp);
+          if (detectedRegion) {
+            qState.region = detectedRegion;
+            forceLocataireLogic(); // Re-apply logic based on new region
+          }
+        }
+      });
+    }
+  }
+
+  var qCpInp = document.getElementById('q-cp');
+  if (qCpInp) {
+    qCpInp.addEventListener('input', function() {
+      var cp = this.value;
+      if (cp.length === 4) {
+        var detectedRegion = getRegionByCP(cp);
+        if (detectedRegion) qState.region = detectedRegion;
       }
     });
   }
