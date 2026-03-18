@@ -1151,7 +1151,11 @@ async function loadProspects() {
   allProspects = data || [];
   updateCrmDashboard();
   updateTabCounts();
-  renderPage();
+  if (currentTab === 'calendrier') {
+    renderCalendar();
+  } else {
+    renderPage();
+  }
 }
 
 function updateCrmDashboard() {
@@ -1750,28 +1754,52 @@ function exportCSV() {
 
 var calendar;
 function renderCalendar() {
+  var events = getCalendarEvents();
   if (!calendar) {
     var calendarEl = document.getElementById('calendar-container');
     calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'timeGridWeek',
       locale: 'fr',
       allDaySlot: false,
-      slotMinTime: '08:00:00',
-      slotMaxTime: '20:00:00',
+      slotMinTime: '07:00:00',
+      slotMaxTime: '21:00:00',
       initialDate: new Date(),
+      height: 'auto',
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'timeGridWeek,timeGridDay'
       },
-      events: getCalendarEvents()
+      events: events,
+      eventClick: function(info) {
+        var pid = info.event.extendedProps.prospectId;
+        var isBlock = info.event.extendedProps.isBlock;
+        if (isBlock) {
+          var confirmDel = confirm('Supprimer ce blocage : "' + info.event.title + '" ?');
+          if (confirmDel && pid) {
+            _supabase.from('prospects').delete().eq('id', pid).then(function() {
+              loadProspects();
+            });
+          }
+        } else if (pid) {
+          openDetail(pid);
+        }
+      }
     });
     calendar.render();
   } else {
     calendar.removeAllEvents();
-    calendar.addEventSource(getCalendarEvents());
+    calendar.addEventSource(events);
     calendar.render();
   }
+}
+
+function addHour(timeStr) {
+  if (!timeStr) return '10:00';
+  var parts = timeStr.split(':');
+  var h = parseInt(parts[0]) + 1;
+  if (h >= 24) h = 23;
+  return (h < 10 ? '0' : '') + h + ':' + (parts[1] || '00');
 }
 
 function getCalendarEvents() {
@@ -1788,14 +1816,17 @@ function getCalendarEvents() {
       }
       
       var isBlock = (p.admin_status === 'blocked');
-      var evColor = isBlock ? '#EF4444' : 'var(--forest2)';
-      var title = isBlock ? '⛔ Bloqué: ' + (p.prenom || '') : 'RDV: ' + (p.prenom || '-') + ' ' + (p.nom || '');
+      var evColor = isBlock ? '#EF4444' : '#0F3D23';
+      var textColor = '#ffffff';
+      var title = isBlock ? '\u26d4 Bloqu\u00e9: ' + (p.prenom || '') : (p.prenom || '-') + ' ' + (p.nom || '');
       
       events.push({
         title: title,
         start: dStr + 'T' + tStr + ':00',
+        end: dStr + 'T' + addHour(tStr) + ':00',
         backgroundColor: evColor,
         borderColor: evColor,
+        textColor: textColor,
         extendedProps: { prospectId: p.id, isBlock: isBlock }
       });
     }
