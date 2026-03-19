@@ -1467,15 +1467,18 @@ async function openDetail(id) {
     // PARSER for missing columns in message
     if (p.message) {
       if (!p.type_batiment || p.type_batiment === '-' || p.type_batiment === 'N/A') {
-        var tbMatch = String(p.message).match(/Type Batiment:\s*(.*)/);
+        var tbMatch = String(p.message).match(/Batiment:\s*(.*)/);
         if (tbMatch) p.type_batiment = tbMatch[1].trim();
       }
       if (p.accord_copro === null || p.accord_copro === undefined || p.accord_copro === '-') {
         var acMatch = String(p.message).match(/Accord Copro:\s*(.*)/);
         if (acMatch) p.accord_copro = (acMatch[1].trim() === 'Oui');
       }
-      var pannMatch = String(p.message).match(/Panneaux existants:\s*(.*)/);
+      var pannMatch = String(p.message).match(/Panneaux:\s*(.*)/);
       if (pannMatch) p.panneaux_existants = pannMatch[1].trim();
+      
+      var entMatch = String(p.message).match(/Entreprise:\s*(.*)/);
+      if (entMatch) p.entreprise = entMatch[1].trim();
     }
 
     var regionNames = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
@@ -2128,7 +2131,25 @@ async function saveProspectChanges() {
   else if (dtVal) combined = dtVal;
 
   var coproVal = document.getElementById('edit-copro').value;
-  var coproBool = (coproVal === 'true' ? true : (coproVal === 'false' ? false : null));
+  var coproStr = (coproVal === 'true' ? 'Oui' : (coproVal === 'false' ? 'Non' : '-'));
+  
+  var entreprise = document.getElementById('edit-entreprise').value;
+  var panneaux = document.getElementById('edit-panneaux').value;
+  var typeBat = document.getElementById('edit-type-bat').value;
+
+  // Re-construct message if it followed the standard format
+  var msg = selectedProspect.message || "";
+  // Simple replacement logic for known labels
+  msg = msg.replace(/Entreprise: .*/, "Entreprise: " + entreprise);
+  msg = msg.replace(/Panneaux: .*/, "Panneaux: " + panneaux);
+  msg = msg.replace(/Batiment: .*/, "Batiment: " + typeBat);
+  msg = msg.replace(/Accord Copro: .*/, "Accord Copro: " + coproStr);
+  
+  // If labels don't exist, append them?
+  if (msg.indexOf("Entreprise:") === -1) msg += "\nEntreprise: " + entreprise;
+  if (msg.indexOf("Panneaux:") === -1) msg += "\nPanneaux: " + panneaux;
+  if (msg.indexOf("Batiment:") === -1) msg += "\nBatiment: " + typeBat;
+  if (msg.indexOf("Accord Copro:") === -1) msg += "\nAccord Copro: " + coproStr;
 
   var updated = {
     prenom: document.getElementById('edit-prenom').value,
@@ -2138,14 +2159,11 @@ async function saveProspectChanges() {
     code_postal: document.getElementById('edit-cp').value,
     region: document.getElementById('edit-region').value,
     statut: document.getElementById('edit-statut').value,
-    entreprise: document.getElementById('edit-entreprise').value,
-    panneaux_existants: document.getElementById('edit-panneaux').value,
-    type_batiment: document.getElementById('edit-type-bat').value,
-    accord_copro: coproBool,
     offre_recommandee: document.getElementById('edit-offre').value,
     notes_admin: document.getElementById('edit-notes').value,
     admin_status: document.getElementById('edit-status').value,
-    date_rdv: combined
+    date_rdv: combined,
+    message: msg
   };
 
   try {
