@@ -912,9 +912,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="font-size:11px; color:#6B7280; margin-top:12px; line-height:1.4;">Faites scanner ce code à votre prospect<br><strong style="color:var(--forest)">gaele-advisor.be</strong></div>
     </div>
 
-    <div class="login-toggle" id="login-toggle" style="margin-top:20px;">
-      Première connexion ? <a onclick="toggleSignup()">Créer un compte</a>
-    </div>
+    <div style="height:20px;"></div>
   </div>
 </div>
 
@@ -2022,11 +2020,9 @@ function renderEditFields() {
   var msgWrap = document.getElementById('detail-message-wrap');
   var actionsEl = document.getElementById('detail-actions');
   
-  // Hide non-editable parts
   if (msgWrap) msgWrap.style.display = 'none';
   if (actionsEl) actionsEl.style.display = 'none';
   
-  // We split the date_rdv if it exists
   var dt = ''; var hr = '';
   if (selectedProspect.date_rdv) {
     var parts = selectedProspect.date_rdv.split(' ');
@@ -2042,7 +2038,61 @@ function renderEditFields() {
         <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">EMAIL</label><input class="login-input" id="edit-email" style="margin-top:2px" value="${escapeHtml(selectedProspect.email || '')}"></div>
         <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">TÉLÉPHONE</label><input class="login-input" id="edit-tel" style="margin-top:2px" value="${escapeHtml(selectedProspect.telephone || '')}"></div>
         <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">CP</label><input class="login-input" id="edit-cp" style="margin-top:2px" value="${escapeHtml(selectedProspect.code_postal || '')}"></div>
-        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">OFFRE</label><input class="login-input" id="edit-offre" style="margin-top:2px" value="${escapeHtml(selectedProspect.offre_recommandee || '')}"></div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">RÉGION</label>
+          <select class="login-input" id="edit-region" style="margin-top:2px">
+            <option value="wal" ${selectedProspect.region === 'wal' ? 'selected' : ''}>Wallonie</option>
+            <option value="fla" ${selectedProspect.region === 'fla' ? 'selected' : ''}>Flandre</option>
+            <option value="bxl" ${selectedProspect.region === 'bxl' ? 'selected' : ''}>Bruxelles</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px">
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">STATUT CLIENT</label>
+          <select class="login-input" id="edit-statut" style="margin-top:2px">
+            <option value="proprio" ${selectedProspect.statut === 'proprio' ? 'selected' : ''}>Propriétaire</option>
+            <option value="locataire" ${selectedProspect.statut === 'locataire' ? 'selected' : ''}>Locataire</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">ENTREPRISE</label>
+          <select class="login-input" id="edit-entreprise" style="margin-top:2px">
+            <option value="Non" ${selectedProspect.entreprise === 'Non' ? 'selected' : ''}>Non</option>
+            <option value="Oui" ${selectedProspect.entreprise === 'Oui' ? 'selected' : ''}>Oui</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">PANNEAUX EXISTANTS</label>
+          <select class="login-input" id="edit-panneaux" style="margin-top:2px">
+            <option value="Non" ${selectedProspect.panneaux_existants === 'Non' ? 'selected' : ''}>Non</option>
+            <option value="Oui" ${selectedProspect.panneaux_existants === 'Oui' ? 'selected' : ''}>Oui</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">TYPE BÂTIMENT</label>
+          <select class="login-input" id="edit-type-bat" style="margin-top:2px">
+            <option value="Maison" ${selectedProspect.type_batiment === 'Maison' ? 'selected' : ''}>Maison</option>
+            <option value="Appartement" ${selectedProspect.type_batiment === 'Appartement' ? 'selected' : ''}>Appartement</option>
+            <option value="Autre" ${selectedProspect.type_batiment === 'Autre' ? 'selected' : ''}>Autre</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">ACCORD CO-PRO</label>
+          <select class="login-input" id="edit-copro" style="margin-top:2px">
+            <option value="null" ${selectedProspect.accord_copro === null ? 'selected' : ''}>-</option>
+            <option value="true" ${selectedProspect.accord_copro === true ? 'selected' : ''}>Oui</option>
+            <option value="false" ${selectedProspect.accord_copro === false ? 'selected' : ''}>Non</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px; font-weight:700; color:#9CA3AF">OFFRE RECOMMANDÉE</label>
+          <select class="login-input" id="edit-offre" style="margin-top:2px">
+            <option value="Gaele" ${selectedProspect.offre_recommandee === 'Gaele' ? 'selected' : ''}>Gaele</option>
+            <option value="Gaele XL" ${selectedProspect.offre_recommandee === 'Gaele XL' ? 'selected' : ''}>Gaele XL</option>
+            <option value="Gaele Courtier" ${selectedProspect.offre_recommandee === 'Gaele Courtier' ? 'selected' : ''}>Gaele Courtier</option>
+          </select>
+        </div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px">
         <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">DATE RDV</label><input class="login-input" type="date" id="edit-date" style="margin-top:2px" value="${dt}"></div>
@@ -2054,7 +2104,7 @@ function renderEditFields() {
       <textarea id="edit-notes" class="login-input" style="height:80px; margin-top:4px">${escapeHtml(selectedProspect.notes_admin || '')}</textarea>
     </div>
     <div style="border-top:1px solid #eee; padding-top:15px">
-      <label style="font-size:10px; font-weight:700; color:#9CA3AF">STATUT</label>
+      <label style="font-size:10px; font-weight:700; color:#9CA3AF">DOSSIER / STATUT ADMIN</label>
       <select id="edit-status" class="login-input" style="margin-top:4px">
         <option value="reception" ${selectedProspect.admin_status === 'reception' ? 'selected' : ''}>Réception</option>
         <option value="manuel" ${selectedProspect.admin_status === 'manuel' ? 'selected' : ''}>Encodage Manuel</option>
@@ -2077,15 +2127,23 @@ async function saveProspectChanges() {
   if (dtVal && hrVal) combined = dtVal + ' ' + hrVal;
   else if (dtVal) combined = dtVal;
 
+  var coproVal = document.getElementById('edit-copro').value;
+  var coproBool = (coproVal === 'true' ? true : (coproVal === 'false' ? false : null));
+
   var updated = {
     prenom: document.getElementById('edit-prenom').value,
     nom: document.getElementById('edit-nom').value,
     email: document.getElementById('edit-email').value,
     telephone: document.getElementById('edit-tel').value,
     code_postal: document.getElementById('edit-cp').value,
+    region: document.getElementById('edit-region').value,
+    statut: document.getElementById('edit-statut').value,
+    entreprise: document.getElementById('edit-entreprise').value,
+    panneaux_existants: document.getElementById('edit-panneaux').value,
+    type_batiment: document.getElementById('edit-type-bat').value,
+    accord_copro: coproBool,
     offre_recommandee: document.getElementById('edit-offre').value,
     notes_admin: document.getElementById('edit-notes').value,
-    status: document.getElementById('edit-status').value, // Use admin_status if that's the column
     admin_status: document.getElementById('edit-status').value,
     date_rdv: combined
   };
