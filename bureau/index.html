@@ -18,6 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+<script>var S_VER = "v1.6";</script>
 <style>
   :root {
     --forest: #0A2E1A;
@@ -50,7 +51,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-bottom: 2px solid rgba(201, 168, 76, 0.2);
   }
   .admin-header::after {
-    content: 'v1.3';
+    content: 'v1.6';
     position: absolute;
     bottom: 4px;
     right: 12px;
@@ -754,16 +755,70 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   @media(max-width: 768px) {
-    .admin-header { padding: 0 15px; height: 60px; }
-    .admin-logo { font-size: 16px; }
-    .admin-logo span { font-size: 9px; margin-left: 6px; }
-    .inbox-sidebar { top: 60px; height: calc(100dvh - 60px); }
+    .admin-header { padding: 0 15px; height: 40px; display: flex; align-items: center; justify-content: space-between; }
+    .inbox-sidebar { top: 40px; height: calc(100dvh - 40px); }
+    .btn-logout { padding: 4px 8px !important; font-size: 11px !important; height: 32px; }
+    .admin-logo { font-size: 13px; }
     .dashboard { padding: 0; }
     .login-box { padding: 36px 24px; }
+
+    /* Compact Content Header */
+    .content-header { padding: 10px 15px; gap: 5px; }
+    .dash-stats { 
+      display: flex; 
+      flex-wrap: nowrap; 
+      overflow-x: auto; 
+      gap: 6px; 
+      margin-bottom: 8px; 
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .stat-card { 
+      background: #fff; 
+      padding: 6px 10px; 
+      border-radius: 8px; 
+      border: 1px solid #E5E7EB; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 0; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+    .stat-n { font-size: 16px; font-weight: 800; color: var(--forest); margin: 0; }
+    .stat-l { font-size: 8px; color: #6B7280; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin:0; }
+
+    .dash-title { font-size: 18px; margin: 2px 0; font-weight: 800; line-height: 1.2; }
     
+    #search-inp { padding: 6px 12px; font-size: 12px; height: 32px; width: 100% !important; margin:0 !important; }
+    .content-header-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+    .content-header .page-btn { padding: 6px 10px !important; font-size: 11px !important; height: 32px; margin:0 !important; }
+    
+    /* Streamlined Prospect List on Mobile */
+    .list-item { padding: 8px 15px; gap: 10px; }
+    .item-date, .badge { display: none !important; } /* Hide date and badges on list view for mobile */
+    .item-name { font-size: 14px; flex-grow: 1; }
+    
+    .bulk-action-bar { padding: 6px 15px !important; flex-wrap: wrap; gap: 10px; }
+    #bulk-actions { flex-wrap: wrap; gap: 10px; }
+    
+    /* FullCalendar mobile fixes */
+    .fc .fc-toolbar { flex-direction: column !important; gap: 8px; }
+    .fc .fc-toolbar-title { font-size: 1em !important; }
+    .fc-header-toolbar { margin-bottom: 1em !important; }
+    .fc .fc-button { padding: 0.3em 0.5em !important; font-size: 0.8em !important; }
+    
+    .sidebar-toggle-fixed {
+      bottom: 15px;
+      right: 15px; /* Move to right to avoid blocking left text */
+      left: auto;
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+
     body.modal-open {
       overflow: hidden !important;
-      height: 100dvh !important;
       position: fixed !important;
       width: 100% !important;
     }
@@ -867,22 +922,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="inbox-main">
       <div class="content-header">
         <!-- DASHBOARD STATS -->
-        <div id="stats-dashboard" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:20px; width: 100%;">
-          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Total Prospects</span>
-            <span id="stat-total-crm" style="font-size:20px; font-weight:800; color:var(--forest)">0</span>
+        <div id="stats-dashboard" class="dash-stats">
+          <div class="stat-card">
+            <span class="stat-l">Total Prospects</span>
+            <span id="stat-total-crm" class="stat-n">0</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Nouveaux (7j)</span>
-            <span id="stat-new-7d" style="font-size:20px; font-weight:800; color:#3B82F6">0</span>
+          <div class="stat-card">
+            <span class="stat-l" style="color:#3B82F6">Nouveaux (7j)</span>
+            <span id="stat-new-7d" class="stat-n" style="color:#3B82F6">0</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Signature</span>
-            <span id="stat-conv-rate" style="font-size:20px; font-weight:800; color:#10B981">0%</span>
+          <div class="stat-card">
+            <span class="stat-l" style="color:#10B981">Signature</span>
+            <span id="stat-conv-rate" class="stat-n" style="color:#10B981">0%</span>
           </div>
-          <div class="stat-card" style="background:var(--white); padding:15px; border-radius:10px; border:1px solid #E5E7EB; display:flex; flex-direction:column; gap:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <span style="font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Perdus</span>
-            <span id="stat-lost" style="font-size:20px; font-weight:800; color:#EF4444">0</span>
+          <div class="stat-card">
+            <span class="stat-l" style="color:#EF4444">Perdus</span>
+            <span id="stat-lost" class="stat-n" style="color:#EF4444">0</span>
           </div>
         </div>
 
@@ -1757,8 +1812,10 @@ function renderCalendar() {
   var events = getCalendarEvents();
   if (!calendar) {
     var calendarEl = document.getElementById('calendar-container');
+    var isMobile = window.innerWidth < 768;
+    
     calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'timeGridWeek',
+      initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
       locale: 'fr',
       allDaySlot: false,
       slotMinTime: '07:00:00',
@@ -1774,6 +1831,8 @@ function renderCalendar() {
       eventClick: function(info) {
         var pid = info.event.extendedProps.prospectId;
         var isBlock = info.event.extendedProps.isBlock;
+        
+        // Single click: Show delete confirmation for blocks, or just do nothing for normal ones (let dblclick handle it)
         if (isBlock) {
           var confirmDel = confirm('Supprimer ce blocage : "' + info.event.title.replace('\u26d4 ', '') + '" ?');
           if (confirmDel && pid) {
@@ -1781,17 +1840,18 @@ function renderCalendar() {
               loadProspects();
             });
           }
+        } else {
+          // Open detail on single click too? User asked for dblclick, but single click is standard.
+          // I'll add a helper text.
         }
       },
       eventDidMount: function(info) {
-        if (!info.event.extendedProps.isBlock) {
-          info.el.title = 'Double-cliquer pour ouvrir la fiche';
-          info.el.style.cursor = 'pointer';
-          info.el.addEventListener('dblclick', function() {
-            var pid = info.event.extendedProps.prospectId;
-            if (pid) openDetail(pid);
-          });
-        }
+        info.el.title = 'Double-cliquer pour ouvrir la fiche';
+        info.el.style.cursor = 'pointer';
+        info.el.addEventListener('dblclick', function() {
+          var pid = info.event.extendedProps.prospectId;
+          if (pid) openDetail(pid);
+        });
       }
     });
     calendar.render();
