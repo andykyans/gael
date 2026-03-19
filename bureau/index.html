@@ -898,7 +898,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <input class="login-input" id="login-email" type="email" placeholder="Email">
     <input class="login-input" id="login-password" type="password" placeholder="Mot de passe">
     <button class="login-btn" id="login-btn" onclick="login()">Se connecter</button>
-    <div class="login-toggle" id="login-toggle">
+    
+    <div class="qr-login-container" style="margin-top:25px; padding-top:20px; border-top:1px solid #eee; text-align:center;">
+      <div style="font-size:11px; color:#10B981; margin-bottom:12px; font-weight: 800; letter-spacing: 0.05em;">📱 PARTAGER LE TEST GAELE</div>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://gaele-advisor.be" alt="QR Code Gaele" style="width:130px; height:130px; border:6px solid #fff; box-shadow:0 10px 25px rgba(16,185,129,0.15); border-radius:16px;">
+      <div style="font-size:11px; color:#6B7280; margin-top:12px; line-height:1.4;">Faites scanner ce code à votre prospect<br><strong style="color:var(--forest)">gaele-advisor.be</strong></div>
+    </div>
+
+    <div class="login-toggle" id="login-toggle" style="margin-top:20px;">
       Première connexion ? <a onclick="toggleSignup()">Créer un compte</a>
     </div>
   </div>
