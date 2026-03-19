@@ -600,6 +600,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .prospects-table a:hover { color: var(--forest3); text-decoration: underline; }
   .has-msg { color: var(--forest2); font-size: 12px; }
   .no-msg { color: #9CA3AF; font-size: 12px; }
+
+  /* ── COLUMN LAYOUT ── */
+  .list-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 40px;
+    background: #F9FAFB;
+    border-bottom: 2px solid #E5E7EB;
+    gap: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .col-check { width: 30px; flex-shrink: 0; }
+  .col-nom { width: 150px; flex-shrink: 0; }
+  .col-prenom { width: 150px; flex-shrink: 0; }
+  .col-date { width: 120px; flex-shrink: 0; }
+  .col-heure { width: 80px; flex-shrink: 0; }
+  .col-fill { flex-grow: 1; }
+
+  @media(max-width: 768px) {
+    .list-header { display: none; }
+    .col-nom, .col-prenom, .col-date, .col-heure { width: auto; flex-shrink: 1; }
+  }
+
   .empty-state {
     text-align: center;
     padding: 64px 20px;
@@ -794,10 +821,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .content-header-row { flex-direction: column; align-items: flex-start; gap: 5px; }
     .content-header .page-btn { padding: 6px 10px !important; font-size: 11px !important; height: 32px; margin:0 !important; }
     
-    /* Streamlined Prospect List on Mobile */
-    .list-item { padding: 8px 15px; gap: 10px; }
-    .item-date, .badge { display: none !important; } /* Hide date and badges on list view for mobile */
-    .item-name { font-size: 14px; flex-grow: 1; }
+    /* Streamlined Prospect List on Mobile (4 columns on one line) */
+    .list-item { padding: 12px 10px !important; gap: 5px !important; display: flex !important; align-items: center !important; }
+    .col-check { width: 25px !important; flex-shrink: 0 !important; }
+    .col-nom { width: 26% !important; font-size: 11px !important; font-weight: 700 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0 !important; }
+    .col-prenom { width: 26% !important; font-size: 11px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0 !important; }
+    .col-date { width: 22% !important; font-size: 10px !important; color: #6B7280; display: block !important; flex-shrink: 0 !important; }
+    .col-heure { width: 16% !important; font-size: 10px !important; color: #6B7280; display: block !important; flex-shrink: 0 !important; }
+    .col-fill { display: none !important; }
+    
+    .list-header { 
+      display: flex !important; 
+      padding: 10px 10px !important; 
+      gap: 5px !important;
+      font-size: 8px !important;
+    }
+    .list-header .col-nom { width: 26% !important; }
+    .list-header .col-prenom { width: 26% !important; }
+    .list-header .col-date { width: 22% !important; }
+    .list-header .col-heure { width: 16% !important; }
     
     .bulk-action-bar { padding: 6px 15px !important; flex-wrap: wrap; gap: 10px; }
     #bulk-actions { flex-wrap: wrap; gap: 10px; }
@@ -970,6 +1012,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </select>
           <button class="page-btn" style="padding: 6px 16px; background: var(--forest2); color: #fff; border:none; border-radius: 6px;" onclick="applyBulkStatus()">Appliquer</button>
         </div>
+      </div>
+
+        </div>
+      </div>
+      
+      <div class="list-header" id="list-header-desktop">
+        <div class="col-check"></div>
+        <div class="col-nom">Nom</div>
+        <div class="col-prenom">Prénom</div>
+        <div class="col-date">Date RDV</div>
+        <div class="col-heure">Heure</div>
+        <div class="col-fill"></div>
       </div>
 
       <div class="content-list" id="prospects-body">
@@ -1328,12 +1382,23 @@ function renderPage() {
       var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
       var itemClass = isUnread ? 'list-item item-unread' : 'list-item';
       var isChecked = selectedIds.indexOf(p.id) !== -1 ? 'checked' : '';
+      
+      // Split date and time
+      var dateVal = '-';
+      var timeVal = '-';
+      if (p.date_rdv) {
+        var parts = p.date_rdv.split(' ');
+        dateVal = parts[0] || '-';
+        timeVal = parts[1] || '-';
+      }
 
-      return '<div class="' + itemClass + '" ondblclick="openDetail(\'' + p.id + '\')" style="display:flex; align-items:center; padding:12px 20px; border-bottom:1px solid #eee; cursor:pointer; gap:15px">' +
-          '<input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)">' +
-          '<div style="font-size:15px; font-weight:700; color:var(--forest); flex-grow:1">' + 
-            escapeHtml(p.prenom || '-') + ' ' + escapeHtml(p.nom || '') + 
-          '</div>' +
+      return '<div class="' + itemClass + '" ondblclick="openDetail(\'' + p.id + '\')" style="display:flex; align-items:center; padding:12px 40px; border-bottom:1px solid #eee; cursor:pointer; gap:20px">' +
+          '<div class="col-check"><input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)"></div>' +
+          '<div class="col-nom" style="font-weight:700; color:var(--forest)">' + escapeHtml(p.nom || '-') + '</div>' +
+          '<div class="col-prenom">' + escapeHtml(p.prenom || '-') + '</div>' +
+          '<div class="col-date" style="font-size:12px; color:#6B7280">' + escapeHtml(dateVal) + '</div>' +
+          '<div class="col-heure" style="font-size:12px; color:#6B7280">' + escapeHtml(timeVal) + '</div>' +
+          '<div class="col-fill"></div>' +
         '</div>';
     }).join('');
 
