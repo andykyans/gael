@@ -18,7 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='9' fill='%230F3D23'/%3E%3Cpath d='M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z' fill='%23C9A84C'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
-<script>var S_VER = "v1.6";</script>
+<script>var S_VER = "v1.7";</script>
 <style>
   :root {
     --forest: #0A2E1A;
@@ -51,7 +51,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-bottom: 2px solid rgba(201, 168, 76, 0.2);
   }
   .admin-header::after {
-    content: 'v1.6';
+    content: 'v1.7';
     position: absolute;
     bottom: 4px;
     right: 12px;
@@ -1325,71 +1325,16 @@ function renderPage() {
   var pageData = filtered.slice(start, start + PAGE_SIZE);
 
     tbody.innerHTML = pageData.map(function(p) {
-      var dateFull = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
-      var timeShort = p.created_at ? new Date(p.created_at).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' }) : '';
-      
       var isUnread = !p.is_read && (p.admin_status === 'reception' || !p.admin_status);
       var itemClass = isUnread ? 'list-item item-unread' : 'list-item';
-
-      var typeLabel = 'Question';
-      var typeClass = 'badge-courtier';
-      var pNom = String(p.nom || '');
-      if (pNom.indexOf('(AVIS CLIENT') !== -1) {
-        typeLabel = 'Avis';
-        typeClass = 'badge-yolk';
-      } else if (p.date_rdv) {
-        typeLabel = 'RDV';
-        typeClass = 'badge-xl';
-      }
-
       var isChecked = selectedIds.indexOf(p.id) !== -1 ? 'checked' : '';
 
-      var statusLabel = 'Nouveau';
-      var statusColor = '#6B7280';
-      var statusBg = '#F3F4F6';
-      
-      var s = p.admin_status || 'reception';
-      if (s === 'appelé') { statusLabel = 'Appelé'; statusColor = '#3B82F6'; statusBg = '#EFF6FF'; }
-      else if (s === 'rdv_fixe') { statusLabel = 'RDV fixé'; statusColor = '#8B5CF6'; statusBg = '#F5F3FF'; }
-      else if (s === 'signé') { statusLabel = 'Signé 🟢'; statusColor = '#059669'; statusBg = '#ECFDF5'; }
-      else if (s === 'perdu') { statusLabel = 'Perdu 🔴'; statusColor = '#DC2626'; statusBg = '#FEF2F2'; }
-
-      var statusBadge = '<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; color:'+statusColor+'; background:'+statusBg+'; margin-left:10px; border:1px solid currentColor">' + statusLabel + '</span>';
-
-      return '<div class="' + itemClass + '" onclick="openDetail(\'' + p.id + '\')" style="display:flex; flex-direction:column; padding:20px 40px; border-bottom:1px solid #eee; gap:12px">' +
-        '<div style="display:flex; align-items:center; justify-content:space-between; width:100%">' +
-          '<div style="display:flex; align-items:center; gap:16px">' +
-            '<input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)">' +
-            '<div style="font-size:12px; color:#9CA3AF; font-weight:600">' + dateFull + ' <span style="opacity:0.6; margin-left:4px">' + timeShort + '</span></div>' +
+      return '<div class="' + itemClass + '" ondblclick="openDetail(\'' + p.id + '\')" style="display:flex; align-items:center; padding:12px 20px; border-bottom:1px solid #eee; cursor:pointer; gap:15px">' +
+          '<input type="checkbox" class="row-checkbox" value="' + p.id + '" ' + isChecked + ' onclick="event.stopPropagation(); toggleRowCheck(this)">' +
+          '<div style="font-size:15px; font-weight:700; color:var(--forest); flex-grow:1">' + 
+            escapeHtml(p.prenom || '-') + ' ' + escapeHtml(p.nom || '') + 
           '</div>' +
-          '<div style="display:flex; align-items:center; gap:10px">' +
-            statusBadge +
-            '<div class="badge ' + typeClass + '">' + typeLabel + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; width:100%">' +
-          '<div>' +
-            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Prospect</div>' +
-            '<div style="font-size:16px; font-weight:700; color:var(--forest)">' + escapeHtml(p.prenom || '-') + ' ' + (escapeHtml(p.nom || '') || '') + '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Email</div>' +
-            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.email || '-') + '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Téléphone</div>' +
-            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.telephone || '-') + '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Localité</div>' +
-            '<div style="font-size:14px; color:#4B5563">' + escapeHtml(p.code_postal || '-') + (p.region ? ' (' + escapeHtml(p.region) + ')' : '') + '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div style="font-size:11px; text-transform:uppercase; color:#9CA3AF; font-weight:700; margin-bottom:4px">Offre</div>' +
-            '<div style="font-size:14px; font-weight:600; color:var(--forest2)">' + escapeHtml(p.offre_recommandee || 'Gaele XL') + '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
+        '</div>';
     }).join('');
 
     var pagEl = document.getElementById('pagination');
