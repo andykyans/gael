@@ -4,7 +4,6 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var blockedDatesCache = [];
-var citiesCache = null;
 
 async function loadBlockedDates() {
   try {
@@ -15,17 +14,7 @@ async function loadBlockedDates() {
   } catch(e) { console.warn("Could not fetch blocked dates:", e); }
 }
 
-async function loadCities() {
-  try {
-    var resp = await fetch('https://raw.githubusercontent.com/jief/zipcode-belgium/master/zipcode-belgium.json');
-    citiesCache = await resp.json();
-  } catch(e) { console.warn("Cities list unavailable"); }
-}
-
-setTimeout(function() {
-  loadBlockedDates();
-  loadCities();
-}, 500);
+setTimeout(loadBlockedDates, 500);
 
 var qState = {};
 
@@ -628,7 +617,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     var cpInp = document.getElementById('cal-cp');
     if (cpInp) {
-      cpInp.addEventListener('input', function() {
+      cpInp.addEventListener('input', async function() {
         var cp = this.value;
         var feedback = document.getElementById('cal-cp-feedback');
         if (cp.length === 4) {
@@ -639,13 +628,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (feedback) {
               var names = { wal: 'Wallonie', fla: 'Flandre', bxl: 'Bruxelles' };
               var regionName = names[detectedRegion] || '';
-              var cityName = "";
-              if (citiesCache) {
-                var match = citiesCache.find(function(item) { return item.zip === cp; });
-                if (match) cityName = match.city + " \u00B7 ";
-              }
-              feedback.textContent = cityName + regionName;
+              
+              // Affichage immédiat de la région
+              feedback.textContent = regionName;
               feedback.style.display = 'block';
+              
+              // Essai de récupération de la ville dans Supabase (Nouvelle table postal_codes)
+              try {
+                var { data, error } = await _supabase
+                  .from('postal_codes')
+                  .select('city')
+                  .eq('zip', cp)
+                  .single();
+                
+                if (data && data.city) {
+                  feedback.textContent = data.city + " \u00B7 " + regionName;
+                }
+              } catch (err) { /* Silently fail if table doesn't exist yet */ }
             }
           }
         } else if (feedback) {
