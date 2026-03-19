@@ -1457,11 +1457,13 @@ function goPage(n) {
 }
 
 
+var selectedProspect = null;
 async function openDetail(id) {
-  isEditMode = true; toggleEditMode(); // Force reset to display mode
+  isEditMode = true; toggleEditMode(); // Force reset to display mode (sets isEditMode to false)
   try {
     var p = allProspects.find(function(x) { return x.id == id; });
     if (!p) return;
+    selectedProspect = p;
     currentOpenId = id;
     
     // PARSER for missing columns in message
@@ -2016,20 +2018,40 @@ function toggleEditMode() {
 
 function renderEditFields() {
   if (!selectedProspect) return;
-  var body = document.querySelector('#detail-overlay .detail-body');
-  // We keep the original body structure but replace text with inputs
+  var fieldsEl = document.getElementById('detail-fields');
+  var msgWrap = document.getElementById('detail-message-wrap');
+  var actionsEl = document.getElementById('detail-actions');
+  
+  // Hide non-editable parts
+  if (msgWrap) msgWrap.style.display = 'none';
+  if (actionsEl) actionsEl.style.display = 'none';
+  
+  // We split the date_rdv if it exists
+  var dt = ''; var hr = '';
+  if (selectedProspect.date_rdv) {
+    var parts = selectedProspect.date_rdv.split(' ');
+    dt = parts[0] || '';
+    hr = parts[1] || '';
+  }
+
   var content = `
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px">
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">PRÉNOM</label><input class="login-input" id="edit-prenom" style="margin-top:2px" value="${escapeHtml(selectedProspect.prenom || '')}"></div>
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">NOM</label><input class="login-input" id="edit-nom" style="margin-top:2px" value="${escapeHtml(selectedProspect.nom || '')}"></div>
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">EMAIL</label><input class="login-input" id="edit-email" style="margin-top:2px" value="${escapeHtml(selectedProspect.email || '')}"></div>
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">TÉLÉPHONE</label><input class="login-input" id="edit-tel" style="margin-top:2px" value="${escapeHtml(selectedProspect.telephone || '')}"></div>
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">CP</label><input class="login-input" id="edit-cp" style="margin-top:2px" value="${escapeHtml(selectedProspect.code_postal || '')}"></div>
-      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">OFFRE</label><input class="login-input" id="edit-offre" style="margin-top:2px" value="${escapeHtml(selectedProspect.offre_recommandee || '')}"></div>
+    <div style="background:#f9fafb; padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid #eee">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">PRÉNOM</label><input class="login-input" id="edit-prenom" style="margin-top:2px" value="${escapeHtml(selectedProspect.prenom || '')}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">NOM</label><input class="login-input" id="edit-nom" style="margin-top:2px" value="${escapeHtml(selectedProspect.nom || '')}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">EMAIL</label><input class="login-input" id="edit-email" style="margin-top:2px" value="${escapeHtml(selectedProspect.email || '')}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">TÉLÉPHONE</label><input class="login-input" id="edit-tel" style="margin-top:2px" value="${escapeHtml(selectedProspect.telephone || '')}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">CP</label><input class="login-input" id="edit-cp" style="margin-top:2px" value="${escapeHtml(selectedProspect.code_postal || '')}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">OFFRE</label><input class="login-input" id="edit-offre" style="margin-top:2px" value="${escapeHtml(selectedProspect.offre_recommandee || '')}"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px">
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">DATE RDV</label><input class="login-input" type="date" id="edit-date" style="margin-top:2px" value="${dt}"></div>
+        <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">HEURE RDV</label><input class="login-input" type="time" id="edit-time" style="margin-top:2px" value="${hr}"></div>
+      </div>
     </div>
     <div style="margin-bottom:15px">
       <label style="font-size:10px; font-weight:700; color:#9CA3AF">NOTES ADMIN</label>
-      <textarea id="edit-notes" class="login-input" style="height:100px; margin-top:4px">${escapeHtml(selectedProspect.admin_notes || '')}</textarea>
+      <textarea id="edit-notes" class="login-input" style="height:80px; margin-top:4px">${escapeHtml(selectedProspect.notes_admin || '')}</textarea>
     </div>
     <div style="border-top:1px solid #eee; padding-top:15px">
       <label style="font-size:10px; font-weight:700; color:#9CA3AF">STATUT</label>
@@ -2043,12 +2065,18 @@ function renderEditFields() {
       </select>
     </div>
   `;
-  body.innerHTML = content;
+  fieldsEl.innerHTML = content;
 }
 
 async function saveProspectChanges() {
   if (!selectedProspect) return;
   
+  var dtVal = document.getElementById('edit-date').value;
+  var hrVal = document.getElementById('edit-time').value;
+  var combined = null;
+  if (dtVal && hrVal) combined = dtVal + ' ' + hrVal;
+  else if (dtVal) combined = dtVal;
+
   var updated = {
     prenom: document.getElementById('edit-prenom').value,
     nom: document.getElementById('edit-nom').value,
@@ -2056,8 +2084,10 @@ async function saveProspectChanges() {
     telephone: document.getElementById('edit-tel').value,
     code_postal: document.getElementById('edit-cp').value,
     offre_recommandee: document.getElementById('edit-offre').value,
-    admin_notes: document.getElementById('edit-notes').value,
-    admin_status: document.getElementById('edit-status').value
+    notes_admin: document.getElementById('edit-notes').value,
+    status: document.getElementById('edit-status').value, // Use admin_status if that's the column
+    admin_status: document.getElementById('edit-status').value,
+    date_rdv: combined
   };
 
   try {
@@ -2069,8 +2099,8 @@ async function saveProspectChanges() {
     loadProspects();
   } catch (e) {
     alert('Erreur lors de la sauvegarde: ' + e.message);
-    isEditMode = true; // Stay in edit mode if error
-    toggleEditMode(); // Re-toggle to reset
+    isEditMode = true; 
+    toggleEditMode(); 
   }
 }
 
