@@ -270,7 +270,6 @@ document.querySelectorAll('.modal-overlay').forEach(function(modal) {
 
 // ── FORM SUBMISSIONS ──
 async function submitCal() {
-  alert("DEBUT submitCal");
   var p = document.getElementById('cal-prenom').value.trim();
   var n = document.getElementById('cal-nom').value.trim();
   var e = document.getElementById('cal-email').value.trim();
@@ -321,7 +320,6 @@ async function submitCal() {
 }
 
 async function submitQuestion() {
-  alert("DEBUT submitQuestion");
   var p = document.getElementById('q-prenom').value.trim();
   var e = document.getElementById('q-email').value.trim();
   var cp = document.getElementById('q-cp').value.trim();
