@@ -1,4 +1,5 @@
 // ── SUPABASE INIT ──
+console.log("Gaelexl Script Version: 3.0 (Email + Logs)");
 var SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZWJjenZodnhhaml5ZWV5ZXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2MDIsImV4cCI6MjA4NzQ0NzYwMn0._wGnpo7sHJeGYHLLdATgWxss8ySVnCZ0UQU5VB6nhhY';
 var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
