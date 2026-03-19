@@ -1013,9 +1013,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="page-btn" style="padding: 6px 16px; background: var(--forest2); color: #fff; border:none; border-radius: 6px;" onclick="applyBulkStatus()">Appliquer</button>
         </div>
       </div>
-
-        </div>
-      </div>
       
       <div class="list-header" id="list-header-desktop">
         <div class="col-check"></div>
@@ -1533,7 +1530,7 @@ async function openDetail(id) {
 
     if (!p.is_read) {
       p.is_read = true;
-      _supabase.from('prospects').update({ is_read: true }).eq('id', id).catch(function(e){ console.error(e); });
+      _supabase.from('prospects').update({ is_read: true }).eq('id', id).then(function(){}).catch(function(e){ console.error(e); });
       renderPage();
     }
   } catch (err) {
