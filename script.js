@@ -312,10 +312,10 @@ async function submitCal() {
     document.getElementById('cal-form-inner').style.display='none';
     document.getElementById('cal-success').style.display='block';
     if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Prise de RDV', content_category: ofr });
-    console.log("Appel de la fonction notify-prospect...");
-    _supabase.functions.invoke('notify-prospect', { body: prospectData })
-      .then(res => console.log("Réponse notification :", res))
-      .catch(err => console.error("Erreur notification :", err));
+    console.log("Notification mail d\u00E9sactiv\u00E9e.");
+    // _supabase.functions.invoke('notify-prospect', { body: prospectData })
+    //   .then(res => console.log("R\u00E9ponse notification :", res))
+    //   .catch(err => console.error("Erreur notification :", err));
   } catch (err) { alert('Erreur. R\u00E9essayez.'); console.error(err); btn.disabled = false; btn.textContent = 'Confirmer \u2192'; }
 }
 
@@ -336,10 +336,10 @@ async function submitQuestion() {
     await _supabase.from('prospects').insert(data);
     document.getElementById('question-form-inner').style.display = 'none';
     document.getElementById('question-success').style.display = 'block';
-    console.log("Appel de la fonction notify-prospect...");
-    _supabase.functions.invoke('notify-prospect', { body: data })
-      .then(res => console.log("Réponse notification :", res))
-      .catch(err => console.error("Erreur notification :", err));
+    console.log("Notification mail d\u00E9sactiv\u00E9e.");
+    // _supabase.functions.invoke('notify-prospect', { body: data })
+    //   .then(res => console.log("R\u00E9ponse notification :", res))
+    //   .catch(err => console.error("Erreur notification :", err));
   } catch (err) { btn.disabled = false; btn.textContent = 'Envoyer \u2192'; console.error(err); }
 }
 
