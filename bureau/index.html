@@ -1994,6 +1994,9 @@ async function saveEncodeModal() {
     var response = await _supabase.from('prospects').insert(newProspect);
     if (response.error) throw response.error;
     
+    // Notification mail
+    _supabase.functions.invoke('notify-prospect', { body: newProspect }).catch(() => {});
+    
     closeEncodeModal();
     alert('Opération réussie !');
     loadProspects(); // Reload all data
