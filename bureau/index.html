@@ -850,6 +850,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .fc-header-toolbar { margin-bottom: 1em !important; }
     .fc .fc-button { padding: 0.3em 0.5em !important; font-size: 0.8em !important; }
     
+    /* Calendrier mobile fixes */
+    .fc .fc-col-header-cell-cushion { font-size: 10px !important; padding: 2px !important; display: block !important; white-space: normal !important; }
+    .fc .fc-timegrid-slot-label-cushion { font-size: 9px !important; }
+    .fc .fc-timegrid-axis-cushion { font-size: 9px !important; }
+    .fc .fc-timegrid-event .fc-event-title { font-size: 9px !important; }
+    .fc .fc-timegrid-event { padding: 1px !important; }
+    
     .sidebar-toggle-fixed {
       bottom: 15px;
       right: 15px; /* Move to right to avoid blocking left text */
@@ -957,6 +964,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="nav-label">Témoignages (Publiés)</span>
           <span class="nav-badge" id="count-publie">0</span>
         </div>
+        <div class="nav-item" onclick="switchTab('manuel')" data-tab="manuel" style="border-top:1px solid #eee; margin-top:10px">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Encodages Manuel</span>
+          <span class="nav-badge" id="count-manuel">0</span>
+        </div>
         <div class="nav-item" onclick="switchTab('calendrier')" data-tab="calendrier" style="border-top:1px solid #eee; margin-top:10px">
           <span class="nav-icon">📅</span>
           <span class="nav-label">Calendrier & Blocages</span>
@@ -1015,6 +1027,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <option value="recontacte">À recontacter</option>
             <option value="non-traite">Non-traité (Hors conditions)</option>
             <option value="perdu">Perdu / Archive</option>
+            <option value="manuel">Encodage Manuel</option>
             <option value="corbeille">Corbeille</option>
           </select>
           <button class="page-btn" style="padding: 6px 16px; background: var(--forest2); color: #fff; border:none; border-radius: 6px;" onclick="applyBulkStatus()">Appliquer</button>
@@ -1094,6 +1107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="detail-date" id="detail-date"></div>
         </div>
         <div style="display:flex; align-items:center; gap:10px">
+          <button class="page-btn btn-edit-toggle" id="btn-edit-prospect" style="background:#f3f4f6; color:#4B5563; border:1px solid #ddd; padding:8px 16px; font-size:13px; border-radius:24px; cursor:pointer;" onclick="toggleEditMode()">✏️ Modifier</button>
           <a id="det-wa-btn" href="#" target="_blank" style="background:#25D366; color:white; padding:8px 16px; border-radius:24px; display:inline-flex; align-items:center; gap:8px; font-size:13px; text-decoration:none; font-weight:700; box-shadow:0 4px 10px rgba(37,211,102,0.2)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
             <span>WhatsApp</span>
@@ -1300,7 +1314,7 @@ function updateCrmDashboard() {
 
 
 function updateTabCounts() {
-  var counts = { reception: 0, appelé: 0, rdv_fixe: 0, signé: 0, perdu: 0, corbeille: 0, publie: 0 };
+  var counts = { reception: 0, appelé: 0, rdv_fixe: 0, signé: 0, perdu: 0, corbeille: 0, publie: 0, manuel: 0 };
   allProspects.forEach(function(p) {
     var s = p.admin_status || 'reception';
     if (counts[s] !== undefined) counts[s]++;
@@ -1322,6 +1336,7 @@ function switchTab(tab) {
     perdu: 'Perdus 🔴',
     corbeille: 'Corbeille',
     publie: 'Témoignages Publiés',
+    manuel: 'Encodages Manuel 📝',
     calendrier: 'Calendrier & Blocages'
   };
   document.getElementById('current-folder-name').textContent = folderNames[tab];
@@ -1443,6 +1458,7 @@ function goPage(n) {
 
 
 async function openDetail(id) {
+  isEditMode = true; toggleEditMode(); // Force reset to display mode
   try {
     var p = allProspects.find(function(x) { return x.id == id; });
     if (!p) return;
@@ -1764,6 +1780,13 @@ function closeDetail() {
   document.getElementById('detail-overlay').classList.remove('open');
   unlockBody();
   resetActionButtons();
+  isEditMode = false;
+  var btn = document.getElementById('btn-edit-prospect');
+  if (btn) {
+    btn.textContent = '✏️ Modifier';
+    btn.style.background = '#f3f4f6';
+    btn.style.color = '#4B5563';
+  }
 }
 
 document.getElementById('detail-overlay').addEventListener('click', function(e) {
@@ -1973,6 +1996,81 @@ async function saveEncodeModal() {
     loadProspects(); // Reload all data
   } catch (err) {
     alert('Erreur: ' + err.message);
+  }
+}
+
+var isEditMode = false;
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  var btn = document.getElementById('btn-edit-prospect');
+  btn.textContent = isEditMode ? '💾 Enregistrer' : '✏️ Modifier';
+  btn.style.background = isEditMode ? 'var(--forest2)' : '#f3f4f6';
+  btn.style.color = isEditMode ? '#fff' : '#4B5563';
+  
+  if (isEditMode) {
+    renderEditFields();
+  } else {
+    saveProspectChanges();
+  }
+}
+
+function renderEditFields() {
+  if (!selectedProspect) return;
+  var body = document.querySelector('#detail-overlay .detail-body');
+  // We keep the original body structure but replace text with inputs
+  var content = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px">
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">PRÉNOM</label><input class="login-input" id="edit-prenom" style="margin-top:2px" value="${escapeHtml(selectedProspect.prenom || '')}"></div>
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">NOM</label><input class="login-input" id="edit-nom" style="margin-top:2px" value="${escapeHtml(selectedProspect.nom || '')}"></div>
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">EMAIL</label><input class="login-input" id="edit-email" style="margin-top:2px" value="${escapeHtml(selectedProspect.email || '')}"></div>
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">TÉLÉPHONE</label><input class="login-input" id="edit-tel" style="margin-top:2px" value="${escapeHtml(selectedProspect.telephone || '')}"></div>
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">CP</label><input class="login-input" id="edit-cp" style="margin-top:2px" value="${escapeHtml(selectedProspect.code_postal || '')}"></div>
+      <div><label style="font-size:10px; font-weight:700; color:#9CA3AF">OFFRE</label><input class="login-input" id="edit-offre" style="margin-top:2px" value="${escapeHtml(selectedProspect.offre_recommandee || '')}"></div>
+    </div>
+    <div style="margin-bottom:15px">
+      <label style="font-size:10px; font-weight:700; color:#9CA3AF">NOTES ADMIN</label>
+      <textarea id="edit-notes" class="login-input" style="height:100px; margin-top:4px">${escapeHtml(selectedProspect.admin_notes || '')}</textarea>
+    </div>
+    <div style="border-top:1px solid #eee; padding-top:15px">
+      <label style="font-size:10px; font-weight:700; color:#9CA3AF">STATUT</label>
+      <select id="edit-status" class="login-input" style="margin-top:4px">
+        <option value="reception" ${selectedProspect.admin_status === 'reception' ? 'selected' : ''}>Réception</option>
+        <option value="manuel" ${selectedProspect.admin_status === 'manuel' ? 'selected' : ''}>Encodage Manuel</option>
+        <option value="appelé" ${selectedProspect.admin_status === 'appelé' ? 'selected' : ''}>Appelé</option>
+        <option value="rdv_fixe" ${selectedProspect.admin_status === 'rdv_fixe' ? 'selected' : ''}>RDV fixé</option>
+        <option value="signé" ${selectedProspect.admin_status === 'signé' ? 'selected' : ''}>Signé</option>
+        <option value="perdu" ${selectedProspect.admin_status === 'perdu' ? 'selected' : ''}>Perdu</option>
+      </select>
+    </div>
+  `;
+  body.innerHTML = content;
+}
+
+async function saveProspectChanges() {
+  if (!selectedProspect) return;
+  
+  var updated = {
+    prenom: document.getElementById('edit-prenom').value,
+    nom: document.getElementById('edit-nom').value,
+    email: document.getElementById('edit-email').value,
+    telephone: document.getElementById('edit-tel').value,
+    code_postal: document.getElementById('edit-cp').value,
+    offre_recommandee: document.getElementById('edit-offre').value,
+    admin_notes: document.getElementById('edit-notes').value,
+    admin_status: document.getElementById('edit-status').value
+  };
+
+  try {
+    var { error } = await _supabase.from('prospects').update(updated).eq('id', selectedProspect.id);
+    if (error) throw error;
+    
+    alert('Modification enregistrée !');
+    closeDetail();
+    loadProspects();
+  } catch (e) {
+    alert('Erreur lors de la sauvegarde: ' + e.message);
+    isEditMode = true; // Stay in edit mode if error
+    toggleEditMode(); // Re-toggle to reset
   }
 }
 
