@@ -494,3 +494,13 @@ async function submitReview() {
 }
 function closeInfoModal() { document.getElementById('info-modal').classList.remove('open'); unlockBody(); }
 function closeQuestionModal() { document.getElementById('question-modal').classList.remove('open'); unlockBody(); }
+
+function scrollToQualification(e) {
+  if (e) e.preventDefault();
+  const el = document.getElementById('qualification');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+    const cpInput = document.getElementById('q-cp-search');
+    if (cpInput) setTimeout(() => cpInput.focus(), 800);
+  }
+}
