@@ -388,7 +388,20 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (wall && !localStorage.getItem('gaele_welcome_seen')) { 
     wall.classList.add('active'); 
     lockBody(); 
-    setTimeout(closeWelcomeWall, 5000); 
+    
+    let countdown = 5;
+    const cdEl = document.getElementById('welcome-countdown');
+    if (cdEl) cdEl.innerText = `Le site s'ouvre dans ${countdown}s...`;
+    
+    const interval = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        if (cdEl) cdEl.innerText = `Le site s'ouvre dans ${countdown}s...`;
+      } else {
+        clearInterval(interval);
+        closeWelcomeWall();
+      }
+    }, 1000);
   }
   else if (wall) wall.style.display = 'none';
 
