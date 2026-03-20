@@ -382,7 +382,7 @@ h1 em{font-style:normal;color:var(--gold)}
 #faq{padding:96px 0;background:#F9FAFB}
 #faq .section-title{color:var(--forest)}
 #faq .section-title em{font-style:normal}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:44px}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:44px;align-items:start}
 @media(max-width:768px){
   .faq-grid{grid-template-columns:1fr}
   #faq, #temoignages, #andy { padding: 48px 0 !important; } /* Réduction drastique des paddings de section */
@@ -649,7 +649,7 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   display: none;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 0 !important;
   padding: 12px 8px calc(12px + env(safe-area-inset-bottom)) !important;
   border: 1px solid rgba(0,0,0,0.08) !important;
