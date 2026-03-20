@@ -15,7 +15,7 @@ async function loadBlockedDates() {
   } catch(e) { console.warn("Could not fetch blocked dates:", e); }
 }
 
-// setTimeout deleted, loading in DOMContentLoaded now.
+// Initial loading of blocked dates is now handled in DOMContentLoaded.
 
 var qState = {};
 
@@ -312,10 +312,7 @@ async function submitCal() {
     document.getElementById('cal-form-inner').style.display='none';
     document.getElementById('cal-success').style.display='block';
     if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Prise de RDV', content_category: ofr });
-    console.log("Notification mail d\u00E9sactiv\u00E9e.");
-    // _supabase.functions.invoke('notify-prospect', { body: prospectData })
-    //   .then(res => console.log("R\u00E9ponse notification :", res))
-    //   .catch(err => console.error("Erreur notification :", err));
+    console.log("Form submitted successfully.");
   } catch (err) { alert('Erreur. R\u00E9essayez.'); console.error(err); btn.disabled = false; btn.textContent = 'Confirmer \u2192'; }
 }
 
@@ -336,10 +333,7 @@ async function submitQuestion() {
     await _supabase.from('prospects').insert(data);
     document.getElementById('question-form-inner').style.display = 'none';
     document.getElementById('question-success').style.display = 'block';
-    console.log("Notification mail d\u00E9sactiv\u00E9e.");
-    // _supabase.functions.invoke('notify-prospect', { body: data })
-    //   .then(res => console.log("R\u00E9ponse notification :", res))
-    //   .catch(err => console.error("Erreur notification :", err));
+    console.log("Question submitted successfully.");
   } catch (err) { btn.disabled = false; btn.textContent = 'Envoyer \u2192'; console.error(err); }
 }
 
@@ -391,7 +385,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   initFomo();
   
   const wall = document.getElementById('welcome-wall');
-  if (wall && !localStorage.getItem('gaele_welcome_seen')) { wall.classList.add('active'); lockBody(); }
+  if (wall && !localStorage.getItem('gaele_welcome_seen')) { 
+    wall.classList.add('active'); 
+    lockBody(); 
+    setTimeout(closeWelcomeWall, 5000); 
+  }
   else if (wall) wall.style.display = 'none';
 
   var pan = document.getElementById('cal-panneaux'); if (pan) pan.addEventListener('change', forceLocataireLogic);
