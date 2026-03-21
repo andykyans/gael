@@ -345,22 +345,6 @@ function toggleFaq(item) {
   if(!isOpen) item.classList.add('open');
 }
 
-// ── FOMO & REVIEWS ──
-function initFomo() {
-  var popup = document.getElementById('fomo-popup');
-  var text = document.getElementById('fomo-text');
-  if (!popup || !text) return;
-  var names = ["Marc", "Sophie", "Julien", "Nathalie", "Thomas", "Marie", "Pierre", "Laura"];
-  var locations = ["Namur", "Li\u00E8ge", "Charleroi", "Mons", "Tournai", "Flandre", "Brabant"];
-  var actions = ["vient de r\u00E9server son analyse gratuite.", "planifie l'installation Gaele XL.", "v\u00E9rifie son \u00E9ligibilit\u00E9."];
-  function show() {
-    text.innerHTML = "<strong>" + names[Math.floor(Math.random()*names.length)] + "</strong> " + actions[Math.floor(Math.random()*actions.length)];
-    popup.classList.remove('fomo-hidden');
-    setTimeout(() => popup.classList.add('fomo-hidden'), 5000);
-  }
-  setInterval(show, 35000);
-  setTimeout(show, 10000);
-}
 
 async function loadDynamicReviews() {
   const grid = document.querySelector('.testi-grid');
@@ -381,10 +365,8 @@ async function loadDynamicReviews() {
   } catch (e) {}
 }
 
-// ── MAIN INIT ──
 document.addEventListener('DOMContentLoaded', async function() {
   loadDynamicReviews();
-  initFomo();
   
   const wall = document.getElementById('welcome-wall');
   if (wall && !localStorage.getItem('gaele_welcome_seen')) { 
