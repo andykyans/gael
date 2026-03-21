@@ -104,7 +104,7 @@ function getOffreRecommandee() {
   if (!r || !s) return null;
   if (r === 'bxl') return 'Gaele Courtier';
   if (s === 'locataire') return 'Gaele Courtier';
-  if (p === 'oui') return 'Gaele Courtier';
+  // Les panneaux existants sont désormais acceptés via Gaele XL (Scénarios A, B, C)
   if (s === 'proprio') return 'Gaele XL';
   return 'Gaele Courtier';
 }
@@ -151,8 +151,10 @@ function forceLocataireLogic() {
   }
 
   if (panneauxSelect && panneauxSelect.value === 'Oui') {
-    if (panneauxInfo) panneauxInfo.style.display = 'block';
-    if (offreSelect) offreSelect.value = 'Gaele Courtier';
+    if (panneauxInfo) {
+      panneauxInfo.innerHTML = "&#9888;&#65039; Une visite technique (Survey) gratuite d\u00E9terminera le sc\u00E9nario (A, B ou C) pour votre installation existante.";
+      panneauxInfo.style.display = 'block';
+    }
   } else {
     if (panneauxInfo) panneauxInfo.style.display = 'none';
   }

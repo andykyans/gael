@@ -105,7 +105,7 @@ src="https://www.facebook.com/tr?id=4388762891378390&ev=PageView&noscript=1"
     { "@type": "Question", "name": "Y a-t-il des frais à prévoir ?", "acceptedAnswer": { "@type": "Answer", "text": "Un seul paiement unique de 150€ de frais de dossier, intégralement remboursés si l'installation s'avère techniquement impossible." }},
     { "@type": "Question", "name": "Pourquoi Gaele XL n'est-il pas disponible à Bruxelles ?", "acceptedAnswer": { "@type": "Answer", "text": "La Région bruxelloise traverse une situation financière difficile, ce qui fragilise les mécanismes de soutien aux énergies renouvelables. Gaele Courtier est disponible partout en Belgique." }},
     { "@type": "Question", "name": "Que se passe-t-il après 25 ans ?", "acceptedAnswer": { "@type": "Answer", "text": "L'installation vous appartient entièrement. Vous pouvez renouveler, changer de fournisseur, ou exploiter votre installation en totale indépendance." }},
-    { "@type": "Question", "name": "Suis-je éligible si je suis locataire ?", "acceptedAnswer": { "@type": "Answer", "text": "Pour Gaele XL, il faut être propriétaire sans panneaux existants. Les locataires peuvent optimiser leur contrat via Gaele Courtier." }},
+    { "@type": "Question", "name": "Suis-je éligible si je suis locataire ?", "acceptedAnswer": { "@type": "Answer", "text": "Pour Gaele XL, il faut être propriétaire. Si vous avez déjà des panneaux, une étude technique déterminera si nous pouvons étendre ou remplacer votre installation (Scénarios A, B, C). Les locataires peuvent optimiser leur contrat via Gaele Courtier." }},
     { "@type": "Question", "name": "Mon toit est-il compatible ?", "acceptedAnswer": { "@type": "Answer", "text": "La grande majorité des toits sont compatibles. Les toits en chaume ou en amiante ne sont pas éligibles. Une visite technique gratuite vérifie la compatibilité." }},
     { "@type": "Question", "name": "Combien de temps prend l'installation ?", "acceptedAnswer": { "@type": "Answer", "text": "Le processus complet prend 8 à 12 semaines entre votre demande et l'installation effective." }},
     { "@type": "Question", "name": "Les panneaux sont-ils assurés ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Le contrat inclut incendie, grêle, vol, vandalisme et rongeurs. Panneaux certifiés DNV-GL." }},
@@ -354,8 +354,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="qcard" onclick="selectQ(this,'panneaux','non')"><span class="qcard-ico">&#9728;&#65039;</span><span class="qcard-label">Non, pas encore</span></button>
     <button class="qcard" onclick="selectQ(this,'panneaux','oui')"><span class="qcard-ico">&#128994;</span><span class="qcard-label">Oui, j'en ai d&#233;j&#224;</span></button>
   </div>
-  <div id="q-panneaux-info" style="display:none; margin:16px auto; max-width:450px; background:#FFF7ED; border:1px solid #FED7AA; border-radius:14px; padding:16px 20px; font-size:14px; color:#92400E;">
-    &#9888;&#65039; <strong>Gaele XL est r&#233;serv&#233; aux installations vierges.</strong> Andy vous orientera vers <strong>Gaele Courtier</strong> ou l'ajout d'une <strong>batterie Earth</strong> &#224; votre installation actuelle.
+  <div id="q-panneaux-info" style="display:none; margin:16px auto; max-width:550px; background:#FFF7ED; border:1px solid #FED7AA; border-radius:14px; padding:16px 20px; font-size:14px; color:#92400E;">
+    &#9888;&#65039; <strong>Bonne nouvelle !</strong> Gaele XL accepte désormais les extensions. Une <strong>visite technique (Survey)</strong> gratuite déterminera votre scénario :
+    <div class="scenarios-list">
+      <div class="scenario-item">
+        <span class="scenario-tag">A</span>
+        <div class="scenario-content"><strong>Puissance &lt; 300 Wc :</strong> Démontage et enlèvement gratuit.</div>
+      </div>
+      <div class="scenario-item">
+        <span class="scenario-tag">B</span>
+        <div class="scenario-content"><strong>&gt; 300 Wc + Full Black :</strong> Conservation et extension (Nouveaux panneaux uniquement).</div>
+      </div>
+      <div class="scenario-item">
+        <span class="scenario-tag">C</span>
+        <div class="scenario-content"><strong>&gt; 300 Wc + Alu :</strong> Démontage gratuit (si toit incliné).</div>
+      </div>
+    </div>
+    <div style="font-size: 12px; margin-top: 10px; opacity: 0.8;"><em>* Visite technique (Survey) obligatoire. Document de renonciation nécessaire pour les démontages.</em></div>
   </div>
 
   <div class="qual-result-box" id="qual-result" style="display:none; margin-top: 40px;">
@@ -552,7 +567,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">Suis-je &#233;ligible si je suis locataire ou si j'ai d&#233;j&#224; des panneaux ?<span class="faq-arrow">+</span></div>
-      <div class="faq-a"><div class="faq-a-inner"><p>Pour Gaele XL, il faut &#234;tre <strong>propri&#233;taire</strong> et <strong>ne pas avoir de panneaux existants</strong>. Si vous &#234;tes locataire ou avez d&#233;j&#224; des panneaux, Andy vous aide via <strong>Gaele Courtier</strong> pour optimiser votre contrat &#233;nergie.</p></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><p>Pour Gaele XL, il faut être <strong>propriétaire</strong>. Si vous avez déjà des panneaux, le programme Gaele XL peut s'étendre ou mettre à jour votre installation après une <strong>visite technique</strong>. Selon la puissance et le type (Full Black ou non), nous adaptons la stratégie (Scénarios A, B ou C). Les locataires sont invités à optimiser leur contrat via <strong>Gaele Courtier</strong>.</p></div></div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">Mon toit est-il compatible ?<span class="faq-arrow">+</span></div>
@@ -573,7 +588,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">J'ai d&#233;j&#224; des panneaux solaires, puis-je b&#233;n&#233;ficier de Gaele ?<span class="faq-arrow">+</span></div>
-      <div class="faq-a"><div class="faq-a-inner"><p>Gaele XL est r&#233;serv&#233; aux propri&#233;taires <strong>sans installation solaire existante</strong>. Si vous avez d&#233;j&#224; des panneaux, Andy peut vous aider de deux fa&#231;ons : (1) optimiser votre contrat &#233;nergie gratuitement via <strong>Gaele Courtier</strong>, ou (2) ajouter une <strong>batterie Earth</strong> &#224; votre installation pour maximiser votre autoconsommation. Contactez Andy pour une &#233;tude personnalis&#233;e.</p></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><p><strong>Oui !</strong> Gaele XL accepte d\u00E9sormais les extensions. Une <strong>visite technique (Survey)</strong> gratuite d\u00E9terminera votre sc\u00E9nario (A, B ou C). Andy vous accompagnera pour optimiser votre installation actuelle avec z\u00E9ro investissement initial.</p></div></div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">C'est du leasing d&#233;guis&#233; ?<span class="faq-arrow">+</span></div>
@@ -703,7 +718,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <option value="Oui">Oui, j'en ai d&#233;j&#224;</option>
         </select>
         <div id="cal-panneaux-info" style="display:none; grid-column:1/-1; background:#FFF7ED; border:1px solid #FED7AA; border-radius:12px; padding:12px 16px; font-size:13px; color:#92400E;">
-          &#9888;&#65039; Andy vous orientera vers Gaele Courtier ou une batterie Earth.
+          &#9888;&#65039; Gaele XL accepte d\u00E9sormais les extensions. Une visite technique (Survey) d\u00E9terminera votre sc\u00E9nario (A, B ou C).
         </div>
         
         <!-- Nouveaux champs pour Propriétaire -->

@@ -1010,3 +1010,45 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   }
 }
 
+/* Scenarios List Styles */
+.scenarios-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 12px;
+}
+.scenario-item {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid #FED7AA;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.scenario-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+.scenario-tag {
+  background: var(--forest2);
+  color: white;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.scenario-content {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #92400E;
+}
+
