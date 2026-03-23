@@ -446,6 +446,13 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
 window.changeVal = function(id, delta) {
   const el = document.getElementById(id);
   if (!el) return;
+  
+  const step = parseFloat(el.step) || 1;
+  // If delta is smaller than step, use step instead to avoid "blocked" feel
+  if (Math.abs(delta) < step) {
+    delta = (delta > 0) ? step : -step;
+  }
+  
   let val = parseFloat(el.value) + delta;
   
   // Clamping
