@@ -181,7 +181,8 @@ function setupInputs() {
 
 // --- CORE UPDATER ---
 window.update = function() {
-  console.log("window.update() called");
+  try {
+    console.log("window.update() called");
   const consoEl = document.getElementById('sl-conso');
   const tarifEl = document.getElementById('sl-tarif');
   const persEl = document.getElementById('sl-pers');
@@ -268,8 +269,17 @@ window.update = function() {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   });
+      try { 
+        renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); 
+      } catch(rmE) { 
+        console.error("Render mobile failed", rmE); 
+      }
 
-  try { renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); } catch(e) { console.error("Render mobile failed", e); }
+  } catch (e) {
+    console.error("Update failed:", e);
+    const errEl = document.getElementById('eco-an');
+    if (errEl) errEl.textContent = "Err: " + e.message;
+  }
 }
 
 function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25, dS2, dS3) {
