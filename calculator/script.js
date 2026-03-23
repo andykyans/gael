@@ -248,6 +248,33 @@ window.update = function() {
   updateEligibility();
   updatePitch(conso, factActuelle, factGaele, ecoAn, ecoMois, eco25);
   renderAmortizationTables();
+  renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4);
+}
+
+function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25) {
+  const container = document.getElementById('mobile-scenario-cards');
+  if (!container) return;
+
+  const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
+  const factGaele = conso * GAELE_KWH;
+
+  const scenarios = [
+    { name: 'S1 (Rien)', inv: '0 €', fac: fmtE(conso * tarif), 25: fmtE(s1_25), class: '' },
+    { name: 'S2 (Panneaux)', inv: '~' + Math.round(inst/1000) + 'K€', fac: fmtE(conso * tarif * S2_DEP), 25: fmtE(s2_25), class: '' },
+    { name: 'S3 (+Batterie)', inv: '~' + Math.round((inst+4000)/1000) + 'K€', fac: fmtE(conso * tarif * S3_DEP), 25: fmtE(s3_25), class: '' },
+    { name: 'Gaele XL ✨', inv: '0 € ✓', fac: fmtE(factGaele), 25: fmtE(s4_25), class: 'highlight' }
+  ];
+
+  container.innerHTML = scenarios.map(s => `
+    <div class="scenario-card-mobile ${s.class}">
+      <div class="card-header-mobile">
+        <span class="card-title-mobile">${s.name}</span>
+      </div>
+      <div class="card-row-mobile"><span>Investissement</span><span>${s.inv}</span></div>
+      <div class="card-row-mobile"><span>Facture / an</span><span>${s.fac}</span></div>
+      <div class="card-row-mobile total"><span>Total 25 ans</span><span>${s['25']}</span></div>
+    </div>
+  `).join('');
 }
 
 // Helper specific for the detailed residual value table (pro style)
