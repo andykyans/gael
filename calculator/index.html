@@ -7,7 +7,7 @@
 <title>Calculateur Gaele XL — Premium Energy Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="style.css?v=28">
+<link rel="stylesheet" href="style.css?v=29">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -97,6 +97,12 @@
     .card { padding: 16px; border-radius: 12px; }
     .pitch-text { font-size: 0.9rem; }
   }
+  .separator-dots { border-top: 1px dashed rgba(0,0,0,0.1); margin: 20px 0; }
+  .tech-spec-block { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; }
+  .spec-row, .b-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; color: var(--text-main); }
+  .spec-row span:first-child, .b-item span:first-child { color: var(--text-muted); }
+  .maintenance-breakdown { border-top: 1px solid rgba(0,0,0,0.05); padding-top: 5px; }
+  .breakdown-grid { display: grid; grid-template-columns: 1fr; gap: 4px; }
 </style>
 </head>
 <body>
@@ -400,12 +406,30 @@
             <input type="range" min="0" max="1" step="1" value="0" oninput="update()" id="e-ond" class="premium-toggle">
             <div class="val-display" id="e-ond-val">Central</div>
           </div>
+
+          <div class="separator-dots"></div>
+
+          <div class="tech-spec-block">
+            <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--or); margin-bottom: 12px;">📊 Fiche Technique</h3>
+            <div class="spec-row"><span>Puissance Totale</span><span id="e-kwp-val" class="highlight">4,3 kWc</span></div>
+            <div class="spec-row"><span>Installation</span><span id="e-panels-val">10 panneaux (4.3 kWc)</span></div>
+            <div class="spec-row"><span>Surface Estimée</span><span id="e-surface-val">~20 m²</span></div>
+          </div>
         </div>
 
         <div class="results-panel">
           <div class="card glass-card timeline-card">
             <h2 class="card-title">📅 Calendrier des coûts (25 ans)</h2>
             <div id="timeline-wrap" class="timeline-container"></div>
+            
+            <div class="maintenance-breakdown">
+              <h3 style="font-size: 0.8rem; margin: 15px 0 10px; color: var(--text-muted);">🛡️ Détails de la provision (25 ans)</h3>
+              <div class="breakdown-grid">
+                <div class="b-item"><span>Nettoyage & Monitoring</span><span id="e-det-clean">3 125 €</span></div>
+                <div class="b-item"><span>Remplacement Matériel</span><span id="e-det-ond">2 400 €</span></div>
+                <div class="b-item"><span>Assurance (Optionnelle)</span><span id="e-det-ass">1 875 €</span></div>
+              </div>
+            </div>
           </div>
           <div class="stats-grid">
             <div class="stat-card glass-card red-bg">
@@ -451,6 +475,6 @@
   </div>
 </div>
 
-<script src="script.js?v=28"></script>
+<script src="script.js?v=29"></script>
 </body>
 </html>

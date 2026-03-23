@@ -494,18 +494,34 @@ function updateEntretien() {
   const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const hasBatt = parseInt(document.getElementById('e-batt')?.value || 0) === 1;
   const isMicro = parseInt(document.getElementById('e-ond')?.value || 0) === 1;
+  const kwp = (panels * 430) / 1000;
+  const surface = panels * 1.95;
 
+  // Fiche Technique
+  if(document.getElementById('e-kwp-val')) document.getElementById('e-kwp-val').textContent = kwp.toFixed(1).replace('.', ',') + ' kWc';
+  if(document.getElementById('e-panels-val')) document.getElementById('e-panels-val').textContent = `${panels} panneaux (Série XL)`;
+  if(document.getElementById('e-surface-val')) document.getElementById('e-surface-val').textContent = `~${Math.round(surface)} m²`;
+
+  // Main UI
   if(document.getElementById('e-inst-val')) document.getElementById('e-inst-val').textContent = fmtE(inst);
   if(document.getElementById('e-batt-val')) document.getElementById('e-batt-val').textContent = hasBatt ? 'Oui' : 'Non';
   if(document.getElementById('e-ond-val')) document.getElementById('e-ond-val').textContent = isMicro ? 'Micro' : 'Central';
 
-  let totalEntretien = 25 * 125; // Nettoyage
-  if(!isMicro) totalEntretien += 2400; // Onduleurs
-  totalEntretien += 1000; // Contrôles
-  if(hasBatt) totalEntretien += 9000; // Batteries
+  // Specific Breakdown
+  const netCost = 25 * 125; // Nettoyage forfaitaire
+  let matCost = 0;
+  if (!isMicro) matCost = 2400; // 2 onduleurs sur 25 ans
+  if (hasBatt) matCost += 4500; // 1 remplacement batterie
+  const assCost = ASSURANCE_AN * 25;
 
+  if(document.getElementById('e-det-clean')) document.getElementById('e-det-clean').textContent = fmtE(netCost);
+  if(document.getElementById('e-det-ond')) document.getElementById('e-det-ond').textContent = fmtE(matCost);
+  if(document.getElementById('e-det-ass')) document.getElementById('e-det-ass').textContent = fmtE(assCost);
+
+  let totalEntretien = netCost + matCost + 1000; // +1000 for controls/SAV
+  
   if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(inst + (hasBatt?PRIX_BATTERIE:0));
-  if(document.getElementById('e-total-entretien')) document.getElementById('e-total-entretien').textContent = fmtE(totalEntretien);
+  if(document.getElementById('e-total-entretien')) document.getElementById('e-total-entretien').textContent = fmtE(totalEntretien + assCost);
 
   const eOnd = document.getElementById('e-ond');
   const ondVal = isMicro ? 1 : 0;
