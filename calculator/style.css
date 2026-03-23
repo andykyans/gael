@@ -468,15 +468,15 @@ body {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #1A5C3A 0%, #0E3218 100%);
-  border: 1px solid rgba(39, 174, 96, 0.3);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .hero-label {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: rgba(255,255,255,0.7);
+  color: #666;
   margin-bottom: 8px;
 }
 
@@ -485,16 +485,13 @@ body {
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(to bottom, #fff, #bbb);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0E3218; /* Deep Dark Green */
   margin-bottom: 8px;
 }
 
 .hero-sub {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #888;
 }
 
 .stats-grid {
