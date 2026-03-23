@@ -321,6 +321,68 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
+<!-- CALCULATOR WIDGET -->
+<section id="lp-calculator" class="app-view">
+  <div class="section-wrap">
+    <div class="widget-card">
+      <div class="widget-header">
+        <span class="section-eyebrow">Simulateur Rapide</span>
+        <h2 class="widget-title">Estimez vos <em>économies</em> instantanément ⚡</h2>
+      </div>
+      
+      <div class="widget-grid">
+        <div class="widget-inputs">
+          <div class="w-input-group">
+            <div class="w-label-row">
+              <label>👨‍👩‍👧‍👦 Taille du foyer</label>
+              <span class="w-value" id="val-w-pers">4 pers.</span>
+            </div>
+            <input type="range" min="1" max="6" step="1" value="4" id="sl-w-pers" class="w-range" oninput="updateWidget()">
+          </div>
+
+          <div class="w-input-group">
+            <div class="w-label-row">
+              <label>⚡ Consommation annuelle</label>
+              <span class="w-value" id="val-w-conso">3 500 kWh</span>
+            </div>
+            <input type="range" min="1000" max="15000" step="100" value="3500" id="sl-w-conso" class="w-range" oninput="updateWidget(true)">
+          </div>
+
+          <div class="w-input-group">
+            <div class="w-label-row">
+              <label>💶 Tarif actuel (€/kWh)</label>
+              <span class="w-value" id="val-w-tarif">0,438 €</span>
+            </div>
+            <input type="range" min="0.25" max="0.65" step="0.005" value="0.438" id="sl-w-tarif" class="w-range" oninput="updateWidget()">
+          </div>
+
+          <div class="w-fixed-info">
+            <span>🛡️ Tarif Gaele XL (fixe) :</span>
+            <strong class="text-gold">0,2703 €/kWh</strong>
+          </div>
+        </div>
+
+        <div class="widget-results">
+          <div class="res-row">
+            <span>Facture Marché</span>
+            <strong id="w-fact-m">— €</strong>
+          </div>
+          <div class="res-row">
+            <span>Facture Gaele XL</span>
+            <strong class="text-green" id="w-fact-g">— €</strong>
+          </div>
+          <div class="res-main">
+            <div class="res-main-label">Économies par an</div>
+            <div class="res-main-val" id="w-eco-an">— €</div>
+          </div>
+          <button class="widget-cta" onclick="scrollToQualification()">Vérifier mon éligibilité →</button>
+        </div>
+      </div>
+      <p class="widget-disclaimer">* Simulation basée sur les prix moyens actuels. L'économie réelle dépend de votre situation géographique et technique.</p>
+    </div>
+  </div>
+</section>
+
 <!-- QUALIFICATION -->
 <section id="qualification" class="app-view">
 <div class="section-wrap" style="max-width:860px">

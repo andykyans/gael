@@ -488,3 +488,54 @@ function scrollToQualification(e) {
     if (cpInput) setTimeout(() => cpInput.focus(), 800);
   }
 }
+
+// ── CALCULATOR WIDGET LOGIC ──
+var W_CONSO_PER_PERS = { 1: 1500, 2: 2800, 3: 3800, 4: 4800, 5: 6000, 6: 8000 };
+var W_GAELE_RATE = 0.2703;
+
+window.updateWidget = function(isManual) {
+    var slPers = document.getElementById('sl-w-pers');
+    var slConso = document.getElementById('sl-w-conso');
+    var slTarif = document.getElementById('sl-w-tarif');
+    
+    if(!slPers || !slConso || !slTarif) return;
+
+    var pers = parseInt(slPers.value);
+    if(!isManual) {
+        slConso.value = W_CONSO_PER_PERS[pers] || 3500;
+    }
+    
+    var conso = parseFloat(slConso.value);
+    var tarif = parseFloat(slTarif.value);
+    
+    // Formatting helpers
+    var f = function(num) { return new Intl.NumberFormat('fr-BE').format(Math.round(num)); };
+    var fD = function(num) { return new Intl.NumberFormat('fr-BE', { minimumFractionDigits: 3 }).format(num); };
+
+    // Update labels
+    document.getElementById('val-w-pers').textContent = pers + (pers >= 6 ? '+ pers.' : ' pers.');
+    document.getElementById('val-w-conso').textContent = f(conso) + ' kWh';
+    document.getElementById('val-w-tarif').textContent = fD(tarif) + ' €';
+
+    // Calculations
+    var factM = conso * tarif;
+    var factG = conso * W_GAELE_RATE;
+    var eco = factM - factG;
+
+    // Update Results
+    document.getElementById('w-fact-m').textContent = f(factM) + ' €';
+    document.getElementById('w-fact-g').textContent = f(factG) + ' €';
+    document.getElementById('w-eco-an').textContent = f(eco) + ' €';
+};
+
+window.scrollToQualification = function() {
+    var el = document.getElementById('qualification');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Auto-init on load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof updateWidget === 'function') updateWidget();
+    }, 500);
+});
