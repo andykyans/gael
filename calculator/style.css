@@ -521,29 +521,32 @@ body {
 }
 
 .mode-switcher {
-  background: rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.15);
   padding: 4px;
   border-radius: 12px;
   display: flex;
   gap: 4px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 .mode-btn {
   background: none;
   border: none;
-  color: var(--text-muted);
-  padding: 6px 12px;
+  color: #fff;
+  opacity: 0.6;
+  padding: 6px 14px;
   border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mode-btn.active {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+  background: var(--or);
+  color: #1a2a1a;
+  opacity: 1;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
 }
 
 .premium-select {

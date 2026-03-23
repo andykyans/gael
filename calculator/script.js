@@ -142,37 +142,45 @@ window.toggleAdvanced = function() {
 };
 
 window.setMode = function(mode) {
-  currentMode = mode;
-  console.log("Setting mode to:", mode);
-  
-  // UI classes
-  document.getElementById('mode-part')?.classList.toggle('active', mode === 'particulier');
-  document.getElementById('mode-pro')?.classList.toggle('active', mode === 'professionnel');
-  
-  // Input visibility
-  const pGroup = document.getElementById('sl-pers').closest('.input-group');
-  const sGroup = document.getElementById('group-secteur');
-  if (pGroup) pGroup.style.display = (mode === 'particulier') ? 'block' : 'none';
-  if (sGroup) sGroup.style.display = (mode === 'particulier') ? 'none' : 'block';
-  
-  // Sliders range update
-  const cEl = document.getElementById('sl-conso');
-  const pEl = document.getElementById('sl-panels');
-  const pElM = document.getElementById('sl-panels-m');
-  
-  if (mode === 'particulier') {
-    if (cEl) { cEl.min = 1000; cEl.max = 20000; cEl.step = 100; cEl.value = 4200; }
-    if (pEl) { pEl.min = 8; pEl.max = 32; pEl.value = 10; }
-    if (pElM) { pElM.min = 8; pElM.max = 32; pElM.value = 10; }
-  } else {
-    if (cEl) { cEl.min = 5000; cEl.max = 500000; cEl.step = 1000; cEl.value = 85000; }
-    if (pEl) { pEl.min = 20; pEl.max = 500; pEl.value = 100; }
-    if (pElM) { pElM.min = 20; pElM.max = 500; pElM.value = 100; }
+  try {
+    currentMode = mode;
+    console.log("Switching to mode:", mode);
+    
+    // UI classes
+    const bPart = document.getElementById('mode-part');
+    const bPro = document.getElementById('mode-pro');
+    if (bPart) bPart.classList.toggle('active', mode === 'particulier');
+    if (bPro) bPro.classList.toggle('active', mode === 'professionnel');
+    
+    // Input visibility
+    const elPers = document.getElementById('sl-pers');
+    const pGroup = elPers ? elPers.closest('.input-group') : null;
+    const sGroup = document.getElementById('group-secteur');
+    
+    if (pGroup) pGroup.style.display = (mode === 'particulier') ? 'block' : 'none';
+    if (sGroup) sGroup.style.display = (mode === 'particulier') ? 'none' : 'block';
+    
+    // Sliders range update
+    const cEl = document.getElementById('sl-conso');
+    const pEl = document.getElementById('sl-panels');
+    const pElM = document.getElementById('sl-panels-m');
+    
+    if (mode === 'particulier') {
+      if (cEl) { cEl.min = 1000; cEl.max = 20000; cEl.step = 100; cEl.value = 4200; }
+      if (pEl) { pEl.min = 8; pEl.max = 32; pEl.value = 10; }
+      if (pElM) { pElM.min = 8; pElM.max = 32; pElM.value = 10; }
+    } else {
+      if (cEl) { cEl.min = 5000; cEl.max = 500000; cEl.step = 1000; cEl.value = 85000; }
+      if (pEl) { pEl.min = 20; pEl.max = 500; pEl.value = 100; }
+      if (pElM) { pElM.min = 20; pElM.max = 500; pElM.value = 100; }
+    }
+    
+    consoIsManual = false;
+    onAutoConsoChange();
+    update();
+  } catch (err) {
+    console.error("setMode failed:", err);
   }
-  
-  consoIsManual = false;
-  onAutoConsoChange();
-  update();
 };
 
 // --- NAVIGATION ---
@@ -316,8 +324,8 @@ window.update = function() {
   });
 
   // MASTER SYNC: Always update all tabs UI
-  updateAdvancedLabels();
-  updateEntretien();
+  try { updateAdvancedLabels(); } catch(e1) { console.error("updateAdvancedLabels failed", e1); }
+  try { updateEntretien(); } catch(e2) { console.error("updateEntretien failed", e2); }
   
   try { 
     renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); 
