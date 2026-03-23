@@ -509,7 +509,7 @@ window.setWidgetMode = function(mode) {
     var groupPers = document.getElementById('group-w-pers');
     if(groupPers) groupPers.style.display = (mode === 'particulier') ? 'block' : 'none';
 
-    // Adjust Sliders
+    // Adjust Sliders (v53: safely check if slConso exists)
     var slConso = document.getElementById('sl-w-conso');
     if(slConso) {
         if(mode === 'particulier') {
@@ -532,15 +532,19 @@ window.updateWidget = function(isManual) {
     var slPers = document.getElementById('sl-w-pers');
     var slConso = document.getElementById('sl-w-conso');
     
-    if(!slConso) return;
-
     var pers = (currentWidgetMode === 'particulier' && slPers) ? parseInt(slPers.value) : 4;
     
-    if(!isManual && currentWidgetMode === 'particulier' && slConso) {
-        slConso.value = W_CONSO_PER_PERS[pers] || 3500;
+    var conso;
+    if (slConso) {
+        if(!isManual && currentWidgetMode === 'particulier') {
+            slConso.value = W_CONSO_PER_PERS[pers] || 3500;
+        }
+        conso = parseFloat(slConso.value);
+    } else {
+        // Automatic fallback if slider is removed (v53)
+        conso = (currentWidgetMode === 'particulier') ? (W_CONSO_PER_PERS[pers] || 3500) : 50000;
     }
     
-    var conso = parseFloat(slConso.value);
     var tarifMarket = W_BASIS_MARKET;
     var tarifGaele = (currentWidgetMode === 'particulier') ? W_RATE_PART : W_RATE_PRO;
     
