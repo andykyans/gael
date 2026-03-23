@@ -11,6 +11,9 @@ let GAELE_IDX = 0.02;
 let MARCHE_IDX = 0.035; 
 let S2_DEP = 0.60;
 let S3_DEP = 0.40;
+const PRIX_WC = 1.1;
+const POWER_PER_PANEL = 430;
+const PRIX_BATTERIE = 7000;
 const ASSURANCE_AN = 75;
 
 const CONSO_PAR_PERS = {
@@ -227,8 +230,8 @@ window.update = function() {
     's3-fac': fmtE(factActuelle * S3_DEP),
     's4-fac': fmtE(factGaele),
     's4-tarif': GAELE_KWH.toFixed(4).replace('.', ',') + '€ ✓',
-    's2-inv': '~' + Math.round(parseFloat(document.getElementById('sl-inst')?.value || 6000)/1000) + 'K€',
-    's3-inv': '~' + Math.round((parseFloat(document.getElementById('sl-inst')?.value || 6000) + 4000)/1000) + 'K€',
+    's2-inv': '~' + Math.round((parseInt(document.getElementById('sl-panels')?.value || 10) * POWER_PER_PANEL * PRIX_WC) / 1000) + 'K€',
+    's3-inv': '~' + Math.round((parseInt(document.getElementById('sl-panels')?.value || 10) * POWER_PER_PANEL * PRIX_WC + PRIX_BATTERIE) / 1000) + 'K€',
     's2-maint': fmtE(dS2.reduce((acc, d) => acc + d.maint, 0)),
     's3-maint': fmtE(dS3.reduce((acc, d) => acc + d.maint, 0)),
     's1-25': fmtE(total25S1),
@@ -265,14 +268,15 @@ function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25, dS2, dS3) {
   // Force visibility for mobile
   container.style.display = 'block';
 
-  const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
+  const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const factGaele = conso * GAELE_KWH;
 
   // Simple mapping to avoid any complex property access errors
   const scenarioData = [
     { title: 'S1 (Statut Quo)', invest: '0 €', maintenance: '0 €', insurance: '0 €', annual: (conso * tarif), total: s1_25, css: '' },
     { title: 'S2 (PV Seuls)', invest: '~' + Math.round(inst/1000) + 'K€', maintenance: dS2 ? dS2.reduce((a, b) => a + b.maint, 0) : 0, insurance: (ASSURANCE_AN * 25), annual: (conso * tarif * S2_DEP), total: s2_25, css: '' },
-    { title: 'S3 (PV + Batt)', invest: '~' + Math.round((inst+4000)/1000) + 'K€', maintenance: dS3 ? dS3.reduce((a, b) => a + b.maint, 0) : 0, insurance: (ASSURANCE_AN * 25), annual: (conso * tarif * S3_DEP), total: s3_25, css: '' },
+    { title: 'S3 (PV + Batt)', invest: '~' + Math.round((inst+PRIX_BATTERIE)/1000) + 'K€', maintenance: dS3 ? dS3.reduce((a, b) => a + b.maint, 0) : 0, insurance: (ASSURANCE_AN * 25), annual: (conso * tarif * S3_DEP), total: s3_25, css: '' },
     { title: 'S4 (Gaele XL) ✨', invest: '0 € ✓', maintenance: 'Inclus', insurance: 'Inclus', annual: factGaele, total: s4_25, css: 'highlight' }
   ];
 
@@ -303,11 +307,8 @@ function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25, dS2, dS3) {
 
 
 function calculateScenarioYearly(scenario, conso, baseTarif) {
-  const mIdx = parseFloat(document.getElementById('sl-idx-marche')?.value || 3.5) / 100;
-  const gIdx = parseFloat(document.getElementById('sl-idx-gaele')?.value || 2.0) / 100;
-  const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60) / 100;
-  const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40) / 100;
-  const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
+  const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const ond = parseInt(document.getElementById('sl-ond')?.value || 0);
 
   let results = [];
@@ -317,7 +318,7 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   
   // Initial investment
   if (scenario === 's2') cumulated = -inst;
-  if (scenario === 's3') cumulated = -(inst + 4000); // 4k extra for battery
+  if (scenario === 's3') cumulated = -(inst + PRIX_BATTERIE); 
   
   for (let y = 1; y <= 25; y++) {
     let elecCost = 0;
@@ -379,21 +380,20 @@ window.updateAdvancedLabels = function() {
   const gIdx = parseFloat(document.getElementById('sl-idx-gaele')?.value || 2.0);
   const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60);
   const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40);
-  const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
+  const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const ond = parseInt(document.getElementById('sl-ond')?.value || 0);
 
   if(document.getElementById('val-idx-marche')) document.getElementById('val-idx-marche').textContent = mIdx.toFixed(1).replace('.', ',') + '%';
   if(document.getElementById('val-idx-gaele')) document.getElementById('val-idx-gaele').textContent = gIdx.toFixed(1).replace('.', ',') + '%';
   if(document.getElementById('val-dep-s2')) document.getElementById('val-dep-s2').textContent = Math.round(s2Dep) + '%';
   if(document.getElementById('val-dep-s3')) document.getElementById('val-dep-s3').textContent = Math.round(s3Dep) + '%';
-  if(document.getElementById('val-inst')) document.getElementById('val-inst').textContent = inst.toLocaleString() + '€';
+  if(document.getElementById('val-panels')) document.getElementById('val-panels').textContent = panels;
+  if(document.getElementById('val-inst')) document.getElementById('val-inst').textContent = fmtE(inst);
   if(document.getElementById('val-ond')) document.getElementById('val-ond').textContent = (ond === 0) ? 'Central' : 'Micro';
   
-  // Sync with Entretien Tab if it exists
-  const eInst = document.getElementById('e-inst');
-  if(eInst) eInst.value = inst;
   const eInstVal = document.getElementById('e-inst-val');
-  if(eInstVal) eInstVal.textContent = inst.toLocaleString() + ' €';
+  if(eInstVal) eInstVal.textContent = fmtE(inst);
   
   const eOnd = document.getElementById('e-ond');
   if(eOnd) eOnd.value = ond;
@@ -425,7 +425,8 @@ function onConsoManual() {
 
 // --- ENTRETIEN ---
 function updateEntretien() {
-  const inst = parseFloat(document.getElementById('e-inst')?.value || 6000);
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
+  const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const hasBatt = parseInt(document.getElementById('e-batt')?.value || 0) === 1;
   const isMicro = parseInt(document.getElementById('e-ond')?.value || 0) === 1;
 
@@ -438,22 +439,12 @@ function updateEntretien() {
   totalEntretien += 1000; // Contrôles
   if(hasBatt) totalEntretien += 9000; // Batteries
 
-  if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(inst + (hasBatt?4000:0));
+  if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(inst + (hasBatt?PRIX_BATTERIE:0));
   if(document.getElementById('e-total-entretien')) document.getElementById('e-total-entretien').textContent = fmtE(totalEntretien);
 
-  // Sync back to Advanced sliders in Calcul tab
-  const slInst = document.getElementById('sl-inst');
-  if(slInst && slInst.value != inst) {
-    slInst.value = inst;
-    if(document.getElementById('val-inst')) document.getElementById('val-inst').textContent = inst.toLocaleString() + '€';
-  }
-  
-  const slOnd = document.getElementById('sl-ond');
+  const eOnd = document.getElementById('e-ond');
   const ondVal = isMicro ? 1 : 0;
-  if(slOnd && slOnd.value != ondVal) {
-    slOnd.value = ondVal;
-    if(document.getElementById('val-ond')) document.getElementById('val-ond').textContent = isMicro ? 'Micro' : 'Central';
-  }
+  if(eOnd) eOnd.value = ondVal;
 
   // Final update of other tabs results
   // We use a small guard to avoid infinite recursion since update() calls updateEntretien()

@@ -225,20 +225,26 @@
                 <input type="range" min="0" max="100" step="1" value="40" oninput="window.updateAdvancedLabels()" id="sl-dep-s3" class="premium-range">
                 <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-dep-s3', 1)">+</button>
               </div>
+            <div class="input-group small">
+              <div class="label-row">
+                <label>☀️ Nombre de panneaux (min 8)</label>
+                <span class="value-badge small" id="val-panels">10</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-panels', -1)">-</button>
+                <input type="range" min="8" max="32" step="1" value="10" oninput="window.updateAdvancedLabels()" id="sl-panels" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-panels', 1)">+</button>
+              </div>
             </div>
 
             <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 15px 0;">
 
             <div class="input-group small">
               <div class="label-row">
-                <label>🛠️ Prix Installation (€)</label>
-                <span class="value-badge small" id="val-inst">6 000€</span>
+                <label>🛠️ Prix Installation Estimé</label>
+                <span class="value-badge small highlight" id="val-inst">4 730€</span>
               </div>
-              <div class="slider-control-group">
-                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-inst', -500)">-</button>
-                <input type="range" min="3000" max="16000" step="500" value="6000" oninput="window.updateAdvancedLabels()" id="sl-inst" class="premium-range">
-                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-inst', 500)">+</button>
-              </div>
+              <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 5px;">Calculé sur base de 1.1€/Wc (Panneaux 430Wc)</p>
             </div>
 
             <div class="input-group small">
@@ -363,9 +369,9 @@
         <div class="card glass-card side-panel">
           <h2 class="card-title">⚙️ Configuration Achat</h2>
           <div class="input-group">
-            <label>Prix Installation</label>
-            <input type="range" min="3000" max="16000" step="500" value="6000" oninput="updateEntretien()" id="e-inst" class="premium-range">
-            <div class="val-display" id="e-inst-val">6 000 €</div>
+            <label>Prix Installation Estimé</label>
+            <div class="val-display highlight" id="e-inst-val">6 000 €</div>
+            <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 5px;">(Basé sur le nombre de panneaux)</p>
           </div>
           <div class="q-block">
             <label>Batterie ?</label>
