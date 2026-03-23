@@ -1180,10 +1180,37 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   }
 }
 
-/* ── HERO INTEGRATED WIDGET (v49) ── */
+/* ── HERO INTEGRATED WIDGET (v49-v50) ── */
 .hero-widget-container {
   margin-top: 30px;
   max-width: 480px;
+}
+
+.w-mode-switcher {
+  display: flex;
+  background: var(--cream2);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.w-mode-btn {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--forest);
+}
+
+.w-mode-btn.active {
+  background: var(--forest);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .widget-card.mini {

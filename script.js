@@ -489,28 +489,63 @@ function scrollToQualification(e) {
   }
 }
 
-// ── CALCULATOR WIDGET LOGIC ──
+// ── CALCULATOR WIDGET LOGIC (v50) ──
 var W_CONSO_PER_PERS = { 1: 1500, 2: 2800, 3: 3800, 4: 4800, 5: 6000, 6: 8000 };
-var W_GAELE_RATE = 0.2703;
+var W_RATE_PART = 0.2703;
+var W_RATE_PRO = 0.25;
+var W_BASIS_MARKET = 0.45; // Tarif bloqué à 0,45 € (v50)
+var currentWidgetMode = 'particulier';
+
+window.setWidgetMode = function(mode) {
+    currentWidgetMode = mode;
+    
+    // UI Update buttons
+    var btnPart = document.getElementById('w-btn-part');
+    var btnPro = document.getElementById('w-btn-pro');
+    if(btnPart) btnPart.classList.toggle('active', mode === 'particulier');
+    if(btnPro) btnPro.classList.toggle('active', mode === 'professionnel');
+
+    // UI visibility
+    var groupPers = document.getElementById('group-w-pers');
+    if(groupPers) groupPers.style.display = (mode === 'particulier') ? 'block' : 'none';
+
+    // Adjust Sliders
+    var slConso = document.getElementById('sl-w-conso');
+    if(slConso) {
+        if(mode === 'particulier') {
+            slConso.min = 1000;
+            slConso.max = 15000;
+            slConso.step = 100;
+            slConso.value = 3500;
+        } else {
+            slConso.min = 5000;
+            slConso.max = 200000;
+            slConso.step = 500;
+            slConso.value = 50000;
+        }
+    }
+    
+    updateWidget();
+};
 
 window.updateWidget = function(isManual) {
     var slPers = document.getElementById('sl-w-pers');
     var slConso = document.getElementById('sl-w-conso');
-    var slTarif = document.getElementById('sl-w-tarif');
     
-    if(!slConso || !slTarif) return;
+    if(!slConso) return;
 
-    var pers = slPers ? parseInt(slPers.value) : 4;
-    if(!isManual && slConso) {
+    var pers = (currentWidgetMode === 'particulier' && slPers) ? parseInt(slPers.value) : 4;
+    
+    if(!isManual && currentWidgetMode === 'particulier' && slConso) {
         slConso.value = W_CONSO_PER_PERS[pers] || 3500;
     }
     
     var conso = parseFloat(slConso.value);
-    var tarif = parseFloat(slTarif.value);
+    var tarifMarket = W_BASIS_MARKET;
+    var tarifGaele = (currentWidgetMode === 'particulier') ? W_RATE_PART : W_RATE_PRO;
     
     // Formatting helpers
     var f = function(num) { return new Intl.NumberFormat('fr-BE').format(Math.round(num)); };
-    var fD = function(num) { return new Intl.NumberFormat('fr-BE', { minimumFractionDigits: 3 }).format(num); };
 
     // Update labels (with null checks)
     var elPers = document.getElementById('val-w-pers');
@@ -518,23 +553,14 @@ window.updateWidget = function(isManual) {
     
     var elConso = document.getElementById('val-w-conso');
     if (elConso) elConso.textContent = f(conso) + ' kWh';
-    
-    var elTarif = document.getElementById('val-w-tarif');
-    if (elTarif) elTarif.textContent = fD(tarif) + ' €';
 
     // Calculations
-    var factM = conso * tarif;
-    var factG = conso * W_GAELE_RATE;
+    var factM = conso * tarifMarket;
+    var factG = conso * tarifGaele;
     var eco = factM - factG;
-    var eco25 = eco * 25; // Base estimation
+    var eco25 = eco * 25;
 
     // Update Results (with null checks)
-    var elFactM = document.getElementById('w-fact-m');
-    if (elFactM) elFactM.textContent = f(factM) + ' €';
-    
-    var elFactG = document.getElementById('w-fact-g');
-    if (elFactG) elFactG.textContent = f(factG) + ' €';
-    
     var elEcoAn = document.getElementById('w-eco-an');
     if (elEcoAn) elEcoAn.textContent = f(eco) + ' €';
 
