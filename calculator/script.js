@@ -332,6 +332,10 @@ function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25, dS2, dS3) {
 
 
 function calculateScenarioYearly(scenario, conso, baseTarif) {
+  const mIdx = parseFloat(document.getElementById('sl-idx-marche')?.value || 3.5) / 100;
+  const gIdx = parseFloat(document.getElementById('sl-idx-gaele')?.value || 2.0) / 100;
+  const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60) / 100;
+  const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40) / 100;
   const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
   const inst = panels * POWER_PER_PANEL * PRIX_WC;
   const ond = parseInt(document.getElementById('sl-ond')?.value || 0);
