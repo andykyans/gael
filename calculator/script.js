@@ -32,10 +32,13 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- AUTH LOGIC ---
 async function checkAuth() {
+  console.log("Checking authentication...");
   const { data: { session } } = await _supabase.auth.getSession();
-  if (session && ADMIN_EMAILS.includes(session.user.email)) {
+  if (session && session.user && ADMIN_EMAILS.includes(session.user.email)) {
+    console.log("Authenticated as:", session.user.email);
     showApp();
   } else {
+    console.log("Not authenticated or not admin.");
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
   }
@@ -46,6 +49,12 @@ window.login = async function() {
   const password = document.getElementById('login-password').value;
   const errorEl = document.getElementById('login-error');
   errorEl.style.display = 'none';
+
+  if (!email || !password) {
+    errorEl.textContent = "Email et mot de passe requis.";
+    errorEl.style.display = 'block';
+    return;
+  }
 
   if (!ADMIN_EMAILS.includes(email)) {
     errorEl.textContent = "Accès réservé aux conseillers Gaele.";
@@ -60,6 +69,11 @@ window.login = async function() {
   } else {
     showApp();
   }
+}
+
+window.logout = async function() {
+  await _supabase.auth.signOut();
+  window.location.reload();
 }
 
 function showApp() {

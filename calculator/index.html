@@ -75,6 +75,24 @@
   }
   .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(201,168,76,0.3); }
   .login-error { color: #E74C3C; font-size: 0.85rem; margin-top: 16px; display: none; }
+
+  /* Mobile Fixes */
+  @media (max-width: 768px) {
+    .grid-layout { display: flex; flex-direction: column; gap: 16px; }
+    .side-panel { order: 2; width: 100%; }
+    .results-panel { order: 1; width: 100%; }
+    .hero-val { font-size: 2.2rem !important; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; }
+    .premium-table { min-width: 600px; }
+    .desktop-nav { display: none !important; }
+    .mobile-nav { display: flex !important; }
+    .brand-subtitle { display: none; }
+    .header-status { font-size: 0.6rem; }
+    .content-area { padding: 12px 12px 100px; }
+    .card { padding: 16px; border-radius: 12px; }
+    .pitch-text { font-size: 0.9rem; }
+  }
 </style>
 </head>
 <body>
@@ -114,6 +132,7 @@
       </nav>
       <div class="header-status">
         <span class="status-dot"></span> Online
+        <button onclick="logout()" class="logout-link" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.7rem; margin-left:12px; text-decoration:underline;">Déconnexion</button>
       </div>
     </div>
   </header>
