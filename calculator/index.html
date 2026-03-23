@@ -125,10 +125,7 @@
         <div class="nav-item active" data-tab="calcul" onclick="showTab('calcul')">Calcul</div>
         <div class="nav-item" data-tab="comparatif" onclick="showTab('comparatif')">Situations</div>
         <div class="nav-item" data-tab="graphique" onclick="showTab('graphique')">Graphique</div>
-        <div class="nav-item" data-tab="pitch" onclick="showTab('pitch')">Pitch</div>
-        <div class="nav-item" data-tab="score" onclick="showTab('score')">Score</div>
         <div class="nav-item" data-tab="entretien" onclick="showTab('entretien')">Entretien</div>
-        <div class="nav-item" data-tab="amortissement" onclick="showTab('amortissement')">Amortissement</div>
       </nav>
       <div class="header-status">
         <span class="status-dot"></span> Online
@@ -310,7 +307,11 @@
 
     <!-- ═══ TAB 2 : SITUATIONS ═══ -->
     <section class="tab-content" id="tab-comparatif">
-      <div class="card glass-card wide-card">
+      <div id="mobile-scenario-cards">
+        <p style="text-align:center; padding: 40px; color: var(--text-dim);">Chargement des situations...</p>
+      </div>
+
+      <div class="card glass-card wide-card desktop-only-table">
         <h2 class="card-title">🏠 Comparaison des Situations</h2>
         <div class="table-responsive">
           <table class="premium-table">
@@ -325,19 +326,15 @@
             </thead>
             <tbody id="comparison-body">
               <tr><td>Investissement</td><td>0€</td><td id="s2-inv" class="text-red">—</td><td id="s3-inv" class="text-red">—</td><td class="text-gold">0€ ✓</td></tr>
-              <tr><td>Entretien</td><td>0€</td><td id="s2-maint" class="text-red">—</td><td id="s3-maint" class="text-red">—</td><td class="text-gold">Inclus ✓</td></tr>
-              <tr><td>Tarif /kWh</td><td id="s1-tarif" class="text-red">—</td><td id="s2-tarif">—</td><td id="s3-tarif">—</td><td class="text-gold">0,2703€ ✓</td></tr>
+              <tr><td>Entretien (25 ans)</td><td id="s1-maint">0€</td><td id="s2-maint" class="text-red">—</td><td id="s3-maint" class="text-red">—</td><td id="s4-maint" class="text-gold">Inclus ✓</td></tr>
+              <tr><td>Assurances (25 ans)</td><td id="s1-ass">0€</td><td id="s2-ass" class="text-red">—</td><td id="s3-ass" class="text-red">—</td><td id="s4-ass" class="text-gold">Inclus ✓</td></tr>
+              <tr><td>Tarif /kWh</td><td id="s1-tarif" class="text-red">—</td><td id="s2-tarif">—</td><td id="s3-tarif">—</td><td id="s4-tarif" class="text-gold">0,2703€ ✓</td></tr>
               <tr><td>Facture / an</td><td id="s1-fac" class="text-red">—</td><td id="s2-fac">—</td><td id="s3-fac">—</td><td class="text-gold" id="s4-fac">—</td></tr>
               <tr><td>Batterie</td><td class="text-red">Non</td><td class="text-red">Non</td><td>Payante</td><td class="text-gold">Gratuite ✓</td></tr>
               <tr><td>PEB Positif</td><td class="text-red">Non</td><td>Partiel</td><td>Oui</td><td class="text-gold">Oui ✓</td></tr>
               <tr class="total-row"><td>Total 25 ans</td><td id="s1-25" class="text-red">—</td><td id="s2-25">—</td><td id="s3-25">—</td><td class="text-gold" id="s4-25">—</td></tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- NEW: Mobile Scenario Cards (Hidden on Desktop) -->
-        <div id="mobile-scenario-cards" class="mobile-only-cards">
-          <!-- Dynamically filled by JS -->
         </div>
 
         <div class="banner-gold">
@@ -360,104 +357,7 @@
       </div>
     </section>
 
-    <!-- ═══ TAB 4 : PITCH ═══ -->
-    <section class="tab-content" id="tab-pitch">
-      <div class="pitch-container">
-        <div class="card glass-card pitch-card">
-          <div class="pitch-tag">Accroche</div>
-          <p class="pitch-text" id="pitch-1">—</p>
-        </div>
-        <div class="card glass-card pitch-card gold-border">
-          <div class="pitch-tag gold">Économies</div>
-          <p class="pitch-text" id="pitch-2">—</p>
-        </div>
-        <div class="card glass-card pitch-card">
-          <div class="pitch-tag">Crédibilité</div>
-          <p class="pitch-text" id="pitch-3">L'État belge détient ~33% de Gridlink via la SFPIM — fonds souverain institutionnel. Ce n'est pas une startup, c'est un projet d'intérêt national. 50M€ investis.</p>
-        </div>
-        <div class="card glass-card pitch-card red-border">
-          <div class="pitch-tag red">Inaction</div>
-          <p class="pitch-text" id="pitch-4">—</p>
-        </div>
-        <div class="card glass-card pitch-card">
-          <div class="pitch-tag">Objection</div>
-          <p class="pitch-text" id="pitch-5">—</p>
-        </div>
-        <button class="cta-button" onclick="copyPitch()">Copier le Pitch complet</button>
-      </div>
-    </section>
-
-    <!-- ═══ TAB 5 : SCORE ═══ -->
-    <section class="tab-content" id="tab-score">
-      <div class="grid-layout">
-        <div class="card glass-card side-panel">
-          <h2 class="card-title">🎯 Qualification</h2>
-          <div id="questions-list">
-             <!-- Injecté ou structure fixe -->
-             <div class="q-block">
-               <label>Propriétaire ?</label>
-               <div class="btn-group">
-                 <button class="btn-q" id="q1-oui" onclick="setQ(1,'oui')">Oui</button>
-                 <button class="btn-q" id="q1-non" onclick="setQ(1,'non')">Non</button>
-               </div>
-             </div>
-             <div class="q-block">
-               <label>Sans panneaux ?</label>
-               <div class="btn-group">
-                 <button class="btn-q" id="q2-non" onclick="setQ(2,'non')">Oui</button>
-                 <button class="btn-q" id="q2-oui" onclick="setQ(2,'oui')">Équipé</button>
-               </div>
-             </div>
-             <div class="q-block">
-               <label>Région (WA/FL) ?</label>
-               <div class="btn-group">
-                 <button class="btn-q" id="q3-oui" onclick="setQ(3,'oui')">Oui</button>
-                 <button class="btn-q" id="q3-non" onclick="setQ(3,'non')">BXL</button>
-               </div>
-             </div>
-             <div class="q-block">
-               <label>Toit compatible ?</label>
-               <div class="btn-group">
-                 <button class="btn-q" id="q4-oui" onclick="setQ(4,'oui')">Oui</button>
-                 <button class="btn-q" id="q4-non" onclick="setQ(4,'non')">Non</button>
-               </div>
-             </div>
-             <div class="q-block">
-               <label>Compteur numérique ?</label>
-               <div class="btn-group">
-                 <button class="btn-q" id="q5-oui" onclick="setQ(5,'oui')">Oui</button>
-                 <button class="btn-q" id="q5-non" onclick="setQ(5,'non')">Non</button>
-               </div>
-             </div>
-          </div>
-        </div>
-
-        <div class="results-panel">
-          <div class="card glass-card gauge-card">
-            <h2 class="card-title">Score d'éligibilité</h2>
-            <div class="gauge-container">
-              <div class="gauge-base"></div>
-              <div class="gauge-needle" id="score-needle"></div>
-              <div class="gauge-value" id="score-center">0%</div>
-            </div>
-            <div id="score-verdict" class="verdict-banner">Répondez aux questions</div>
-          </div>
-          <div class="card glass-card metrics-card">
-             <div id="criteria-list" class="criteria-grid">
-               <!-- Iterated via JS -->
-               <div class="crit-item"><span>Propriétaire</span><div class="bar-bg"><div id="bar-q1" class="bar"></div></div><span id="txt-q1">-</span></div>
-               <div class="crit-item"><span>Libre</span><div class="bar-bg"><div id="bar-q2" class="bar"></div></div><span id="txt-q2">-</span></div>
-               <div class="crit-item"><span>Région</span><div class="bar-bg"><div id="bar-q3" class="bar"></div></div><span id="txt-q3">-</span></div>
-               <div class="crit-item"><span>Toit</span><div class="bar-bg"><div id="bar-q4" class="bar"></div></div><span id="txt-q4">-</span></div>
-               <div class="crit-item"><span>Compteur</span><div class="bar-bg"><div id="bar-q5" class="bar"></div></div><span id="txt-q5">-</span></div>
-               <div class="crit-item"><span>Conso</span><div class="bar-bg"><div id="bar-conso" class="bar"></div></div><span id="txt-conso">-</span></div>
-             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ TAB 6 : ENTRETIEN ═══ -->
+    <!-- ═══ TAB 4 : ENTRETIEN ═══ -->
     <section class="tab-content" id="tab-entretien">
       <div class="grid-layout">
         <div class="card glass-card side-panel">
@@ -501,15 +401,6 @@
         </div>
       </div>
     </section>
-    <!-- ═══ TAB 7 : AMORTISSEMENT ═══ -->
-    <section class="tab-content" id="tab-amortissement">
-      <div class="card glass-card">
-        <h2 class="card-title">💵 Tableaux d'amortissement détaillés (25 ans)</h2>
-        <div id="amort-tables-root" class="amort-container">
-          <!-- Injecté par JS -->
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- MOBILE FOOTER NAV -->
@@ -526,17 +417,9 @@
       <span class="nav-icon">📈</span>
       <span class="nav-text">Graph</span>
     </div>
-    <div class="nav-btn" data-tab="pitch" onclick="showTab('pitch')">
-      <span class="nav-icon">💬</span>
-      <span class="nav-text">Pitch</span>
-    </div>
-    <div class="nav-btn" data-tab="score" onclick="showTab('score')">
-      <span class="nav-icon">🎯</span>
-      <span class="nav-text">Qualif</span>
-    </div>
-    <div class="nav-btn" data-tab="amortissement" onclick="showTab('amortissement')">
-      <span class="nav-icon">💵</span>
-      <span class="nav-text">Amort.</span>
+    <div class="nav-btn" data-tab="entretien" onclick="showTab('entretien')">
+      <span class="nav-icon">🛠️</span>
+      <span class="nav-text">Entretien</span>
     </div>
   </footer>
 
@@ -545,6 +428,6 @@
   </div>
 </div>
 
-<script src="script.js?v=10"></script>
+<script src="script.js?v=11"></script>
 </body>
 </html>

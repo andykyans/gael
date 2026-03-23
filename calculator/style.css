@@ -346,6 +346,8 @@ body {
   flex-direction: column;
 }
 
+.mobile-only-cards, #mobile-scenario-cards { display: none; }
+
 .pro-amort-wrapper {
   background: #fff;
   color: #333;
@@ -801,9 +803,9 @@ body {
     min-width: 550px;
   }
 
-  /* NEW: Hide Original Table and Show Cards */
-  .table-responsive { display: none !important; }
-  .mobile-only-cards { display: block !important; }
+  /* NEW: Force Mobile View */
+  .desktop-only-table { display: none !important; }
+  #mobile-scenario-cards { display: block !important; }
   
   .scenario-card-mobile {
     background: var(--glass);
@@ -859,8 +861,6 @@ body {
     display: none; /* Hide Base HT, Amort An, Cumul Amort on mobile */
   }
 }
-
-.mobile-only-cards { display: none; }
 
 .app-footer {
   text-align: center;

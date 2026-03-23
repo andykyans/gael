@@ -11,6 +11,7 @@ let GAELE_IDX = 0.02;
 let MARCHE_IDX = 0.035; 
 let S2_DEP = 0.60;
 let S3_DEP = 0.40;
+const ASSURANCE_AN = 75;
 
 const CONSO_PAR_PERS = {
   1: 1800, 2: 2800, 3: 3500, 4: 4200, 5: 5000, 6: 5800, 7: 6500, 8: 7200
@@ -22,7 +23,6 @@ const fmtE = (n) => fmt(Math.round(n)) + ' €';
 
 let chartInstance = null;
 let consoIsManual = false;
-const questions = {1: null, 2: null, 3: null, 4: null, 5: null};
 
 // --- SUPABASE CONFIG ---
 const SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupInputs();
   updateEntretien();
-  updateEligibility();
   
   const btn = document.querySelector('.advanced-toggle');
   if (btn) {
@@ -146,7 +145,7 @@ window.showTab = function(id) {
   });
 
   if (id === 'graphique') setTimeout(drawChart, 100);
-  if (id === 'amortissement') renderAmortizationTables();
+  if (id === 'comparatif') update(); // Force update to render mobile cards
 };
 
 // --- INPUTS ---
@@ -201,10 +200,10 @@ window.update = function() {
   const dS3 = calculateScenarioYearly('s3', conso, tarif);
   const dS4 = calculateScenarioYearly('s4', conso, tarif);
 
-  const total25S1 = Math.abs(dS1[24].cum);
-  const total25S2 = Math.abs(dS2[24].cum);
-  const total25S3 = Math.abs(dS3[24].cum);
-  const total25S4 = Math.abs(dS4[24].cum);
+  const total25S1 = (dS1.length > 0) ? Math.abs(dS1[dS1.length - 1].cum) : 0;
+  const total25S2 = (dS2.length > 0) ? Math.abs(dS2[dS2.length - 1].cum) : 0;
+  const total25S3 = (dS3.length > 0) ? Math.abs(dS3[dS3.length - 1].cum) : 0;
+  const total25S4 = (dS4.length > 0) ? Math.abs(dS4[dS4.length - 1].cum) : 0;
 
   const eco25 = total25S1 - total25S4;
 
@@ -227,6 +226,7 @@ window.update = function() {
     's2-fac': fmtE(factActuelle * S2_DEP),
     's3-fac': fmtE(factActuelle * S3_DEP),
     's4-fac': fmtE(factGaele),
+    's4-tarif': GAELE_KWH.toFixed(4).replace('.', ',') + '€ ✓',
     's2-inv': '~' + Math.round(parseFloat(document.getElementById('sl-inst')?.value || 6000)/1000) + 'K€',
     's3-inv': '~' + Math.round((parseFloat(document.getElementById('sl-inst')?.value || 6000) + 4000)/1000) + 'K€',
     's2-maint': fmtE(dS2.reduce((acc, d) => acc + d.maint, 0)),
@@ -235,7 +235,13 @@ window.update = function() {
     's2-25': fmtE(total25S2),
     's3-25': fmtE(total25S3),
     's4-25': fmtE(total25S4),
-    'avantage-s1': fmtE(eco25),
+    'avantage-s1': fmtE(total25S1 - total25S4),
+    's1-maint': '0 €',
+    's4-maint': 'Inclus ✓',
+    's1-ass': '0 €',
+    's2-ass': fmtE(ASSURANCE_AN * 25),
+    's3-ass': fmtE(ASSURANCE_AN * 25),
+    's4-ass': 'Inclus ✓',
     'g-s1': fmtE(total25S1),
     'g-s4': fmtE(total25S4)
   };
@@ -245,60 +251,56 @@ window.update = function() {
     if (el) el.textContent = val;
   });
 
-  updateEligibility();
-  updatePitch(conso, factActuelle, factGaele, ecoAn, ecoMois, eco25);
-  renderAmortizationTables();
-  renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4);
+  try { renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); } catch(e) { console.error("Render mobile failed", e); }
 }
 
-function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25) {
+function renderMobileCards(conso, tarif, s1_25, s2_25, s3_25, s4_25, dS2, dS3) {
+  console.log("renderMobileCards() called");
   const container = document.getElementById('mobile-scenario-cards');
-  if (!container) return;
+  if (!container) {
+    console.warn("Container #mobile-scenario-cards not found");
+    return;
+  }
+
+  // Force visibility for mobile
+  container.style.display = 'block';
 
   const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
   const factGaele = conso * GAELE_KWH;
 
-  const scenarios = [
-    { name: 'S1 (Rien)', inv: '0 €', fac: fmtE(conso * tarif), 25: fmtE(s1_25), class: '' },
-    { name: 'S2 (Panneaux)', inv: '~' + Math.round(inst/1000) + 'K€', fac: fmtE(conso * tarif * S2_DEP), 25: fmtE(s2_25), class: '' },
-    { name: 'S3 (+Batterie)', inv: '~' + Math.round((inst+4000)/1000) + 'K€', fac: fmtE(conso * tarif * S3_DEP), 25: fmtE(s3_25), class: '' },
-    { name: 'Gaele XL ✨', inv: '0 € ✓', fac: fmtE(factGaele), 25: fmtE(s4_25), class: 'highlight' }
+  // Simple mapping to avoid any complex property access errors
+  const scenarioData = [
+    { title: 'S1 (Statut Quo)', invest: '0 €', maintenance: '0 €', insurance: '0 €', annual: (conso * tarif), total: s1_25, css: '' },
+    { title: 'S2 (PV Seuls)', invest: '~' + Math.round(inst/1000) + 'K€', maintenance: dS2 ? dS2.reduce((a, b) => a + b.maint, 0) : 0, insurance: (ASSURANCE_AN * 25), annual: (conso * tarif * S2_DEP), total: s2_25, css: '' },
+    { title: 'S3 (PV + Batt)', invest: '~' + Math.round((inst+4000)/1000) + 'K€', maintenance: dS3 ? dS3.reduce((a, b) => a + b.maint, 0) : 0, insurance: (ASSURANCE_AN * 25), annual: (conso * tarif * S3_DEP), total: s3_25, css: '' },
+    { title: 'S4 (Gaele XL) ✨', invest: '0 € ✓', maintenance: 'Inclus', insurance: 'Inclus', annual: factGaele, total: s4_25, css: 'highlight' }
   ];
 
-  container.innerHTML = scenarios.map(s => `
-    <div class="scenario-card-mobile ${s.class}">
-      <div class="card-header-mobile">
-        <span class="card-title-mobile">${s.name}</span>
+  let html = '';
+  scenarioData.forEach(s => {
+    const maintenanceStr = typeof s.maintenance === 'number' ? fmtE(s.maintenance) : s.maintenance;
+    const insuranceStr = typeof s.insurance === 'number' ? fmtE(s.insurance) : s.insurance;
+    const annualStr = fmtE(s.annual);
+    const totalStr = fmtE(s.total);
+
+    html += `
+      <div class="scenario-card-mobile ${s.css}">
+        <div class="card-header-mobile">
+          <span class="card-title-mobile">${s.title}</span>
+        </div>
+        <div class="card-row-mobile"><span>Investissement</span><span>${s.invest}</span></div>
+        <div class="card-row-mobile"><span>Entretien (25a)</span><span>${maintenanceStr}</span></div>
+        <div class="card-row-mobile"><span>Assurance (25a)</span><span>${insuranceStr}</span></div>
+        <div class="card-row-mobile"><span>Facture / an</span><span>${annualStr}</span></div>
+        <div class="card-row-mobile total"><span>Total 25 ans</span><span>${totalStr}</span></div>
       </div>
-      <div class="card-row-mobile"><span>Investissement</span><span>${s.inv}</span></div>
-      <div class="card-row-mobile"><span>Facture / an</span><span>${s.fac}</span></div>
-      <div class="card-row-mobile total"><span>Total 25 ans</span><span>${s['25']}</span></div>
-    </div>
-  `).join('');
+    `;
+  });
+
+  container.innerHTML = html;
+  console.log("renderMobileCards() finished successfully");
 }
 
-// Helper specific for the detailed residual value table (pro style)
-function calculateResidualValue(baseAmount) {
-  const years = 25;
-  const yearlyDep = baseAmount / years;
-  let results = [];
-  let startYear = 2027;
-
-  for (let y = 0; y < years; y++) {
-    const totalDep = yearlyDep * (y + 1);
-    const residualHT = baseAmount - totalDep;
-    results.push({
-      year: startYear + y,
-      base: baseAmount,
-      depAn: yearlyDep,
-      depTotal: totalDep,
-      residualHT: Math.max(0, residualHT),
-      residual6: Math.max(0, residualHT * 1.06),
-      residual21: Math.max(0, residualHT * 1.21)
-    });
-  }
-  return results;
-}
 
 function calculateScenarioYearly(scenario, conso, baseTarif) {
   const mIdx = parseFloat(document.getElementById('sl-idx-marche')?.value || 3.5) / 100;
@@ -336,8 +338,11 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
     }
     if (scenario === 's4') elecCost = conso * currentGaeleTarif;
 
-    cumulated -= (elecCost + maintCost);
-    results.push({ year: y, elec: elecCost, maint: maintCost, cum: cumulated });
+    // Insurance for traditional solar
+    const insuranceCost = (scenario === 's2' || scenario === 's3') ? ASSURANCE_AN : 0;
+
+    cumulated -= (elecCost + maintCost + insuranceCost);
+    results.push({ year: y, elec: elecCost, maint: maintCost, insurance: insuranceCost, cum: cumulated });
     
     currentTarif *= (1 + mIdx);
     currentGaeleTarif *= (1 + gIdx);
@@ -345,122 +350,6 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   return results;
 }
 
-function renderAmortizationTables() {
-  const root = document.getElementById('amort-tables-root');
-  if (!root) return;
-  
-  const conso = parseFloat(document.getElementById('sl-conso')?.value || 3500);
-  const tarif = parseFloat(document.getElementById('sl-tarif')?.value || 0.435);
-  const inst = parseFloat(document.getElementById('sl-inst')?.value || 6000);
-  
-  // Part 1: Residual Value (Inspired by image)
-  const resData = calculateResidualValue(inst);
-  let resRows = '';
-  resData.forEach((d, idx) => {
-    resRows += `
-      <tr>
-        <td class="idx-col">${idx + 1}</td>
-        <td>${d.year}</td>
-        <td>${fmtE(d.base)}</td>
-        <td>${fmtE(d.depAn)}</td>
-        <td>${fmtE(d.depTotal)}</td>
-        <td class="res-col res-ht">${fmtE(d.residualHT)}</td>
-        <td class="res-col res-6" style="color:#27AE60">${fmtE(d.residual6)}</td>
-        <td class="res-col res-21" style="color:#2980b9">${fmtE(d.residual21)}</td>
-      </tr>
-    `;
-  });
-
-  const resHtml = `
-    <div class="pro-amort-wrapper" style="margin-bottom: 30px; border-top-color: var(--green);">
-      <div class="pro-header">
-        <div class="pro-title">VALEUR RÉSIDUELLE INSTALLATION (TABLEAU DÉGRESSIF)</div>
-        <div class="pro-disclaimer">Indicateur d'amortissement comptable de l'actif (durée 25 ans)</div>
-      </div>
-      <table class="pro-amort-table">
-        <thead>
-          <tr class="sub-header">
-            <th>#</th>
-            <th>Année</th>
-            <th>Base HT</th>
-            <th>Amort. An</th>
-            <th>Cumul Amort.</th>
-            <th>Résiduel HT</th>
-            <th>TVA 6% Incl.</th>
-            <th>TVA 21% Incl.</th>
-          </tr>
-        </thead>
-        <tbody>${resRows}</tbody>
-      </table>
-    </div>
-  `;
-
-  // Part 2: Comparative Situations (Requested by user)
-  const scenarios = [
-    { id: 's1', label: 'S1 : Situation Marché', color: 'var(--red)' },
-    { id: 's2', label: 'S2 : Panneaux Seuls', color: 'var(--blue)' },
-    { id: 's3', label: 'S3 : Panneaux + Batterie', color: '#e67e22' },
-    { id: 's4', label: 'S4 : Solution Gaele XL ✨', color: 'var(--or)' }
-  ];
-
-  const dataS1 = calculateScenarioYearly('s1', conso, tarif);
-  let situationsHtml = '';
-
-  scenarios.forEach(sc => {
-    const data = calculateScenarioYearly(sc.id, conso, tarif);
-    let rows = '';
-    let foundBreakEven = false;
-    
-    data.forEach((d, idx) => {
-      const s1Cumul = dataS1[idx].cum;
-      const isBetter = d.cum > s1Cumul;
-      let breakEvenClass = '';
-      
-      if (!foundBreakEven && sc.id !== 's1' && isBetter) {
-        foundBreakEven = true;
-        breakEvenClass = 'pro-break-even';
-      }
-      
-      const cumulVal = Math.round(d.cum);
-      const cumulClass = cumulVal < 0 ? 'neg' : 'pos';
-
-      rows += `
-        <tr class="${breakEvenClass}">
-          <td class="idx-col">${d.year}</td>
-          <td>${fmtE(d.elec)}</td>
-          <td>${d.maint > 0 ? fmtE(d.maint) : '—'}</td>
-          <td class="res-col ${cumulClass}">${fmtE(d.cum)}</td>
-        </tr>
-      `;
-    });
-
-    situationsHtml += `
-      <div class="pro-amort-wrapper scenario-card">
-        <div class="pro-header" style="border-bottom-color: ${sc.color}">
-          <div class="pro-title" style="color: ${sc.color}">${sc.label}</div>
-          <div class="pro-disclaimer">Évolution financière (Cumul économies vs investissement)</div>
-        </div>
-        <table class="pro-amort-table">
-          <thead>
-            <tr>
-              <th>An</th>
-              <th>Élec.</th>
-              <th>Maint.</th>
-              <th style="text-align:right">Cumulé</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    `;
-  });
-  
-  root.innerHTML = `
-    ${resHtml}
-    <h2 class="section-divider">📈 Évolution Comparative des Situations</h2>
-    <div class="multi-amort-grid">${situationsHtml}</div>
-  `;
-}
 
 // NEW: Helper for +/- buttons and label updates
 window.changeVal = function(id, delta) {
@@ -512,6 +401,7 @@ window.updateAdvancedLabels = function() {
   if(eOndVal) eOndVal.textContent = (ond === 0) ? 'Central' : 'Micro';
 
   updateEntretien();
+  update();
 };
 
 // --- PERSON & CONSO LOGIC ---
@@ -532,64 +422,6 @@ function onConsoManual() {
   update();
 }
 
-// --- ELIGIBILITY ---
-const weights = { 1: {oui: 35, non: 0}, 2: {non: 25, oui: 0}, 3: {oui: 20, non: 5}, 4: {oui: 12, non: 0}, 5: {oui: 8, non: 4} };
-const qLabels = { 1: {oui:'✅ Oui', non:'❌ Non'}, 2: {non:'✅ Libre', oui:'❌ Équipé'}, 3: {oui:'✅ OK', non:'⚠️ BXL'}, 4: {oui:'✅ OK', non:'❌ Non'}, 5: {oui:'✅ Oui', non:'⚠️ Non'} };
-
-function setQ(n, val) {
-  questions[n] = val;
-  document.getElementById(`q${n}-oui`)?.classList.toggle('active-oui', val==='oui');
-  document.getElementById(`q${n}-non`)?.classList.toggle('active-non', val==='non');
-  if(n===2 || n===4) {
-    document.getElementById(`q${n}-non`)?.classList.toggle('active-oui', val==='non');
-    document.getElementById(`q${n}-non`)?.classList.remove('active-non');
-  }
-  updateEligibility();
-}
-
-function updateEligibility() {
-  let score = 0;
-  for(let n=1; n<=5; n++) {
-    if(questions[n] !== null) score += weights[n][questions[n]] || 0;
-    
-    const bar = document.getElementById('bar-q' + n);
-    const txt = document.getElementById('txt-q' + n);
-    if(bar && txt) {
-      if(questions[n] === null) { bar.style.width = '0%'; txt.textContent = '—'; }
-      else {
-        const pts = weights[n][questions[n]] || 0;
-        const maxPts = Math.max(...Object.values(weights[n]));
-        bar.style.width = (maxPts > 0 ? (pts/maxPts*100) : 0) + '%';
-        bar.style.background = pts > 0 ? 'var(--green)' : 'var(--red)';
-        txt.textContent = qLabels[n][questions[n]];
-      }
-    }
-  }
-
-  const conso = parseFloat(document.getElementById('sl-conso')?.value || 0);
-  const barC = document.getElementById('bar-conso');
-  const txtC = document.getElementById('txt-conso');
-  if(barC && txtC) {
-    const consoPct = Math.min(100, (conso / 8000) * 100);
-    barC.style.width = consoPct + '%';
-    barC.style.background = conso < 2000 ? 'var(--red)' : conso < 3500 ? 'var(--or)' : 'var(--green)';
-    txtC.textContent = (conso/1000).toFixed(1) + 'k';
-  }
-
-  const needle = document.getElementById('score-needle');
-  const center = document.getElementById('score-center');
-  if(needle) needle.style.transform = `translateX(-50%) rotate(${-90 + (score * 1.8)}deg)`;
-  if(center) center.textContent = score + '%';
-
-  const verdict = document.getElementById('score-verdict');
-  if(verdict) {
-    if(questions[1] === 'non') verdict.textContent = '❌ Non éligible (Locataire)';
-    else if(questions[2] === 'oui') verdict.textContent = '⚠️ Déjà équipé';
-    else if(score >= 80) verdict.textContent = '⭐ EXCELLENT';
-    else if(score >= 60) verdict.textContent = '✅ BON';
-    else verdict.textContent = 'Calcul du score...';
-  }
-}
 
 // --- ENTRETIEN ---
 function updateEntretien() {
@@ -608,17 +440,30 @@ function updateEntretien() {
 
   if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(inst + (hasBatt?4000:0));
   if(document.getElementById('e-total-entretien')) document.getElementById('e-total-entretien').textContent = fmtE(totalEntretien);
+
+  // Sync back to Advanced sliders in Calcul tab
+  const slInst = document.getElementById('sl-inst');
+  if(slInst && slInst.value != inst) {
+    slInst.value = inst;
+    if(document.getElementById('val-inst')) document.getElementById('val-inst').textContent = inst.toLocaleString() + '€';
+  }
+  
+  const slOnd = document.getElementById('sl-ond');
+  const ondVal = isMicro ? 1 : 0;
+  if(slOnd && slOnd.value != ondVal) {
+    slOnd.value = ondVal;
+    if(document.getElementById('val-ond')) document.getElementById('val-ond').textContent = isMicro ? 'Micro' : 'Central';
+  }
+
+  // Final update of other tabs results
+  // We use a small guard to avoid infinite recursion since update() calls updateEntretien()
+  if (!window._isUpdating) {
+    window._isUpdating = true;
+    update();
+    window._isUpdating = false;
+  }
 }
 
-// --- PITCH ---
-function updatePitch(conso, actual, gaele, an, mois, total25) {
-  const p1 = document.getElementById('pitch-1');
-  const p2 = document.getElementById('pitch-2');
-  const p4 = document.getElementById('pitch-4');
-  if(p1) p1.textContent = `Facture actuelle : ${fmtE(actual)}/an. Avec Gaele XL : ${fmtE(gaele)}.`;
-  if(p2) p2.textContent = `Gain : ${fmtE(mois)}/mois (${fmtE(an)}/an). Total 25 ans : ${fmtE(total25)}.`;
-  if(p4) p4.textContent = `Chaque mois d'hésitation vous coûte ${fmtE(mois)}.`;
-}
 
 // --- CHART ---
 function drawChart() {
@@ -714,10 +559,3 @@ function selectPers(n) {
   onPersonChange();
 }
 
-function copyPitch() {
-  const p1 = document.getElementById('pitch-1')?.textContent || "";
-  const p2 = document.getElementById('pitch-2')?.textContent || "";
-  const p3 = document.getElementById('pitch-3')?.textContent || "";
-  const full = `GAELE XL\n\n${p1}\n\n${p2}\n\n${p3}`;
-  navigator.clipboard.writeText(full).then(() => alert('Copié !'));
-}
