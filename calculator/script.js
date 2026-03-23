@@ -341,8 +341,9 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   const gIdx = parseFloat(document.getElementById('sl-idx-gaele')?.value || 2.0) / 100;
   const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60) / 100;
   const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40) / 100;
-  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
-  const inst = panels * POWER_PER_PANEL * PRIX_WC;
+  const prixWc = parseFloat(document.getElementById('sl-prix-wc')?.value || 1.1);
+  const prixBatt = parseFloat(document.getElementById('sl-prix-batt')?.value || 7000);
+  const inst = panels * POWER_PER_PANEL * prixWc;
   const ond = parseInt(document.getElementById('sl-ond')?.value || 0);
 
   let results = [];
@@ -352,7 +353,7 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   
   // Initial investment
   if (scenario === 's2') cumulated = -inst;
-  if (scenario === 's3') cumulated = -(inst + PRIX_BATTERIE); 
+  if (scenario === 's3') cumulated = -(inst + prixBatt); 
   
   for (let y = 1; y <= 25; y++) {
     let elecCost = 0;
@@ -426,7 +427,10 @@ window.updateAdvancedLabels = function() {
   const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60);
   const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40);
   const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
-  const inst = panels * POWER_PER_PANEL * PRIX_WC;
+  const prixWc = parseFloat(document.getElementById('sl-prix-wc')?.value || 1.1);
+  const prixBatt = parseFloat(document.getElementById('sl-prix-batt')?.value || 7000);
+  
+  const inst = panels * POWER_PER_PANEL * prixWc;
   const ond = parseInt(document.getElementById('sl-ond')?.value || 0);
 
   if(document.getElementById('val-idx-marche')) document.getElementById('val-idx-marche').textContent = mIdx.toFixed(1).replace('.', ',') + '%';
@@ -434,6 +438,10 @@ window.updateAdvancedLabels = function() {
   if(document.getElementById('val-dep-s2')) document.getElementById('val-dep-s2').textContent = Math.round(s2Dep) + '%';
   if(document.getElementById('val-dep-s3')) document.getElementById('val-dep-s3').textContent = Math.round(s3Dep) + '%';
   if(document.getElementById('val-panels')) document.getElementById('val-panels').textContent = panels;
+  
+  if(document.getElementById('val-prix-wc')) document.getElementById('val-prix-wc').textContent = prixWc.toFixed(2).replace('.', ',') + ' €';
+  if(document.getElementById('val-prix-batt')) document.getElementById('val-prix-batt').textContent = fmtE(prixBatt);
+
   if(document.getElementById('val-inst')) document.getElementById('val-inst').textContent = fmtE(inst);
   if(document.getElementById('val-ond')) document.getElementById('val-ond').textContent = (ond === 0) ? 'Central' : 'Micro';
   
@@ -577,7 +585,8 @@ function updateEntretien() {
   if(document.getElementById('e-inst-val')) document.getElementById('e-inst-val').textContent = fmtE(inst);
   if(document.getElementById('e-batt-val')) document.getElementById('e-batt-val').textContent = hasBatt ? 'Oui' : 'Non';
   if(document.getElementById('e-ond-val')) document.getElementById('e-ond-val').textContent = isMicro ? 'Micro' : 'Central';
-  const instSoleil = panels * POWER_PER_PANEL * PRIX_WC;
+  const prixWc = parseFloat(document.getElementById('sl-prix-wc')?.value || 1.1);
+  const instSoleil = panels * POWER_PER_PANEL * prixWc;
   
   // Specific Breakdown (Dynamic indexing)
   const netAn = 50 + (8 * panels); // Base + 8€ per panel/year
