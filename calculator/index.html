@@ -7,7 +7,7 @@
 <title>Calculateur Gaele XL — Premium Energy Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=31">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -254,9 +254,9 @@
                 <span class="value-badge small" id="val-panels">10</span>
               </div>
               <div class="slider-control-group">
-                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-panels', -1)">-</button>
-                <input type="range" min="8" max="32" step="1" value="10" oninput="window.updateAdvancedLabels()" id="sl-panels" class="premium-range">
-                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-panels', 1)">+</button>
+                <button type="button" class="btn-ctrl" onclick="window.changePanels(-1)">-</button>
+                <input type="range" min="8" max="32" step="1" value="10" oninput="window.syncPanels(this.value)" id="sl-panels" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changePanels(1)">+</button>
               </div>
             </div>
 
@@ -391,6 +391,17 @@
       <div class="grid-layout">
         <div class="card glass-card side-panel">
           <h2 class="card-title">⚙️ Configuration Achat</h2>
+          
+          <div class="q-block">
+            <label>Nombre de panneaux</label>
+            <div class="slider-control-group">
+              <button type="button" class="btn-ctrl" onclick="window.changePanels(-1)">-</button>
+              <input type="range" min="8" max="32" step="1" id="sl-panels-m" oninput="window.syncPanels(this.value)" class="premium-range">
+              <button type="button" class="btn-ctrl" onclick="window.changePanels(1)">+</button>
+            </div>
+            <div class="val-display" id="val-panels-m">10</div>
+          </div>
+
           <div class="input-group">
             <label>Prix Installation Estimé</label>
             <div class="val-display highlight" id="e-inst-val">6 000 €</div>
@@ -478,6 +489,6 @@
   </div>
 </div>
 
-<script src="script.js?v=30"></script>
+<script src="script.js?v=31"></script>
 </body>
 </html>

@@ -436,6 +436,30 @@ window.updateAdvancedLabels = function() {
   const eOndVal = document.getElementById('e-ond-val');
   if(eOndVal) eOndVal.textContent = (ond === 0) ? 'Central' : 'Micro';
 
+  // Maintenance tab specific panels label
+  if(document.getElementById('val-panels-m')) document.getElementById('val-panels-m').textContent = panels;
+  
+  // Ensure sliders are synced (prevents drift)
+  const pM = document.getElementById('sl-panels-m');
+  if(pM && pM.value != panels) pM.value = panels;
+};
+
+// --- DUAL PANELS SYNC ---
+window.syncPanels = function(val) {
+  const p1 = document.getElementById('sl-panels');
+  const p2 = document.getElementById('sl-panels-m');
+  if(p1) p1.value = val;
+  if(p2) p2.value = val;
+  update();
+};
+
+window.changePanels = function(delta) {
+  const el = document.getElementById('sl-panels');
+  if(!el) return;
+  let val = parseInt(el.value) + delta;
+  if(val < 8) val = 8;
+  if(val > 32) val = 32;
+  window.syncPanels(val);
 };
 
 // --- PERSON & CONSO LOGIC ---
