@@ -394,7 +394,12 @@ window.changeVal = function(id, delta) {
   if (val > max) val = max;
   
   el.value = val;
-  updateAdvancedLabels();
+  
+  // TRIGGER HANDLERS
+  if (id === 'sl-pers') onPersonChange();
+  else if (id === 'sl-conso') onConsoManual();
+  else if (id === 'sl-tarif') update();
+  else updateAdvancedLabels();
 };
 
 window.toggleVal = function(id) {
@@ -436,10 +441,14 @@ window.updateAdvancedLabels = function() {
 // --- PERSON & CONSO LOGIC ---
 function onPersonChange() {
   const pers = parseInt(document.getElementById('sl-pers').value);
-  if (!consoIsManual) {
-    const autoConso = CONSO_PAR_PERS[pers] || 3500;
-    document.getElementById('sl-conso').value = autoConso;
-  }
+  // OBLIGATORY INFLUENCE: Reset manual flag when person count changes
+  consoIsManual = false; 
+  
+  const autoConso = CONSO_PAR_PERS[pers] || 3500;
+  document.getElementById('sl-conso').value = autoConso;
+  
+  // Sync UI
+  updateConsoUI();
   update();
 }
 
@@ -447,9 +456,36 @@ function onConsoManual() {
   const conso = parseFloat(document.getElementById('sl-conso').value);
   const pers = parseInt(document.getElementById('sl-pers').value);
   const autoConso = CONSO_PAR_PERS[pers] || 3500;
-  consoIsManual = Math.abs(conso - autoConso) > 50;
+  
+  // Set manual if difference is significant
+  if (Math.abs(conso - autoConso) > 50) {
+    consoIsManual = true;
+  }
+  
+  updateConsoUI();
   update();
 }
+
+function updateConsoUI() {
+  const autoLabel = document.getElementById('conso-auto-label');
+  const manualBadge = document.getElementById('conso-manual-badge');
+  const resetBtn = document.getElementById('conso-reset-btn');
+  
+  if (consoIsManual) {
+    if (autoLabel) autoLabel.style.display = 'none';
+    if (manualBadge) manualBadge.style.display = 'inline-block';
+    if (resetBtn) resetBtn.style.display = 'inline-block';
+  } else {
+    if (autoLabel) autoLabel.style.display = 'inline-block';
+    if (manualBadge) manualBadge.style.display = 'none';
+    if (resetBtn) resetBtn.style.display = 'none';
+  }
+}
+
+window.resetConsoAuto = function() {
+  consoIsManual = false;
+  onPersonChange();
+};
 
 
 // --- ENTRETIEN ---
