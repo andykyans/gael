@@ -436,8 +436,6 @@ window.updateAdvancedLabels = function() {
   const eOndVal = document.getElementById('e-ond-val');
   if(eOndVal) eOndVal.textContent = (ond === 0) ? 'Central' : 'Micro';
 
-  updateEntretien();
-  update();
 };
 
 // --- PERSON & CONSO LOGIC ---
