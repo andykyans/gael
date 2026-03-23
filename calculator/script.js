@@ -170,7 +170,7 @@ window.setMode = function(mode) {
       if (pEl) { pEl.min = 8; pEl.max = 32; pEl.value = 10; }
       if (pElM) { pElM.min = 8; pElM.max = 32; pElM.value = 10; }
     } else {
-      if (cEl) { cEl.min = 5000; cEl.max = 500000; cEl.step = 1000; cEl.value = 85000; }
+      if (cEl) { cEl.min = 5000; cEl.max = 500000; cEl.step = 500; cEl.value = 85000; }
       if (pEl) { pEl.min = 20; pEl.max = 500; pEl.value = 100; }
       if (pElM) { pElM.min = 20; pElM.max = 500; pElM.value = 100; }
     }
@@ -605,21 +605,13 @@ window.onAutoConsoChange = function() {
 window.onPersonChange = window.onAutoConsoChange;
 
 window.onConsoManual = function() {
-  const conso = parseFloat(document.getElementById('sl-conso').value);
-  let autoConso = 3500;
+  const el = document.getElementById('sl-conso');
+  if (!el) return;
+  const conso = parseFloat(el.value);
+  console.log("onConsoManual triggered:", conso);
   
-  if (currentMode === 'particulier') {
-    const pers = parseInt(document.getElementById('sl-pers').value);
-    autoConso = CONSO_PAR_PERS[pers] || 3500;
-  } else {
-    const secteur = document.getElementById('sl-secteur').value;
-    autoConso = CONSO_PRO_SECTEUR[secteur] || 45000;
-  }
-  
-  // Set manual if difference is significant
-  if (Math.abs(conso - autoConso) > (currentMode === 'particulier' ? 50 : 500)) {
-    consoIsManual = true;
-  }
+  // IMMEDIATELY set manual if user touches slider
+  consoIsManual = true;
   
   updateConsoUI();
   update();
