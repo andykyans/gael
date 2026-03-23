@@ -58,6 +58,9 @@ function selectQ(btn, key, val) {
   qState[key] = val;
   
   if (key === 'region') {
+    if (val === 'bxl') {
+      document.getElementById('q-panneaux-info').style.display = 'none';
+    }
     var nextStep = document.getElementById('q2-grid');
     if (nextStep) {
       setTimeout(function() {
@@ -84,7 +87,7 @@ function selectQ(btn, key, val) {
 
   if (key === 'panneaux') {
     var info = document.getElementById('q-panneaux-info');
-    if (val === 'oui') {
+    if (val === 'oui' && qState.region !== 'bxl') {
       if (info) info.style.display = 'block';
     } else {
       if (info) info.style.display = 'none';
