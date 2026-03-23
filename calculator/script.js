@@ -20,6 +20,15 @@ const CONSO_PAR_PERS = {
   1: 1800, 2: 2800, 3: 3500, 4: 4200, 5: 5000, 6: 5800, 7: 6500, 8: 7200
 };
 
+const CONSO_PRO_SECTEUR = {
+  'bureaux': 45000,
+  'commerce': 85000,
+  'industrie': 180000,
+  'restauration': 65000
+};
+
+let currentMode = 'particulier';
+
 // --- HELPERS ---
 const fmt = (n, dec = 0) => n.toLocaleString('fr-BE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 const fmtE = (n) => fmt(Math.round(n)) + ' €';
@@ -130,6 +139,40 @@ window.toggleAdvanced = function() {
   const isHidden = panel.style.display === 'none' || panel.style.display === '';
   panel.style.display = isHidden ? 'block' : 'none';
   if (chevron) chevron.textContent = isHidden ? '▲' : '▼';
+};
+
+window.setMode = function(mode) {
+  currentMode = mode;
+  console.log("Setting mode to:", mode);
+  
+  // UI classes
+  document.getElementById('mode-part')?.classList.toggle('active', mode === 'particulier');
+  document.getElementById('mode-pro')?.classList.toggle('active', mode === 'professionnel');
+  
+  // Input visibility
+  const pGroup = document.getElementById('sl-pers').closest('.input-group');
+  const sGroup = document.getElementById('group-secteur');
+  if (pGroup) pGroup.style.display = (mode === 'particulier') ? 'block' : 'none';
+  if (sGroup) sGroup.style.display = (mode === 'particulier') ? 'none' : 'block';
+  
+  // Sliders range update
+  const cEl = document.getElementById('sl-conso');
+  const pEl = document.getElementById('sl-panels');
+  const pElM = document.getElementById('sl-panels-m');
+  
+  if (mode === 'particulier') {
+    if (cEl) { cEl.min = 1000; cEl.max = 20000; cEl.step = 100; cEl.value = 4200; }
+    if (pEl) { pEl.min = 8; pEl.max = 32; pEl.value = 10; }
+    if (pElM) { pElM.min = 8; pElM.max = 32; pElM.value = 10; }
+  } else {
+    if (cEl) { cEl.min = 5000; cEl.max = 500000; cEl.step = 1000; cEl.value = 85000; }
+    if (pEl) { pEl.min = 20; pEl.max = 500; pEl.value = 100; }
+    if (pElM) { pElM.min = 20; pElM.max = 500; pElM.value = 100; }
+  }
+  
+  consoIsManual = false;
+  onAutoConsoChange();
+  update();
 };
 
 // --- NAVIGATION ---
@@ -523,26 +566,41 @@ window.changePanels = function(delta) {
 };
 
 // --- PERSON & CONSO LOGIC ---
-window.onPersonChange = function() {
-  const pers = parseInt(document.getElementById('sl-pers').value);
-  // OBLIGATORY INFLUENCE: Reset manual flag when person count changes
-  consoIsManual = false; 
+window.onAutoConsoChange = function() {
+  consoIsManual = false;
+  let autoConso = 3500;
   
-  const autoConso = CONSO_PAR_PERS[pers] || 3500;
-  document.getElementById('sl-conso').value = autoConso;
+  if (currentMode === 'particulier') {
+    const pers = parseInt(document.getElementById('sl-pers')?.value || 4);
+    autoConso = CONSO_PAR_PERS[pers] || 3500;
+  } else {
+    const secteur = document.getElementById('sl-secteur')?.value || 'bureaux';
+    autoConso = CONSO_PRO_SECTEUR[secteur] || 45000;
+  }
   
-  // Sync UI
+  const cEl = document.getElementById('sl-conso');
+  if (cEl) cEl.value = autoConso;
+  
   updateConsoUI();
   update();
 }
 
+window.onPersonChange = window.onAutoConsoChange;
+
 window.onConsoManual = function() {
   const conso = parseFloat(document.getElementById('sl-conso').value);
-  const pers = parseInt(document.getElementById('sl-pers').value);
-  const autoConso = CONSO_PAR_PERS[pers] || 3500;
+  let autoConso = 3500;
+  
+  if (currentMode === 'particulier') {
+    const pers = parseInt(document.getElementById('sl-pers').value);
+    autoConso = CONSO_PAR_PERS[pers] || 3500;
+  } else {
+    const secteur = document.getElementById('sl-secteur').value;
+    autoConso = CONSO_PRO_SECTEUR[secteur] || 45000;
+  }
   
   // Set manual if difference is significant
-  if (Math.abs(conso - autoConso) > 50) {
+  if (Math.abs(conso - autoConso) > (currentMode === 'particulier' ? 50 : 500)) {
     consoIsManual = true;
   }
   

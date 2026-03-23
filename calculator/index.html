@@ -7,7 +7,7 @@
 <title>Calculateur Gaele XL — Premium Energy Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="style.css?v=42">
+<link rel="stylesheet" href="style.css?v=43">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -152,7 +152,13 @@
       <div class="grid-layout">
         <!-- INPUTS -->
         <div class="card glass-card side-panel">
-          <h2 class="card-title">📋 Vos informations</h2>
+          <div class="card-header-flex">
+            <h2 class="card-title">📋 Vos informations</h2>
+            <div class="mode-switcher">
+              <button id="mode-part" class="mode-btn active" onclick="setMode('particulier')">Particulier</button>
+              <button id="mode-pro" class="mode-btn" onclick="setMode('professionnel')">Professionnel</button>
+            </div>
+          </div>
           
           <div class="input-group">
             <div class="label-row">
@@ -529,6 +535,6 @@
   </div>
 </div>
 
-<script src="script.js?v=42"></script>
+<script src="script.js?v=43"></script>
 </body>
 </html>
