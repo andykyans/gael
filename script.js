@@ -498,10 +498,10 @@ window.updateWidget = function(isManual) {
     var slConso = document.getElementById('sl-w-conso');
     var slTarif = document.getElementById('sl-w-tarif');
     
-    if(!slPers || !slConso || !slTarif) return;
+    if(!slConso || !slTarif) return;
 
-    var pers = parseInt(slPers.value);
-    if(!isManual) {
+    var pers = slPers ? parseInt(slPers.value) : 4;
+    if(!isManual && slConso) {
         slConso.value = W_CONSO_PER_PERS[pers] || 3500;
     }
     
@@ -512,20 +512,34 @@ window.updateWidget = function(isManual) {
     var f = function(num) { return new Intl.NumberFormat('fr-BE').format(Math.round(num)); };
     var fD = function(num) { return new Intl.NumberFormat('fr-BE', { minimumFractionDigits: 3 }).format(num); };
 
-    // Update labels
-    document.getElementById('val-w-pers').textContent = pers + (pers >= 6 ? '+ pers.' : ' pers.');
-    document.getElementById('val-w-conso').textContent = f(conso) + ' kWh';
-    document.getElementById('val-w-tarif').textContent = fD(tarif) + ' €';
+    // Update labels (with null checks)
+    var elPers = document.getElementById('val-w-pers');
+    if (elPers) elPers.textContent = pers + (pers >= 6 ? '+ pers.' : ' pers.');
+    
+    var elConso = document.getElementById('val-w-conso');
+    if (elConso) elConso.textContent = f(conso) + ' kWh';
+    
+    var elTarif = document.getElementById('val-w-tarif');
+    if (elTarif) elTarif.textContent = fD(tarif) + ' €';
 
     // Calculations
     var factM = conso * tarif;
     var factG = conso * W_GAELE_RATE;
     var eco = factM - factG;
+    var eco25 = eco * 25; // Base estimation
 
-    // Update Results
-    document.getElementById('w-fact-m').textContent = f(factM) + ' €';
-    document.getElementById('w-fact-g').textContent = f(factG) + ' €';
-    document.getElementById('w-eco-an').textContent = f(eco) + ' €';
+    // Update Results (with null checks)
+    var elFactM = document.getElementById('w-fact-m');
+    if (elFactM) elFactM.textContent = f(factM) + ' €';
+    
+    var elFactG = document.getElementById('w-fact-g');
+    if (elFactG) elFactG.textContent = f(factG) + ' €';
+    
+    var elEcoAn = document.getElementById('w-eco-an');
+    if (elEcoAn) elEcoAn.textContent = f(eco) + ' €';
+
+    var elEco25 = document.getElementById('w-eco-25');
+    if (elEco25) elEco25.textContent = f(eco25) + ' €';
 };
 
 window.scrollToQualification = function() {
