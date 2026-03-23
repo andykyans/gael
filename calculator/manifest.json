@@ -1,0 +1,17 @@
+{
+  "name": "Gaele XL Calculator",
+  "short_name": "Gaele XL",
+  "description": "Premium Solar Energy Calculator by Gaele",
+  "start_url": "/calculator/",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#C9A84C",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
