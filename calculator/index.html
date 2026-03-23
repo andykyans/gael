@@ -7,7 +7,7 @@
 <title>Calculateur Gaele XL — Premium Energy Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -391,12 +391,12 @@
           </div>
           <div class="q-block">
             <label>Batterie ?</label>
-            <input type="range" min="0" max="1" step="1" value="0" oninput="updateEntretien()" id="e-batt" class="premium-toggle">
+            <input type="range" min="0" max="1" step="1" value="0" oninput="update()" id="e-batt" class="premium-toggle">
             <div class="val-display" id="e-batt-val">Non</div>
           </div>
           <div class="q-block">
             <label>Type Onduleur</label>
-            <input type="range" min="0" max="1" step="1" value="0" oninput="updateEntretien()" id="e-ond" class="premium-toggle">
+            <input type="range" min="0" max="1" step="1" value="0" oninput="update()" id="e-ond" class="premium-toggle">
             <div class="val-display" id="e-ond-val">Central</div>
           </div>
         </div>
@@ -450,6 +450,6 @@
   </div>
 </div>
 
-<script src="script.js?v=26"></script>
+<script src="script.js?v=27"></script>
 </body>
 </html>

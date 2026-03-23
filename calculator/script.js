@@ -269,11 +269,16 @@ window.update = function() {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   });
-      try { 
-        renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); 
-      } catch(rmE) { 
-        console.error("Render mobile failed", rmE); 
-      }
+
+  // MASTER SYNC: Always update all tabs UI
+  updateAdvancedLabels();
+  updateEntretien();
+  
+  try { 
+    renderMobileCards(conso, tarif, total25S1, total25S2, total25S3, total25S4, dS2, dS3); 
+  } catch(rmE) { 
+    console.error("Render mobile failed", rmE); 
+  }
 
   } catch (e) {
     console.error("Update failed:", e);
@@ -395,18 +400,15 @@ window.changeVal = function(id, delta) {
   
   el.value = val;
   
-  // TRIGGER HANDLERS
-  if (id === 'sl-pers') onPersonChange();
-  else if (id === 'sl-conso') onConsoManual();
-  else if (id === 'sl-tarif') update();
-  else updateAdvancedLabels();
+  // Master update
+  update();
 };
 
 window.toggleVal = function(id) {
   const el = document.getElementById(id);
   if (!el) return;
   el.value = (el.value == 0) ? 1 : 0;
-  updateAdvancedLabels();
+  update();
 };
 
 window.updateAdvancedLabels = function() {
@@ -510,14 +512,6 @@ function updateEntretien() {
   const eOnd = document.getElementById('e-ond');
   const ondVal = isMicro ? 1 : 0;
   if(eOnd) eOnd.value = ondVal;
-
-  // Final update of other tabs results
-  // We use a small guard to avoid infinite recursion since update() calls updateEntretien()
-  if (!window._isUpdating) {
-    window._isUpdating = true;
-    update();
-    window._isUpdating = false;
-  }
 }
 
 
