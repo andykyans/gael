@@ -191,6 +191,7 @@ window.update = function() {
   const conso = parseFloat(consoEl.value);
   const tarif = parseFloat(tarifEl.value);
   const pers = parseInt(persEl.value);
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
 
   // Labels
   if(document.getElementById('val-conso')) document.getElementById('val-conso').textContent = fmt(conso) + ' kWh';
