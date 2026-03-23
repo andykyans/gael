@@ -784,8 +784,9 @@ body {
 
   .content-area { padding: 15px 15px 120px; }
   
-  .header-status { display: none; }
   .brand-subtitle { display: none; }
+  .header-status { font-size: 0.6rem; }
+  .status-dot { display: none; } /* Hide dot on mobile to save space */
   
   .card { padding: 20px; }
   
