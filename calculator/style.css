@@ -487,8 +487,7 @@ body {
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1;
-  color: #0E3218; /* Deep Dark Green */
-  text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+  color: #0a0c10; /* Exact Background Color */
   margin-bottom: 8px;
 }
 
