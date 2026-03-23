@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05190B">
+<title>Calculateur Gaele XL — Premium Energy Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="stylesheet" href="style.css?v=2">
+<style>
+  /* Login Screen Premium Styles */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #020C06 url('https://images.unsplash.com/photo-1509391366360-feaf9fa44452?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #login-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(5, 25, 11, 0.4) 0%, rgba(2, 12, 6, 0.95) 100%);
+    backdrop-filter: blur(10px);
+  }
+  .login-card {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    text-align: center;
+    animation: loginIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes loginIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+  .login-logo { font-size: 3rem; margin-bottom: 20px; display: inline-block; }
+  .login-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; color: #C9A84C; margin-bottom: 8px; }
+  .login-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 32px; }
+  .login-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    outline: none;
+    transition: all 0.3s;
+  }
+  .login-input:focus { border-color: #C9A84C; background: rgba(255,255,255,0.1); }
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #C9A84C, #b8963d);
+    color: #05190B;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(201,168,76,0.3); }
+  .login-error { color: #E74C3C; font-size: 0.85rem; margin-top: 16px; display: none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">⚡</div>
+    <div class="login-title">Accès Privé</div>
+    <div class="login-sub">Identifiez-vous pour accéder au calculateur</div>
+    <div class="login-error" id="login-error">Accès refusé.</div>
+    <input type="email" id="login-email" class="login-input" placeholder="Email professionnel">
+    <input type="password" id="login-password" class="login-input" placeholder="Mot de passe">
+    <button class="login-btn" onclick="login()">Se connecter</button>
+  </div>
+</div>
+
+<div id="app" style="display: none;">
+  <!-- HEADER -->
+  <header class="glass-header">
+    <div class="header-content">
+      <div class="brand">
+        <span class="brand-logo">⚡</span>
+        <div class="brand-text">
+          <h1 class="brand-title">Gaele XL</h1>
+          <p class="brand-subtitle">Andy Kyambikwa · Conseiller Certifié</p>
+        </div>
+      </div>
+      <nav class="desktop-nav">
+        <div class="nav-item active" data-tab="calcul" onclick="showTab('calcul')">Calcul</div>
+        <div class="nav-item" data-tab="comparatif" onclick="showTab('comparatif')">Situations</div>
+        <div class="nav-item" data-tab="graphique" onclick="showTab('graphique')">Graphique</div>
+        <div class="nav-item" data-tab="pitch" onclick="showTab('pitch')">Pitch</div>
+        <div class="nav-item" data-tab="score" onclick="showTab('score')">Score</div>
+        <div class="nav-item" data-tab="entretien" onclick="showTab('entretien')">Entretien</div>
+        <div class="nav-item" data-tab="amortissement" onclick="showTab('amortissement')">Amortissement</div>
+      </nav>
+      <div class="header-status">
+        <span class="status-dot"></span> Online
+      </div>
+    </div>
+  </header>
+
+  <main class="content-area">
+    
+    <!-- ═══ TAB 1 : CALCUL ═══ -->
+    <section class="tab-content active" id="tab-calcul">
+      <div class="grid-layout">
+        <!-- INPUTS -->
+        <div class="card glass-card side-panel">
+          <h2 class="card-title">📋 Vos informations</h2>
+          
+          <div class="input-group">
+            <div class="label-row">
+              <label>👥 Taille du foyer</label>
+              <span class="value-badge" id="val-pers">4 pers.</span>
+            </div>
+            <input type="range" min="1" max="8" step="1" value="4" oninput="onPersonChange()" id="sl-pers" class="premium-range">
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label>⚡ Consommation annuelle</label>
+              <span class="value-badge highlight" id="val-conso">3 500 kWh</span>
+            </div>
+            <div class="input-meta">
+              <span id="conso-auto-label">Estimation automatique</span>
+              <span id="conso-manual-badge" style="display:none">Défini manuellement</span>
+              <button id="conso-reset-btn" onclick="resetConsoAuto()" style="display:none">Réinitialiser</button>
+            </div>
+            <input type="range" min="500" max="15000" step="100" value="3500" oninput="onConsoManual()" id="sl-conso" class="premium-range">
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label>💶 Tarif actuel (€/kWh)</label>
+              <span class="value-badge" id="val-tarif">0,436 €</span>
+            </div>
+            <input type="range" min="0.25" max="0.60" step="0.005" value="0.436" oninput="update()" id="sl-tarif" class="premium-range">
+          </div>
+
+          <!-- ADVANCED PARAMS -->
+          <button class="advanced-toggle" onclick="window.toggleAdvanced()" type="button">
+            <span>⚙️ Paramètres Avancés</span>
+            <span id="adv-chevron">▼</span>
+          </button>
+          
+          <div id="advanced-panel" style="display:none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="input-group small">
+              <div class="label-row">
+                <label>📈 Index Marché (%/an)</label>
+                <span class="value-badge small" id="val-idx-marche">3,5%</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-idx-marche', -0.1)">-</button>
+                <input type="range" min="0" max="10" step="0.1" value="3.5" oninput="window.updateAdvancedLabels()" id="sl-idx-marche" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-idx-marche', 0.1)">+</button>
+              </div>
+            </div>
+
+            <div class="input-group small">
+              <div class="label-row">
+                <label>📈 Index Gaele (%/an)</label>
+                <span class="value-badge small" id="val-idx-gaele">2,0%</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-idx-gaele', -0.1)">-</button>
+                <input type="range" min="0" max="5" step="0.1" value="2.0" oninput="window.updateAdvancedLabels()" id="sl-idx-gaele" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-idx-gaele', 0.1)">+</button>
+              </div>
+            </div>
+
+            <div class="input-group small">
+              <div class="label-row">
+                <label>🏠 Dépendance S2 (Panneaux)</label>
+                <span class="value-badge small" id="val-dep-s2">60%</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-dep-s2', -1)">-</button>
+                <input type="range" min="0" max="100" step="1" value="60" oninput="window.updateAdvancedLabels()" id="sl-dep-s2" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-dep-s2', 1)">+</button>
+              </div>
+            </div>
+
+            <div class="input-group small">
+              <div class="label-row">
+                <label>🏠 Dépendance S3 (+Batt)</label>
+                <span class="value-badge small" id="val-dep-s3">40%</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-dep-s3', -1)">-</button>
+                <input type="range" min="0" max="100" step="1" value="40" oninput="window.updateAdvancedLabels()" id="sl-dep-s3" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-dep-s3', 1)">+</button>
+              </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 15px 0;">
+
+            <div class="input-group small">
+              <div class="label-row">
+                <label>🛠️ Prix Installation (€)</label>
+                <span class="value-badge small" id="val-inst">6 000€</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-inst', -500)">-</button>
+                <input type="range" min="3000" max="16000" step="500" value="6000" oninput="window.updateAdvancedLabels()" id="sl-inst" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.changeVal('sl-inst', 500)">+</button>
+              </div>
+            </div>
+
+            <div class="input-group small">
+              <div class="label-row">
+                <label>🔄 Type Onduleur</label>
+                <span class="value-badge small" id="val-ond">Central</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.toggleVal('sl-ond')">🔄</button>
+                <input type="range" min="0" max="1" step="1" value="0" oninput="window.updateAdvancedLabels()" id="sl-ond" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.toggleVal('sl-ond')">🔄</button>
+              </div>
+            </div>
+
+            <button type="button" class="apply-btn" onclick="window.update()">Appliquer les changements</button>
+          </div>
+
+          <!-- MEYER TABLE -->
+          <div class="ref-container">
+             <p class="ref-title">Moyennes Belges</p>
+             <div id="ref-table" class="ref-grid"></div>
+          </div>
+        </div>
+
+        <!-- MAIN RESULTS -->
+        <div class="results-panel">
+          <div class="hero-result glass-card primary-gradient">
+            <p class="hero-label">Économies par an avec Gaele XL</p>
+            <h3 class="hero-val" id="eco-an">—</h3>
+            <p class="hero-sub" id="eco-sub">—</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card glass-card border-green">
+              <p class="stat-val text-green" id="eco-mois">—</p>
+              <p class="stat-label">Gain mensuel</p>
+            </div>
+            <div class="stat-card glass-card border-gold">
+              <p class="stat-val text-gold" id="eco-25">—</p>
+              <p class="stat-label">Sur 25 ans</p>
+            </div>
+            <div class="stat-card glass-card border-red">
+              <p class="stat-val text-red" id="fact-actuelle">—</p>
+              <p class="stat-label">Facture actuelle</p>
+            </div>
+            <div class="stat-card glass-card border-blue">
+              <p class="stat-val text-blue" id="fact-gaele">—</p>
+              <p class="stat-label">Facture Gaele</p>
+            </div>
+          </div>
+
+          <div class="card glass-card details-card">
+            <h2 class="card-title">📊 Détails du contrat</h2>
+            <div class="details-list">
+              <div class="detail-item"><span>Prix Marché</span><span id="d-marche" class="text-red"></span></div>
+              <div class="detail-item"><span>Prix Gaele XL</span><span id="d-gaele" class="text-green"></span></div>
+              <div class="detail-item"><span>Différence</span><span id="d-diff" class="text-gold"></span></div>
+              <div class="detail-item"><span>Réduction</span><span id="d-pct" class="text-gold"></span></div>
+              <div class="detail-item meta-line"><span>Indexation Marché</span><span class="text-red">+3,5%/an (Est.)</span></div>
+              <div class="detail-item meta-line"><span>Indexation Gaele XL</span><span class="text-green">+2%/an Max</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TAB 2 : SITUATIONS ═══ -->
+    <section class="tab-content" id="tab-comparatif">
+      <div class="card glass-card wide-card">
+        <h2 class="card-title">🏠 Comparaison des Situations</h2>
+        <div class="table-responsive">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>Critère</th>
+                <th>S1 (Rien)</th>
+                <th>S2 (Panneaux)</th>
+                <th>S3 (+Batt)</th>
+                <th class="highlight-th">S4 (Gaele XL)</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-body">
+              <tr><td>Investissement</td><td>0€</td><td id="s2-inv" class="text-red">—</td><td id="s3-inv" class="text-red">—</td><td class="text-gold">0€ ✓</td></tr>
+              <tr><td>Entretien</td><td>0€</td><td id="s2-maint" class="text-red">—</td><td id="s3-maint" class="text-red">—</td><td class="text-gold">Inclus ✓</td></tr>
+              <tr><td>Tarif /kWh</td><td id="s1-tarif" class="text-red">—</td><td id="s2-tarif">—</td><td id="s3-tarif">—</td><td class="text-gold">0,2703€ ✓</td></tr>
+              <tr><td>Facture / an</td><td id="s1-fac" class="text-red">—</td><td id="s2-fac">—</td><td id="s3-fac">—</td><td class="text-gold" id="s4-fac">—</td></tr>
+              <tr><td>Batterie</td><td class="text-red">Non</td><td class="text-red">Non</td><td>Payante</td><td class="text-gold">Gratuite ✓</td></tr>
+              <tr><td>PEB Positif</td><td class="text-red">Non</td><td>Partiel</td><td>Oui</td><td class="text-gold">Oui ✓</td></tr>
+              <tr class="total-row"><td>Total 25 ans</td><td id="s1-25" class="text-red">—</td><td id="s2-25">—</td><td id="s3-25">—</td><td class="text-gold" id="s4-25">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="banner-gold">
+          <p>Gain total avec Gaele XL : <strong id="avantage-s1">—</strong> sur 25 ans</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TAB 3 : GRAPHIQUE ═══ -->
+    <section class="tab-content" id="tab-graphique">
+      <div class="card glass-card chart-card">
+        <h2 class="card-title">📈 Projection des coûts cumulés</h2>
+        <div class="canvas-container">
+          <canvas id="myChart"></canvas>
+        </div>
+        <div class="chart-summary">
+          <div class="summary-item"><span class="dot red"></span> Marché (S1) : <strong id="g-s1">—</strong></div>
+          <div class="summary-item"><span class="dot gold"></span> Gaele XL : <strong id="g-s4">—</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TAB 4 : PITCH ═══ -->
+    <section class="tab-content" id="tab-pitch">
+      <div class="pitch-container">
+        <div class="card glass-card pitch-card">
+          <div class="pitch-tag">Accroche</div>
+          <p class="pitch-text" id="pitch-1">—</p>
+        </div>
+        <div class="card glass-card pitch-card gold-border">
+          <div class="pitch-tag gold">Économies</div>
+          <p class="pitch-text" id="pitch-2">—</p>
+        </div>
+        <div class="card glass-card pitch-card">
+          <div class="pitch-tag">Crédibilité</div>
+          <p class="pitch-text" id="pitch-3">L'État belge détient ~33% de Gridlink via la SFPIM — fonds souverain institutionnel. Ce n'est pas une startup, c'est un projet d'intérêt national. 50M€ investis.</p>
+        </div>
+        <div class="card glass-card pitch-card red-border">
+          <div class="pitch-tag red">Inaction</div>
+          <p class="pitch-text" id="pitch-4">—</p>
+        </div>
+        <div class="card glass-card pitch-card">
+          <div class="pitch-tag">Objection</div>
+          <p class="pitch-text" id="pitch-5">—</p>
+        </div>
+        <button class="cta-button" onclick="copyPitch()">Copier le Pitch complet</button>
+      </div>
+    </section>
+
+    <!-- ═══ TAB 5 : SCORE ═══ -->
+    <section class="tab-content" id="tab-score">
+      <div class="grid-layout">
+        <div class="card glass-card side-panel">
+          <h2 class="card-title">🎯 Qualification</h2>
+          <div id="questions-list">
+             <!-- Injecté ou structure fixe -->
+             <div class="q-block">
+               <label>Propriétaire ?</label>
+               <div class="btn-group">
+                 <button class="btn-q" id="q1-oui" onclick="setQ(1,'oui')">Oui</button>
+                 <button class="btn-q" id="q1-non" onclick="setQ(1,'non')">Non</button>
+               </div>
+             </div>
+             <div class="q-block">
+               <label>Sans panneaux ?</label>
+               <div class="btn-group">
+                 <button class="btn-q" id="q2-non" onclick="setQ(2,'non')">Oui</button>
+                 <button class="btn-q" id="q2-oui" onclick="setQ(2,'oui')">Équipé</button>
+               </div>
+             </div>
+             <div class="q-block">
+               <label>Région (WA/FL) ?</label>
+               <div class="btn-group">
+                 <button class="btn-q" id="q3-oui" onclick="setQ(3,'oui')">Oui</button>
+                 <button class="btn-q" id="q3-non" onclick="setQ(3,'non')">BXL</button>
+               </div>
+             </div>
+             <div class="q-block">
+               <label>Toit compatible ?</label>
+               <div class="btn-group">
+                 <button class="btn-q" id="q4-oui" onclick="setQ(4,'oui')">Oui</button>
+                 <button class="btn-q" id="q4-non" onclick="setQ(4,'non')">Non</button>
+               </div>
+             </div>
+             <div class="q-block">
+               <label>Compteur numérique ?</label>
+               <div class="btn-group">
+                 <button class="btn-q" id="q5-oui" onclick="setQ(5,'oui')">Oui</button>
+                 <button class="btn-q" id="q5-non" onclick="setQ(5,'non')">Non</button>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        <div class="results-panel">
+          <div class="card glass-card gauge-card">
+            <h2 class="card-title">Score d'éligibilité</h2>
+            <div class="gauge-container">
+              <div class="gauge-base"></div>
+              <div class="gauge-needle" id="score-needle"></div>
+              <div class="gauge-value" id="score-center">0%</div>
+            </div>
+            <div id="score-verdict" class="verdict-banner">Répondez aux questions</div>
+          </div>
+          <div class="card glass-card metrics-card">
+             <div id="criteria-list" class="criteria-grid">
+               <!-- Iterated via JS -->
+               <div class="crit-item"><span>Propriétaire</span><div class="bar-bg"><div id="bar-q1" class="bar"></div></div><span id="txt-q1">-</span></div>
+               <div class="crit-item"><span>Libre</span><div class="bar-bg"><div id="bar-q2" class="bar"></div></div><span id="txt-q2">-</span></div>
+               <div class="crit-item"><span>Région</span><div class="bar-bg"><div id="bar-q3" class="bar"></div></div><span id="txt-q3">-</span></div>
+               <div class="crit-item"><span>Toit</span><div class="bar-bg"><div id="bar-q4" class="bar"></div></div><span id="txt-q4">-</span></div>
+               <div class="crit-item"><span>Compteur</span><div class="bar-bg"><div id="bar-q5" class="bar"></div></div><span id="txt-q5">-</span></div>
+               <div class="crit-item"><span>Conso</span><div class="bar-bg"><div id="bar-conso" class="bar"></div></div><span id="txt-conso">-</span></div>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TAB 6 : ENTRETIEN ═══ -->
+    <section class="tab-content" id="tab-entretien">
+      <div class="grid-layout">
+        <div class="card glass-card side-panel">
+          <h2 class="card-title">⚙️ Configuration Achat</h2>
+          <div class="input-group">
+            <label>Prix Installation</label>
+            <input type="range" min="3000" max="16000" step="500" value="6000" oninput="updateEntretien()" id="e-inst" class="premium-range">
+            <div class="val-display" id="e-inst-val">6 000 €</div>
+          </div>
+          <div class="q-block">
+            <label>Batterie ?</label>
+            <input type="range" min="0" max="1" step="1" value="0" oninput="updateEntretien()" id="e-batt" class="premium-toggle">
+            <div class="val-display" id="e-batt-val">Non</div>
+          </div>
+          <div class="q-block">
+            <label>Type Onduleur</label>
+            <input type="range" min="0" max="1" step="1" value="0" oninput="updateEntretien()" id="e-ond" class="premium-toggle">
+            <div class="val-display" id="e-ond-val">Central</div>
+          </div>
+        </div>
+
+        <div class="results-panel">
+          <div class="card glass-card timeline-card">
+            <h2 class="card-title">📅 Calendrier des coûts (25 ans)</h2>
+            <div id="timeline-wrap" class="timeline-container"></div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card glass-card red-bg">
+              <p class="stat-val" id="e-total-invest">—</p>
+              <p class="stat-label">Investissement</p>
+            </div>
+            <div class="stat-card glass-card red-bg">
+              <p class="stat-val" id="e-total-entretien">—</p>
+              <p class="stat-label">Total Entretien</p>
+            </div>
+            <div class="stat-card glass-card gold-bg">
+               <p class="stat-val">0 €</p>
+               <p class="stat-label">Gaele XL ✓</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ═══ TAB 7 : AMORTISSEMENT ═══ -->
+    <section class="tab-content" id="tab-amortissement">
+      <div class="card glass-card">
+        <h2 class="card-title">💵 Tableaux d'amortissement détaillés (25 ans)</h2>
+        <div id="amort-tables-root" class="amort-container">
+          <!-- Injecté par JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MOBILE FOOTER NAV -->
+  <footer class="mobile-nav">
+    <div class="nav-btn active" data-tab="calcul" onclick="showTab('calcul')">
+      <span class="nav-icon">📊</span>
+      <span class="nav-text">Calcul</span>
+    </div>
+    <div class="nav-btn" data-tab="comparatif" onclick="showTab('comparatif')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-text">Situs</span>
+    </div>
+    <div class="nav-btn" data-tab="graphique" onclick="showTab('graphique')">
+      <span class="nav-icon">📈</span>
+      <span class="nav-text">Graph</span>
+    </div>
+    <div class="nav-btn" data-tab="pitch" onclick="showTab('pitch')">
+      <span class="nav-icon">💬</span>
+      <span class="nav-text">Pitch</span>
+    </div>
+    <div class="nav-btn" data-tab="score" onclick="showTab('score')">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-text">Qualif</span>
+    </div>
+    <div class="nav-btn" data-tab="amortissement" onclick="showTab('amortissement')">
+      <span class="nav-icon">💵</span>
+      <span class="nav-text">Amort.</span>
+    </div>
+  </footer>
+
+  <div class="app-footer">
+    Données basées sur l'Observatoire du Photovoltaïque (Belgique 2025).
+  </div>
+</div>
+
+<script src="script.js?v=9"></script>
+</body>
+</html>
