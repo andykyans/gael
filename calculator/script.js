@@ -414,7 +414,9 @@ window.changeVal = function(id, delta) {
   el.value = val;
   
   // Master update
-  update();
+  if (id === 'sl-pers') onPersonChange();
+  else if (id === 'sl-conso') onConsoManual();
+  else update();
 };
 
 window.toggleVal = function(id) {
@@ -521,7 +523,7 @@ window.changePanels = function(delta) {
 };
 
 // --- PERSON & CONSO LOGIC ---
-function onPersonChange() {
+window.onPersonChange = function() {
   const pers = parseInt(document.getElementById('sl-pers').value);
   // OBLIGATORY INFLUENCE: Reset manual flag when person count changes
   consoIsManual = false; 
@@ -534,7 +536,7 @@ function onPersonChange() {
   update();
 }
 
-function onConsoManual() {
+window.onConsoManual = function() {
   const conso = parseFloat(document.getElementById('sl-conso').value);
   const pers = parseInt(document.getElementById('sl-pers').value);
   const autoConso = CONSO_PAR_PERS[pers] || 3500;
