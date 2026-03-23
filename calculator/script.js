@@ -357,24 +357,33 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   for (let y = 1; y <= 25; y++) {
     let elecCost = 0;
     let maintCost = 0;
+    let insuranceCost = 0;
     
+    // Shared dynamic params
+    const netAn = 50 + (8 * panels);
+    const assAn = 40 + (4 * panels);
+    const savAn = 1000 / 25; // 40€
+
     if (scenario === 's1') elecCost = conso * currentTarif;
-    if (scenario === 's2') {
-      elecCost = (conso * currentTarif) * s2Dep;
-      maintCost = 125 + (y % 5 === 0 ? 200 : 0);
-      if (ond === 0 && (y === 10 || y === 20)) maintCost += 1200;
-      if (ond === 1 && (y % 10 === 0)) maintCost += 200; // SAV/Monitoring Micro
-    }
-    if (scenario === 's3') {
-      elecCost = (conso * currentTarif) * s3Dep;
-      maintCost = 125 + (y % 5 === 0 ? 200 : 0);
-      if (ond === 0 && (y === 10 || y === 20)) maintCost += 1200;
-      if (y === 12 || y === 24) maintCost += 4500; // Battery replacement
+    if (scenario === 's2' || scenario === 's3') {
+      const dep = (scenario === 's2') ? s2Dep : s3Dep;
+      elecCost = (conso * currentTarif) * dep;
+      
+      // Maintenance logic
+      maintCost = netAn + savAn;
+      if (ond === 0) {
+        if (y === 10 || y === 20) maintCost += 1200;
+      } else {
+        maintCost += (50 + (15 * panels));
+      }
+      
+      if (scenario === 's3' && (y === 12 || y === 24)) {
+        maintCost += 4500; // Battery replacement
+      }
+      
+      insuranceCost = assAn;
     }
     if (scenario === 's4') elecCost = conso * currentGaeleTarif;
-
-    // Insurance for traditional solar
-    const insuranceCost = (scenario === 's2' || scenario === 's3') ? ASSURANCE_AN : 0;
 
     cumulated -= (elecCost + maintCost + insuranceCost);
     results.push({ year: y, elec: elecCost, maint: maintCost, insurance: insuranceCost, cum: cumulated });
