@@ -439,18 +439,56 @@ window.updateAdvancedLabels = function() {
   // Maintenance tab specific panels label
   if(document.getElementById('val-panels-m')) document.getElementById('val-panels-m').textContent = panels;
   
+  // Advanced Battery label
+  const battVal = parseInt(document.getElementById('sl-batt')?.value || 0);
+  if(document.getElementById('val-batt-adv')) document.getElementById('val-batt-adv').textContent = (battVal === 1) ? 'Oui' : 'Non';
+
   // Ensure sliders are synced (prevents drift)
   const pM = document.getElementById('sl-panels-m');
   if(pM && pM.value != panels) pM.value = panels;
+  
+  const bM = document.getElementById('e-batt');
+  if(bM && bM.value != battVal) bM.value = battVal;
+  
+  const oM = document.getElementById('e-ond');
+  if(oM && oM.value != ond) oM.value = ond;
 };
 
-// --- DUAL PANELS SYNC ---
+// --- DUAL CONTROLS SYNC ---
 window.syncPanels = function(val) {
   const p1 = document.getElementById('sl-panels');
   const p2 = document.getElementById('sl-panels-m');
   if(p1) p1.value = val;
   if(p2) p2.value = val;
   update();
+};
+
+window.syncBattery = function(val) {
+  const b1 = document.getElementById('sl-batt');
+  const b2 = document.getElementById('e-batt');
+  if(b1) b1.value = val;
+  if(b2) b2.value = val;
+  update();
+};
+
+window.syncInverter = function(val) {
+  const o1 = document.getElementById('sl-ond');
+  const o2 = document.getElementById('e-ond');
+  if(o1) o1.value = val;
+  if(o2) o2.value = val;
+  update();
+};
+
+window.toggleSync = function(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const newVal = (el.value == 0) ? 1 : 0;
+  if(id === 'sl-batt') window.syncBattery(newVal);
+  else if(id === 'sl-ond') window.syncInverter(newVal);
+  else {
+    el.value = newVal;
+    update();
+  }
 };
 
 window.changePanels = function(delta) {

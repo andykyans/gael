@@ -7,7 +7,7 @@
 <title>Calculateur Gaele XL — Premium Energy Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=33">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -272,13 +272,25 @@
 
             <div class="input-group small">
               <div class="label-row">
+                <label>🔋 Batterie ?</label>
+                <span class="value-badge small" id="val-batt-adv">Non</span>
+              </div>
+              <div class="slider-control-group">
+                <button type="button" class="btn-ctrl" onclick="window.toggleSync('sl-batt')">🔄</button>
+                <input type="range" min="0" max="1" step="1" value="0" oninput="window.syncBattery(this.value)" id="sl-batt" class="premium-toggle">
+                <button type="button" class="btn-ctrl" onclick="window.toggleSync('sl-batt')">🔄</button>
+              </div>
+            </div>
+
+            <div class="input-group small">
+              <div class="label-row">
                 <label>🔄 Type Onduleur</label>
                 <span class="value-badge small" id="val-ond">Central</span>
               </div>
               <div class="slider-control-group">
-                <button type="button" class="btn-ctrl" onclick="window.toggleVal('sl-ond')">🔄</button>
-                <input type="range" min="0" max="1" step="1" value="0" oninput="window.updateAdvancedLabels()" id="sl-ond" class="premium-range">
-                <button type="button" class="btn-ctrl" onclick="window.toggleVal('sl-ond')">🔄</button>
+                <button type="button" class="btn-ctrl" onclick="window.toggleSync('sl-ond')">🔄</button>
+                <input type="range" min="0" max="1" step="1" value="0" oninput="window.syncInverter(this.value)" id="sl-ond" class="premium-range">
+                <button type="button" class="btn-ctrl" onclick="window.toggleSync('sl-ond')">🔄</button>
               </div>
             </div>
 
@@ -409,12 +421,12 @@
           </div>
           <div class="q-block">
             <label>Batterie ?</label>
-            <input type="range" min="0" max="1" step="1" value="0" oninput="update()" id="e-batt" class="premium-toggle">
+            <input type="range" min="0" max="1" step="1" value="0" oninput="window.syncBattery(this.value)" id="e-batt" class="premium-toggle">
             <div class="val-display" id="e-batt-val">Non</div>
           </div>
           <div class="q-block">
             <label>Type Onduleur</label>
-            <input type="range" min="0" max="1" step="1" value="0" oninput="update()" id="e-ond" class="premium-toggle">
+            <input type="range" min="0" max="1" step="1" value="0" oninput="window.syncInverter(this.value)" id="e-ond" class="premium-toggle">
             <div class="val-display" id="e-ond-val">Central</div>
           </div>
 
@@ -489,6 +501,6 @@
   </div>
 </div>
 
-<script src="script.js?v=32"></script>
+<script src="script.js?v=33"></script>
 </body>
 </html>
