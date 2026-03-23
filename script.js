@@ -577,6 +577,22 @@ window.scrollToQualification = function() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
 };
 
+window.adjW = function(id, delta) {
+    var sl = document.getElementById(id);
+    if (!sl) return;
+    var v = parseFloat(sl.value);
+    var min = parseFloat(sl.min);
+    var max = parseFloat(sl.max);
+    var step = parseFloat(sl.step);
+    
+    var nv = v + (delta * step);
+    if (nv < min) nv = min;
+    if (nv > max) nv = max;
+    
+    sl.value = nv;
+    updateWidget(id === 'sl-w-conso');
+};
+
 // Auto-init on load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {

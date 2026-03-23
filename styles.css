@@ -1236,6 +1236,42 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   padding: 2px 10px;
 }
 
+.w-slider-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.w-adj-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: white;
+  color: var(--forest);
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.w-adj-btn:hover {
+  background: var(--gold);
+  color: white;
+  transform: scale(1.1);
+}
+
+.w-adj-btn:active {
+  transform: scale(0.95);
+}
+
 .widget-results.mini {
   background: var(--forest);
   padding: 20px;
