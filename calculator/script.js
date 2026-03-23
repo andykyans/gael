@@ -531,12 +531,21 @@ function updateEntretien() {
   if(document.getElementById('e-batt-val')) document.getElementById('e-batt-val').textContent = hasBatt ? 'Oui' : 'Non';
   if(document.getElementById('e-ond-val')) document.getElementById('e-ond-val').textContent = isMicro ? 'Micro' : 'Central';
 
-  // Specific Breakdown
-  const netCost = 25 * 125; // Nettoyage forfaitaire
+  // Specific Breakdown (Dynamic indexing)
+  const netAn = 50 + (8 * panels); // Base + 8€ per panel/year
+  const netCost = 25 * netAn;
+  
   let matCost = 0;
-  if (!isMicro) matCost = 2400; // 2 onduleurs sur 25 ans
-  if (hasBatt) matCost += 4500; // 1 remplacement batterie
-  const assCost = ASSURANCE_AN * 25;
+  if (!isMicro) {
+    matCost = 2400; // Central is fixed
+  } else {
+    matCost = (50 + (15 * panels)) * 25; // Micros maintenance scale with numbers
+  }
+  
+  if (hasBatt) matCost += 4500; // 1 replacement battery
+  
+  const assAn = 40 + (4 * panels); // Base + 4€ per panel/year
+  const assCost = assAn * 25;
 
   if(document.getElementById('e-det-clean')) document.getElementById('e-det-clean').textContent = fmtE(netCost);
   if(document.getElementById('e-det-ond')) document.getElementById('e-det-ond').textContent = fmtE(matCost);
