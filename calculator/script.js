@@ -31,19 +31,34 @@ let consoIsManual = false;
 const SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZWJjenZodnhhaml5ZWV5ZXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2MDIsImV4cCI6MjA4NzQ0NzYwMn0._wGnpo7sHJeGYHLLdATgWxss8ySVnCZ0UQU5VB6nhhY';
 const ADMIN_EMAILS = ['bmf.amk@gmail.com', 'fabrice.kyams@gmail.com'];
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let _supabase = null;
+if (typeof supabase !== 'undefined') {
+  _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+  console.error("Supabase CDN not loaded!");
+}
 
 // --- AUTH LOGIC ---
 async function checkAuth() {
   console.log("Checking authentication...");
-  const { data: { session } } = await _supabase.auth.getSession();
-  if (session && session.user && ADMIN_EMAILS.includes(session.user.email)) {
-    console.log("Authenticated as:", session.user.email);
+  if (!_supabase) {
+    console.warn("Supabase not available, bypass auth (offline mode).");
     showApp();
-  } else {
-    console.log("Not authenticated or not admin.");
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
+    return;
+  }
+  try {
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (session && session.user && ADMIN_EMAILS.includes(session.user.email)) {
+      console.log("Authenticated as:", session.user.email);
+      showApp();
+    } else {
+      console.log("Not authenticated or not admin.");
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  } catch (e) {
+    console.error("Auth check failed:", e);
+    showApp(); // Fallback to let them use the calculator
   }
 }
 
