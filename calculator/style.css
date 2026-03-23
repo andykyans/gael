@@ -803,53 +803,57 @@ body {
     min-width: 550px;
   }
 
-  /* NEW: Force Mobile View */
+}
+
+/* Mobile Scenario Cards (Always enabled for these specific classes) */
+.scenario-card-mobile {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.card-header-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.card-title-mobile {
+  font-family: var(--font-accent);
+  font-weight: 800;
+  color: var(--or-light);
+  font-size: 1.1rem;
+}
+
+.card-row-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.card-row-mobile span:first-child { color: var(--text-muted); padding-right: 10px; }
+.card-row-mobile span:last-child { font-weight: 700; color: var(--text-main); text-align: right; }
+
+.card-row-mobile.total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+  font-size: 1.1rem;
+  color: var(--or) !important;
+}
+.card-row-mobile.total span:last-child { color: var(--or) !important; }
+
+@media (max-width: 768px) {
   .desktop-only-table { display: none !important; }
   #mobile-scenario-cards { display: block !important; }
-  
-  .scenario-card-mobile {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    animation: fadeIn 0.4s ease-out;
-  }
-  
-  .card-header-mobile {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-  }
-  
-  .card-title-mobile {
-    font-family: var(--font-accent);
-    font-weight: 800;
-    color: var(--or-light);
-    font-size: 1.1rem;
-  }
-  
-  .card-row-mobile {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-  }
-  
-  .card-row-mobile span:first-child { color: var(--text-muted); }
-  .card-row-mobile span:last-child { font-weight: 700; color: var(--text-main); }
-  
-  .card-row-mobile.total {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px dashed rgba(255,255,255,0.1);
-    font-size: 1.1rem;
-    color: var(--or) !important;
-  }
-  .card-row-mobile.total span:last-child { color: var(--or) !important; }
 
   /* Compact Amortization Table */
   .pro-amort-table th:nth-child(3),
