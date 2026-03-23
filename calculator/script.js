@@ -589,7 +589,7 @@ function updateEntretien() {
     matCost = (50 + (15 * panels)) * 25; // Micros maintenance scale with numbers
   }
   
-  if (hasBatt) matCost += 4500; // 1 replacement battery
+  if (hasBatt) matCost += 9000; // 2 replacements (year 12 and 24) for 25y projection
   
   const assAn = 40 + (4 * panels); // Base + 4€ per panel/year
   const assCost = assAn * 25;
