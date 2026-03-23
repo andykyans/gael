@@ -577,31 +577,33 @@ function updateEntretien() {
   if(document.getElementById('e-inst-val')) document.getElementById('e-inst-val').textContent = fmtE(inst);
   if(document.getElementById('e-batt-val')) document.getElementById('e-batt-val').textContent = hasBatt ? 'Oui' : 'Non';
   if(document.getElementById('e-ond-val')) document.getElementById('e-ond-val').textContent = isMicro ? 'Micro' : 'Central';
-
+  const instSoleil = panels * POWER_PER_PANEL * PRIX_WC;
+  
   // Specific Breakdown (Dynamic indexing)
   const netAn = 50 + (8 * panels); // Base + 8€ per panel/year
   const netCost = 25 * netAn;
   
-  let matCost = 0;
+  let matCostPV = 0;
   if (!isMicro) {
-    matCost = 2400; // Central is fixed
+    matCostPV = 2400; // Central is fixed
   } else {
-    matCost = (50 + (15 * panels)) * 25; // Micros maintenance scale with numbers
+    matCostPV = (50 + (15 * panels)) * 25; // Micros maintenance scale with numbers
   }
-  
-  if (hasBatt) matCost += 9000; // 2 replacements (year 12 and 24) for 25y projection
   
   const assAn = 40 + (4 * panels); // Base + 4€ per panel/year
   const assCost = assAn * 25;
 
+  const totalMaintPV = netCost + matCostPV + assCost + 1000;
+  const totalMaintFull = totalMaintPV + 9000; // PV + 2 Batt Replacements
+
   if(document.getElementById('e-det-clean')) document.getElementById('e-det-clean').textContent = fmtE(netCost);
-  if(document.getElementById('e-det-ond')) document.getElementById('e-det-ond').textContent = fmtE(matCost);
+  if(document.getElementById('e-det-ond')) document.getElementById('e-det-ond').textContent = isMicro ? fmtE(matCostPV) : "2 400 €";
   if(document.getElementById('e-det-ass')) document.getElementById('e-det-ass').textContent = fmtE(assCost);
 
-  let totalEntretien = netCost + matCost + 1000; // +1000 for controls/SAV
-  
-  if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(inst + (hasBatt?PRIX_BATTERIE:0));
-  if(document.getElementById('e-total-entretien')) document.getElementById('e-total-entretien').textContent = fmtE(totalEntretien + assCost);
+  // Stats Grid Update
+  if(document.getElementById('e-total-invest')) document.getElementById('e-total-invest').textContent = fmtE(instSoleil);
+  if(document.getElementById('e-maint-pv')) document.getElementById('e-maint-pv').textContent = fmtE(totalMaintPV);
+  if(document.getElementById('e-maint-total')) document.getElementById('e-maint-total').textContent = fmtE(totalMaintFull);
 
   const eOnd = document.getElementById('e-ond');
   const ondVal = isMicro ? 1 : 0;
