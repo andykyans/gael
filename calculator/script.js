@@ -566,9 +566,11 @@ window.toggleSync = function(id) {
 window.changePanels = function(delta) {
   const el = document.getElementById('sl-panels');
   if(!el) return;
+  const min = parseInt(el.min || 8);
+  const max = parseInt(el.max || 32);
   let val = parseInt(el.value) + delta;
-  if(val < 8) val = 8;
-  if(val > 32) val = 32;
+  if(val < min) val = min;
+  if(val > max) val = max;
   window.syncPanels(val);
 };
 
