@@ -253,10 +253,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="w-input-group">
               <div class="w-label-row">
-                <label>⚡ Conso annuelle estimée</label>
+                <label>⚡ Conso annuelle</label>
                 <span class="w-value" id="val-w-conso">3 500 kWh</span>
               </div>
-              <!-- Conso automatisée : Pas de curseur ici (v52) -->
+              <input type="range" min="1000" max="15000" step="100" value="3500" id="sl-w-conso" class="w-range" oninput="updateWidget(true)">
             </div>
             <div class="w-input-group" style="margin-bottom:0">
               <div class="w-label-row">
