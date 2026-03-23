@@ -97,6 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleAdvanced();
     };
   }
+
+  // NEW: Responsive Chart Redraw
+  window.addEventListener('resize', () => {
+    if (document.getElementById('tab-graphique').classList.contains('active')) {
+      drawChart();
+    }
+  });
 });
 
 window.toggleAdvanced = function() {
