@@ -341,6 +341,7 @@ function calculateScenarioYearly(scenario, conso, baseTarif) {
   const gIdx = parseFloat(document.getElementById('sl-idx-gaele')?.value || 2.0) / 100;
   const s2Dep = parseFloat(document.getElementById('sl-dep-s2')?.value || 60) / 100;
   const s3Dep = parseFloat(document.getElementById('sl-dep-s3')?.value || 40) / 100;
+  const panels = parseInt(document.getElementById('sl-panels')?.value || 10);
   const prixWc = parseFloat(document.getElementById('sl-prix-wc')?.value || 1.1);
   const prixBatt = parseFloat(document.getElementById('sl-prix-batt')?.value || 7000);
   const inst = panels * POWER_PER_PANEL * prixWc;
