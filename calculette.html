@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur d'Économies | Gaele XL</title>
+    <meta name="description" content="Découvrez combien vous pouvez économiser sur votre facture d'énergie avec Gaele XL. Simulation gratuite en 30 secondes.">
+    
+    <!-- Polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS (Réutilisation du style existant + ajustements dédiés) -->
+    <link rel="stylesheet" href="styles.css?v=11">
+    <style>
+        body {
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .promo-container {
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        .promo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .promo-header img {
+            height: 40px;
+            margin-bottom: 20px;
+        }
+        .promo-title {
+            font-family: 'Outfit', sans-serif;
+            color: var(--forest);
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+        .promo-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0;
+        }
+        /* Ajustements pour le widget en mode "plein écran" */
+        .widget-card.mini {
+            background: white !important;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+            padding: 40px !important;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .promo-title { font-size: 1.8rem; }
+            .widget-card.mini { padding: 25px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="promo-container">
+        <div class="promo-header">
+            <img src="https://static.wixstatic.com/media/893c83_13e9a4f4d2f04e1281f62c5e5e3e2a2c~mv2.png" alt="Gaele XL">
+            <h1 class="promo-title">Découvrez votre <span class="text-gold">gain réel</span> en 30 secondes</h1>
+            <p class="promo-subtitle">Simulateur gratuit Gaele XL basé sur vos factures actuelles.</p>
+        </div>
+
+        <!-- LE CALCULATEUR (Même structure que sur la landing page) -->
+        <div class="widget-card mini">
+            <div class="w-mode-switcher">
+                <button id="w-btn-part" class="w-mode-btn active" onclick="setWidgetMode('particulier')">👨‍👩‍👧‍👦 Particulier</button>
+                <button id="w-btn-pro" class="w-mode-btn" onclick="setWidgetMode('professionnel')">🏢 Professionnel</button>
+            </div>
+
+            <div class="widget-grid">
+                <div class="widget-inputs">
+                    <div class="w-input-group" id="group-w-pers">
+                        <div class="w-label-row">
+                            <label>👨‍👩‍👧‍👦 Taille du foyer</label>
+                            <span class="w-value" id="val-w-pers">4 pers.</span>
+                        </div>
+                        <div class="w-slider-box">
+                            <button class="w-adj-btn" onclick="adjW('sl-w-pers', -1)">-</button>
+                            <input type="range" min="1" max="6" step="1" value="4" id="sl-w-pers" class="w-range" oninput="updateWidget()">
+                            <button class="w-adj-btn" onclick="adjW('sl-w-pers', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="w-input-group">
+                        <div class="w-label-row">
+                            <label>⚡ Conso annuelle</label>
+                            <span class="w-value" id="val-w-conso">3 500 kWh</span>
+                        </div>
+                        <div class="w-slider-box">
+                            <button class="w-adj-btn" onclick="adjW('sl-w-conso', -1)">-</button>
+                            <input type="range" min="1000" max="15000" step="100" value="3500" id="sl-w-conso" class="w-range" oninput="updateWidget(true)">
+                            <button class="w-adj-btn" onclick="adjW('sl-w-conso', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="w-input-group" style="margin-bottom:0">
+                        <div class="w-label-row">
+                            <label>💶 Tarif marché bloqué</label>
+                            <span class="w-value" style="background:var(--forest); color:white; border:none">0,450 € / kWh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-results mini">
+                    <div class="res-mini-row"><span>Gain estimé /an :</span> <strong id="w-eco-an">— €</strong></div>
+                    <div class="res-mini-row"><span>Économies sur 25 ans :</span> <strong class="text-gold" id="w-eco-25">— €</strong></div>
+                    <a href="index.html#qualification" class="widget-cta-mini" style="font-size:1.1rem; padding:18px">Vérifier mon éligibilité gratuitement →</a>
+                </div>
+            </div>
+            <p style="font-size:0.7rem; color:#999; text-align:center; margin-top:20px">* Simulation basée sur les tarifs fixes Gaele XL par rapport aux prix moyens du marché.</p>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="script.js?v=3.9" defer></script>
+    <script>
+        // On redirige le scroll-to-qualification vers la page principale
+        window.scrollToQualification = function() {
+            window.location.href = "index.html#qualification";
+        };
+    </script>
+</body>
+</html>
