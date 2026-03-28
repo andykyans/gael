@@ -1,12 +1,18 @@
 // ── SUPABASE INIT ──
-console.log("Gaelexl Script Version: 3.0 (Email + Logs)");
+console.log("Gaelexl Script Version: 3.1 (Guarded)");
 var SUPABASE_URL = 'https://adebczvhvxajiyeeyerx.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZWJjenZodnhhaml5ZWV5ZXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2MDIsImV4cCI6MjA4NzQ0NzYwMn0._wGnpo7sHJeGYHLLdATgWxss8ySVnCZ0UQU5VB6nhhY';
-var _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var _supabase = null;
+if (typeof supabase !== 'undefined') {
+  _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+  console.warn("Supabase is not defined. Some features might be disabled.");
+}
 
 var blockedDatesCache = [];
 
 async function loadBlockedDates() {
+  if (!_supabase) return;
   try {
     var res = await _supabase.from('prospects').select('date_rdv').eq('admin_status', 'blocked');
     if (res.data) {
@@ -312,6 +318,7 @@ async function submitCal() {
   var prospectData = { prenom: p, nom: n, email: e, telephone: t, code_postal: cp, date_rdv: combinedDate, region: qState.region || getRegionByCP(cp), statut: st, offre_recommandee: ofr, message: notes };
 
   try {
+    if (!_supabase) { alert('Service indisponible (Supabase non chargé).'); throw new Error("Supabase null"); }
     var result = await _supabase.from('prospects').insert(prospectData);
     if (result.error) throw result.error;
     document.getElementById('cal-form-inner').style.display='none';
@@ -335,6 +342,7 @@ async function submitQuestion() {
 
   var data = { prenom: p, nom: document.getElementById('q-nom').value.trim(), email: e, telephone: t, code_postal: cp, region: getRegionByCP(cp), statut: st, message: msg };
   try {
+    if (!_supabase) { throw new Error("Supabase null"); }
     await _supabase.from('prospects').insert(data);
     document.getElementById('question-form-inner').style.display = 'none';
     document.getElementById('question-success').style.display = 'block';
@@ -351,7 +359,7 @@ function toggleFaq(item) {
 
 async function loadDynamicReviews() {
   const grid = document.querySelector('.testi-grid');
-  if (!grid) return;
+  if (!grid || !_supabase) return;
   try {
     const { data } = await _supabase.from('prospects').select('*').eq('admin_status', 'publie').order('created_at', { ascending: false });
     if (!data) return;
@@ -424,21 +432,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.warn("Error mixing blocked dates:", e);
   }
 
-  flatpickr("#cal-date", {
-    static: true, monthSelectorType: 'static', dateFormat: "d/m/Y", minDate: "today", locale: "fr",
-    disable: [d => d.getDay()===0],
-    onChange: function(sd, ds) {
-      var ts = document.getElementById("cal-time");
-      if (!ds) { ts.disabled = true; return; }
-      ts.innerHTML = '<option value="" disabled selected>Choisir une heure *</option>';
-      ts.disabled = false;
-      var iso = ds.split('/')[2]+'-'+ds.split('/')[1]+'-'+ds.split('/')[0];
-      ["09:00", "12:00", "15:00", "18:00"].forEach(t => {
-        var isB = blockedDates.indexOf(iso+" "+t)!==-1 || blockedDates.indexOf(ds+" "+t)!==-1;
-        var opt = document.createElement("option"); opt.value = t; opt.textContent = t + (isB ? " (Indisponible)" : ""); opt.disabled = isB; ts.appendChild(opt);
-      });
-    }
-  });
+  if (typeof flatpickr !== 'undefined' && document.getElementById('cal-date')) {
+    flatpickr("#cal-date", {
+      static: true, monthSelectorType: 'static', dateFormat: "d/m/Y", minDate: "today", locale: "fr",
+      disable: [d => d.getDay()===0],
+      onChange: function(sd, ds) {
+        var ts = document.getElementById("cal-time");
+        if (!ds) { ts.disabled = true; return; }
+        ts.innerHTML = '<option value="" disabled selected>Choisir une heure *</option>';
+        ts.disabled = false;
+        var iso = ds.split('/')[2]+'-'+ds.split('/')[1]+'-'+ds.split('/')[0];
+        ["09:00", "12:00", "15:00", "18:00"].forEach(t => {
+          var isB = blockedDates.indexOf(iso+" "+t)!==-1 || blockedDates.indexOf(ds+" "+t)!==-1;
+          var opt = document.createElement("option"); opt.value = t; opt.textContent = t + (isB ? " (Indisponible)" : ""); opt.disabled = isB; ts.appendChild(opt);
+        });
+      }
+    });
+  }
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -448,8 +458,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (id) document.querySelectorAll('.m-nav-item').forEach(i => { i.classList.toggle('active', i.getAttribute('href')==='#'+id); });
       }
     });
-  }, { threshold: 0.2 });
+  }, { threshold: 0.1 }); // Lower threshold for better visibility trigger
   document.querySelectorAll('.app-view').forEach(s => observer.observe(s));
+
+  // Handle initial hash on load
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target && target.classList.contains('app-view')) {
+      target.classList.add('visible');
+    }
+  }
+});
+
+// Handle hash changes for better UX
+window.addEventListener('hashchange', function() {
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target && target.classList.contains('app-view')) {
+      target.classList.add('visible');
+    }
+  }
 });
 
 function closeWelcomeWall() {
@@ -468,6 +496,7 @@ async function submitReview() {
   if(!name || !loc || rat===0 || !txt) { alert('Champs requis.'); return; }
   const btn = document.querySelector('#review-modal .cal-submit'); btn.disabled = true; btn.textContent='Envoi...';
   try {
+    if (!_supabase) { throw new Error("Supabase null"); }
     await _supabase.from('prospects').insert([{ prenom: name, nom: '(AVIS CLIENT '+rat+'/5)', email: 'avis@client.be', telephone: '0000', code_postal: loc, message: `NOTE: ${rat}/5\nAVIS: ${txt}`, statut: 'Propri\u00E9taire', offre_recommandee: 'Gaele XL' }]);
     const grid = document.querySelector('.testi-grid');
     if (grid) {
@@ -512,19 +541,33 @@ window.setWidgetMode = function(mode) {
     var groupPers = document.getElementById('group-w-pers');
     if(groupPers) groupPers.style.display = (mode === 'particulier') ? 'block' : 'none';
 
-    // Adjust Sliders (v53: safely check if slConso exists)
+    // Adjust Sliders
     var slConso = document.getElementById('sl-w-conso');
     if(slConso) {
         if(mode === 'particulier') {
             slConso.min = 1000;
             slConso.max = 15000;
             slConso.step = 100;
-            slConso.value = 3500;
+            if (slConso.value > 15000) slConso.value = 3500;
         } else {
             slConso.min = 5000;
             slConso.max = 200000;
             slConso.step = 500;
-            slConso.value = 50000;
+            if (slConso.value < 5000) slConso.value = 50000;
+        }
+    }
+
+    // Update CTA link
+    var cta = document.getElementById('w-cta-link');
+    if (cta) {
+        var path = window.location.pathname;
+        // Robust index detection
+        var isIndex = path.endsWith('index.html') || path.endsWith('/') || path === "" || path.includes('index.html#');
+        
+        if (mode === 'professionnel') {
+            cta.href = isIndex ? "#professionnels" : "index.html#professionnels";
+        } else {
+            cta.href = isIndex ? "#qualification" : "index.html#qualification";
         }
     }
     
@@ -573,6 +616,22 @@ window.updateWidget = function(isManual) {
 
     var elEco25 = document.getElementById('w-eco-25');
     if (elEco25) elEco25.textContent = f(eco25) + ' €';
+
+    // Before/After comparison elements
+    var elFactM = document.getElementById('w-fact-marche');
+    if (elFactM) elFactM.textContent = f(factM) + ' €/an';
+
+    var elFactG = document.getElementById('w-fact-gaele');
+    if (elFactG) elFactG.textContent = f(factG) + ' €/an';
+
+    var elRateM = document.getElementById('w-rate-marche');
+    if (elRateM) elRateM.textContent = tarifMarket.toFixed(4).replace('.', ',') + ' €/kWh';
+
+    var elRateG = document.getElementById('w-rate-gaele');
+    if (elRateG) elRateG.textContent = tarifGaele.toFixed(4).replace('.', ',') + ' €/kWh';
+
+    var elEcoAn2 = document.getElementById('w-eco-an-badge');
+    if (elEcoAn2) elEcoAn2.textContent = '- ' + f(eco) + ' €/an';
 };
 
 window.scrollToQualification = function() {
@@ -596,9 +655,40 @@ window.adjW = function(id, delta) {
     updateWidget(id === 'sl-w-conso');
 };
 
+// Robust CTA Handler
+function initCtaHandler() {
+    const cta = document.getElementById('w-cta-link');
+    if (!cta) return;
+    
+    cta.onclick = function(e) {
+        var path = window.location.pathname;
+        var isIndex = path.endsWith('index.html') || path.endsWith('/') || path === "" || path.includes('index.html#');
+        
+        const targetId = (currentWidgetMode === 'professionnel') ? 'professionnels' : 'qualification';
+        
+        if (isIndex) {
+            e.preventDefault();
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.classList.add('visible');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.location.hash = targetId;
+            } else {
+                // Fallback if ID not found on index (should not happen)
+                window.location.href = "index.html#" + targetId;
+            }
+        } else {
+            // On a secondary page like calculette.html
+            e.preventDefault();
+            window.location.href = "index.html#" + targetId;
+        }
+    };
+}
+
 // Auto-init on load
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         if (typeof updateWidget === 'function') updateWidget();
+        initCtaHandler();
     }, 500);
 });
