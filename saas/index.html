@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Gaele Pro — Application de prospection terrain pour conseillers énergie Gaele XL en Wallonie.">
+<meta name="theme-color" content="#0a1a0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Gaele Pro — Prospection</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast">✅ Enregistré</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">☀️ Gaele Pro</div>
+    <div class="header-sub" id="header-sub">Andy Kyambikwa · Gaele XL</div>
+  </div>
+  <div class="header-badge" id="session-badge">Session OFF</div>
+</div>
+
+<!-- PAGE TERRAIN -->
+<div class="page active" id="page-terrain">
+
+  <!-- SESSION -->
+  <div class="session-live" id="session-block">
+    <div style="font-size:0.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">Session de prospection</div>
+    <div class="session-timer" id="timer-display">00:00:00</div>
+    <div class="session-compteur">
+      <div class="compteur-box"><div class="compteur-val" id="c-visites">0</div><div class="compteur-lbl">Visites</div></div>
+      <div class="compteur-box"><div class="compteur-val" id="c-interesses">0</div><div class="compteur-lbl">Intéressés</div></div>
+      <div class="compteur-box"><div class="compteur-val" id="c-rdv">0</div><div class="compteur-lbl">RDV</div></div>
+      <div class="compteur-box"><div class="compteur-val" id="c-signes">0</div><div class="compteur-lbl">Signés</div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn btn-vert" id="btn-session" onclick="toggleSession()" style="flex:1">▶ Démarrer session</button>
+      <button class="btn btn-outline btn-sm" onclick="resetSession()">↺</button>
+    </div>
+  </div>
+
+  <!-- NOUVELLE VISITE -->
+  <div class="card">
+    <div class="card-title">➕ Nouvelle visite</div>
+
+    <div class="form-group">
+      <label class="form-label">Adresse / N° de maison</label>
+      <input type="text" class="form-input" id="f-adresse" placeholder="Ex: Rue du Bailli 12" autocomplete="street-address">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nom — Prénom</label>
+      <input type="text" class="form-input" id="f-nom" placeholder="Optionnel si refus" autocomplete="name">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📋 Q1 — Propriétaire ?</label>
+      <div class="choix-grid cols3">
+        <button class="choix-btn" onclick="sel(this,'q1','oui','sel-vert')"   data-q="q1" data-v="oui">✅ Oui</button>
+        <button class="choix-btn" onclick="sel(this,'q1','non','sel-rouge')"  data-q="q1" data-v="non">❌ Non</button>
+        <button class="choix-btn" onclick="sel(this,'q1','copro','sel-or')"  data-q="q1" data-v="copro">🤝 Co-proprio</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">☀️ Q2 — Panneaux solaires ?</label>
+      <div class="choix-grid cols3">
+        <button class="choix-btn" onclick="sel(this,'q2','non','sel-vert')"    data-q="q2" data-v="non">✅ Pas encore</button>
+        <button class="choix-btn" onclick="sel(this,'q2','oui','sel-rouge')"   data-q="q2" data-v="oui">⚠️ Déjà équipé</button>
+        <button class="choix-btn" onclick="sel(this,'q2','ancien','sel-or')"   data-q="q2" data-v="ancien">🔄 Ancienne install.</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">💬 Q3 — Intéressé ?</label>
+      <div class="choix-grid cols3">
+        <button class="choix-btn" onclick="sel(this,'q3','oui','sel-vert')"  data-q="q3" data-v="oui">⭐ Oui !</button>
+        <button class="choix-btn" onclick="sel(this,'q3','peut','sel-or')"   data-q="q3" data-v="peut">🤔 Peut-être</button>
+        <button class="choix-btn" onclick="sel(this,'q3','non','sel-rouge')" data-q="q3" data-v="non">❌ Non</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📊 Statut de la visite</label>
+      <div class="choix-grid cols2">
+        <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')"   data-q="statut" data-v="signe">✅ Contrat signé</button>
+        <button class="choix-btn" onclick="sel(this,'statut','rdv','sel-or')"       data-q="statut" data-v="rdv">📅 RDV fixé</button>
+        <button class="choix-btn" onclick="sel(this,'statut','rappel','sel-bleu')"  data-q="statut" data-v="rappel">📞 À rappeler</button>
+        <button class="choix-btn" onclick="sel(this,'statut','non','sel-rouge')"    data-q="statut" data-v="non">❌ Pas intéressé</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📞 Contact (si intéressé)</label>
+      <input type="tel" class="form-input" id="f-tel" placeholder="GSM / Téléphone" autocomplete="tel">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📝 Notes</label>
+      <textarea class="form-input" id="f-notes" rows="2" placeholder="Infos utiles..." style="resize:none"></textarea>
+    </div>
+
+    <button class="btn btn-or" onclick="saveVisite()" style="margin-top:4px">💾 Enregistrer la visite</button>
+  </div>
+</div>
+
+<!-- PAGE CRM -->
+<div class="page" id="page-crm">
+  <div style="padding:14px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">CRM Prospects</div>
+      <div style="font-size:0.65rem;color:var(--txt2)" id="crm-count">0 prospects</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-outline btn-sm" onclick="filterProspects('all')" style="font-size:0.65rem;padding:6px 10px;border-color:var(--or);color:var(--or)">Tous</button>
+      <button class="btn btn-outline btn-sm" onclick="filterProspects('chaud')" style="font-size:0.65rem;padding:6px 10px">🔥 Chauds</button>
+    </div>
+  </div>
+
+  <!-- FILTRE STATUTS -->
+  <div style="padding:6px 14px;display:flex;gap:6px;overflow-x:auto">
+    <button class="choix-btn sel-vert"  onclick="filterProspects('signe')"  style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">✅ Signés</button>
+    <button class="choix-btn sel-or"    onclick="filterProspects('rdv')"    style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">📅 RDV</button>
+    <button class="choix-btn sel-bleu"  onclick="filterProspects('rappel')" style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">📞 Rappel</button>
+    <button class="choix-btn sel-rouge" onclick="filterProspects('non')"    style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">❌ Non</button>
+  </div>
+
+  <!-- EXPORT CSV -->
+  <div style="padding:0 14px;margin-top:8px">
+    <button class="btn btn-bleu btn-sm" onclick="exportCSV()" style="width:100%;font-size:0.78rem">📤 Exporter en CSV (Excel)</button>
+  </div>
+
+  <div id="prospects-list"></div>
+  <div id="crm-empty" style="text-align:center;padding:40px 20px;color:var(--txt2);font-size:0.85rem;display:none">
+    <div style="font-size:2rem;margin-bottom:8px">📭</div>
+    Aucun prospect encore.<br>Commence ta prospection !
+  </div>
+</div>
+
+<!-- PAGE DASHBOARD -->
+<div class="page" id="page-dashboard">
+
+  <div style="padding:14px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">Dashboard</div>
+      <div style="font-size:0.65rem;color:var(--txt2)">Toutes les sessions</div>
+    </div>
+    <!-- Bouton objectifs -->
+    <button class="btn btn-outline btn-sm" onclick="openObjectifsModal()" style="font-size:0.65rem;padding:6px 12px;border-color:var(--or);color:var(--or)">🎯 Objectifs</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-val or"   id="d-total">0</div><div class="stat-lbl">Maisons visitées</div></div>
+    <div class="stat-box"><div class="stat-val vert" id="d-signes">0</div><div class="stat-lbl">Contrats signés</div></div>
+    <div class="stat-box"><div class="stat-val bleu" id="d-rdv">0</div><div class="stat-lbl">RDV fixés</div></div>
+    <div class="stat-box"><div class="stat-val rouge" id="d-conv">0%</div><div class="stat-lbl">Taux conversion</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Visites par jour (7 derniers jours)</div>
+    <div class="mini-bars" id="week-chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Objectif hebdomadaire</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:0.78rem">Maisons visitées</span>
+      <span style="font-size:0.78rem;color:var(--or2)" id="obj-txt">0 / 210</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="obj-bar" style="width:0%"></div></div>
+
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:0.78rem">Contrats signés</span>
+        <span style="font-size:0.78rem;color:#4ecb71" id="obj-signes-txt">0 / 4</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-fill" id="obj-signes-bar" style="width:0%;background:linear-gradient(90deg,var(--vert-ok),#4ecb71)"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Répartition des statuts</div>
+    <div id="stats-statuts"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ Conseils IA</div>
+    <div id="ai-tips" style="font-size:0.82rem;line-height:1.6;color:var(--txt2)"></div>
+  </div>
+
+  <div style="padding:14px">
+    <button class="btn btn-rouge" onclick="clearData()" style="opacity:.6;font-size:0.75rem">🗑️ Effacer toutes les données</button>
+  </div>
+</div>
+
+<!-- PAGE PLANNING -->
+<div class="page" id="page-planning">
+  <div style="padding:14px 14px 4px">
+    <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">Planning Wallonie</div>
+    <div style="font-size:0.65rem;color:var(--txt2)">Zones et horaires recommandés</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 Cette semaine</div>
+    <div id="planning-week"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📍 Zones prioritaires Wallonie</div>
+    <div id="zones-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💬 Script d'accroche</div>
+    <div style="background:var(--card2);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic">
+      "Bonjour ! Je me permets de sonner car on fait un rapide sondage énergie dans le quartier. Juste 3 questions — vous êtes propriétaire ici ?"
+    </div>
+    <div style="margin-top:10px;background:var(--card2);border-left:3px solid var(--v2);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic">
+      "On vérifie combien de maisons ont déjà des panneaux solaires dans la rue. Vous, vous en avez ?"
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL PROSPECT -->
+<div class="modal-overlay" id="modal-prospect">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-nom">Prospect</div>
+    <div id="modal-content"></div>
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <button class="btn btn-or" onclick="closeModal()" style="flex:1">Fermer</button>
+      <button class="btn btn-rouge btn-sm" id="btn-delete-prospect">🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OBJECTIFS -->
+<div class="modal-overlay" id="modal-objectifs">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎯 Objectifs hebdomadaires</div>
+    <div style="font-size:0.78rem;color:var(--txt2);margin-bottom:16px;line-height:1.5">
+      Ajuste tes objectifs selon ta semaine de travail. Ces valeurs sont sauvegardées dans ton appareil.
+    </div>
+    <div class="obj-input-row">
+      <label for="obj-visites-input">🏠 Maisons à visiter</label>
+      <input type="number" id="obj-visites-input" min="1" max="500" value="210">
+    </div>
+    <div class="obj-input-row">
+      <label for="obj-contrats-input">✅ Contrats à signer</label>
+      <input type="number" id="obj-contrats-input" min="1" max="50" value="4">
+    </div>
+    <div style="margin-top:20px;display:flex;gap:8px">
+      <button class="btn btn-or" onclick="saveObjectifsModal()" style="flex:1">💾 Sauvegarder</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('modal-objectifs').classList.remove('open')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('terrain',this)"><span class="ico">🚪</span><span>Terrain</span></button>
+  <button class="nav-btn" onclick="showPage('crm',this)"><span class="ico">👥</span><span>CRM</span></button>
+  <button class="nav-btn" onclick="showPage('dashboard',this)"><span class="ico">📊</span><span>Stats</span></button>
+  <button class="nav-btn" onclick="showPage('planning',this)"><span class="ico">📅</span><span>Planning</span></button>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
