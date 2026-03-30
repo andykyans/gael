@@ -1175,8 +1175,12 @@ function generatePlanning(commune) {
   const communeLeads = (state.b2bLeads || []).filter(l => l.commune && l.commune.toLowerCase() === commune.toLowerCase());
   const realStreets = [...new Set(communeLeads.map(l => l.rue).filter(Boolean))];
   
+  if (realStreets.length < 5) {
+    showToast(`⚠️ Rues génériques utilisées (Pas de données B2B pour ${commune.toUpperCase()})`, '#e74c3c');
+  }
+
   // Fallback rues si peu de données B2B
-  const fallbackStreets = ["Rue de la Station", "Rue de l'Église", "Chaussée de Mons", "Rue du Centre", "Rue du Bailli", "Rue Haute", "Rue Neuve", "Place du Marché"];
+  const fallbackStreets = ["Rue de la Station", "Rue de l'Église", "Chaussée de Mons", "Rue du Centre", "Rue du Bailli", "Rue Haute", "Rue Neuve", "Place du Marché", "Avenue Reine Astrid", "Boulevard Léopold", "Rue des Écoles", "Chemin du Grand Pré", "Rue Verte"];
   const availableStreets = realStreets.length >= 10 ? realStreets : [...realStreets, ...fallbackStreets];
 
   const planningData = {
