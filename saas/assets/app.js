@@ -1281,7 +1281,14 @@ function renderPlanningTable(data) {
                 <td class="day-cell">${r.jour}</td>
                 <td class="time-cell">${r.horaire}</td>
                 <td class="zone-cell">${r.zone}</td>
-                <td class="streets-cell">${r.rues}</td>
+                <td class="streets-cell">
+                  ${r.rues.split(' + ').map(street => `
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                      <span>${street}</span>
+                      <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(street + ', ' + data.commune)}" target="_blank" style="text-decoration:none;font-size:0.8rem;background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--border)" title="Ouvrir dans Google Maps">🗺️ Map</a>
+                    </div>
+                  `).join('')}
+                </td>
               </tr>
             `).join('')}
           </tbody>
