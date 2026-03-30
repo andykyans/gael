@@ -122,6 +122,22 @@ select.form-input option{background:var(--card)}
 
 .sep{height:1px;background:var(--border);margin:14px 0}
 .tag{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0.06em}
+
+/* ── PLANNING TABLE ─────────────────────────────────── */
+.planning-table-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:12px 14px;overflow:hidden}
+.planning-header{padding:16px;border-bottom:1px solid var(--border);background:var(--card2)}
+.planning-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--txt)}
+.planning-subtitle{font-size:0.7rem;color:var(--txt2);margin-top:4px}
+.table-scroll{overflow-x:auto;width:100%}
+.p-table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:450px}
+.p-table th{text-align:left;padding:12px 16px;font-size:0.65rem;color:var(--txt2);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)}
+.p-table td{padding:14px 16px;border-bottom:1px solid var(--border);color:var(--txt);vertical-align:middle}
+.p-table tr:last-child td{border-bottom:none}
+.p-table .day-cell{font-weight:800;font-family:'Syne',sans-serif;color:var(--or2)}
+.p-table .time-cell{font-size:0.75rem;color:var(--txt2)}
+.p-table .zone-cell{color:var(--or)}
+.p-table .streets-cell{font-style:italic;color:var(--txt);line-height:1.4}
+.p-table tr:hover{background:rgba(201,168,76,.03)}
 </style>
 </head>
 <body>
@@ -304,27 +320,32 @@ select.form-input option{background:var(--card)}
 
 <!-- PAGE PLANNING -->
 <div class="page" id="page-planning">
-  <div style="padding:14px 14px 4px">
-    <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">Planning Wallonie</div>
-    <div style="font-size:0.65rem;color:var(--txt2)">Zones et horaires recommandés</div>
+  <div style="padding:14px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">Planning de Prospection</div>
+      <div style="font-size:0.65rem;color:var(--txt2)">Générateur hebdomadaire automatique</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-title">🚀 Nouvelle zone</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="planning-commune" class="form-input" placeholder="Ex: Tubize, Mons..." list="communes-list">
+      <datalist id="communes-list"></datalist>
+      <button class="btn btn-or btn-sm" onclick="handleGeneratePlanning()" style="white-space:nowrap">Générer</button>
+    </div>
+  </div>
+
+  <div id="planning-container">
+    <!-- Le tableau sera injecté ici -->
   </div>
 
   <div class="card">
-    <div class="card-title">📅 Cette semaine</div>
-    <div id="planning-week"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">📍 Zones prioritaires Wallonie</div>
-    <div id="zones-list"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">💬 Script d'accroche</div>
-    <div style="background:var(--card2);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic">
+    <div class="card-title">💬 Script d'accroche conseillé</div>
+    <div style="background:var(--card2);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic;margin-bottom:10px">
       "Bonjour ! Je me permets de sonner car on fait un rapide sondage énergie dans le quartier. Juste 3 questions — vous êtes propriétaire ici ?"
     </div>
-    <div style="margin-top:10px;background:var(--card2);border-left:3px solid var(--v2);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic">
+    <div style="background:var(--card2);border-left:3px solid var(--v2);border-radius:0 8px 8px 0;padding:12px;font-size:0.82rem;line-height:1.7;color:var(--txt);font-style:italic">
       "On vérifie combien de maisons ont déjà des panneaux solaires dans la rue. Vous, vous en avez ?"
     </div>
   </div>
@@ -352,6 +373,16 @@ select.form-input option{background:var(--card)}
 </div>
 
 <script>
+console.log("Gaele Pro — Version 1.5.2 chargé");
+
+function showToast(msg, bg = 'var(--vert-ok)') {
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.style.background = bg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 2500);
+}
 // ── STATE ──────────────────────────────────────────────
 let state = {
   prospects: JSON.parse(localStorage.getItem('gaele_prospects')||'[]'),
@@ -369,6 +400,135 @@ function showPage(id, btn) {
   if(id==='crm') renderCRM();
   if(id==='dashboard') renderDashboard();
   if(id==='planning') renderPlanning();
+}
+
+// ── PLANNING ──────────────────────────────────
+function renderPlanning() {
+  const container = document.getElementById('planning-container');
+  const dList = document.getElementById('communes-list');
+  
+  // Remplir auto-complétion
+  if (state.b2bLeads && state.b2bLeads.length > 0 && dList && dList.children.length === 0) {
+    const communes = [...new Set(state.b2bLeads.map(l => l.commune).filter(Boolean))].sort();
+    communes.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      dList.appendChild(opt);
+    });
+  }
+
+  // Charger existant
+  const saved = localStorage.getItem('gaele_planning');
+  if (saved) {
+    const data = JSON.parse(saved);
+    renderPlanningTable(data);
+  } else {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;color:var(--txt2);font-size:0.85rem">
+        <div style="font-size:2.5rem;margin-bottom:12px">📅</div>
+        Entrez une commune au-dessus pour générer votre planning de la semaine (250 adresses).
+      </div>`;
+  }
+}
+
+function handleGeneratePlanning() {
+  const input = document.getElementById('planning-commune');
+  const commune = input.value.trim();
+  if (!commune) {
+    showToast('⚠️ Entrez une commune', '#e74c3c');
+    return;
+  }
+  generatePlanning(commune);
+}
+
+function generatePlanning(commune) {
+  const start = new Date();
+  let dayOffset = (2 - start.getDay() + 7) % 7; 
+  if (start.getDay() === 0 || start.getDay() === 1) dayOffset = (2 - start.getDay() + 7) % 7;
+  else if (start.getDay() > 2) dayOffset = 0;
+
+  const mardi = new Date(start);
+  mardi.setDate(start.getDate() + dayOffset);
+  
+  const dayNames = ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  const zones = ['centre', 'nord', 'sud', 'est', 'ouest'];
+  
+  const communeLeads = (state.b2bLeads||[]).filter(l => l.commune && l.commune.toLowerCase() === commune.toLowerCase());
+  const realStreets = [...new Set(communeLeads.map(l => l.rue).filter(Boolean))];
+  const fallbackStreets = ["Rue de la Station", "Rue de l'Église", "Chaussée de Mons", "Rue du Centre", "Rue du Bailli", "Rue Haute", "Rue Neuve", "Place du Marché"];
+  const availableStreets = realStreets.length >= 10 ? realStreets : [...realStreets, ...fallbackStreets];
+
+  const planningData = {
+    commune: commune.charAt(0).toUpperCase() + commune.slice(1),
+    range: "",
+    rows: []
+  };
+
+  for (let i = 0; i < 5; i++) {
+    const date = new Date(mardi);
+    date.setDate(mardi.getDate() + i);
+    const dateStr = date.toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit' });
+    const s1 = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+    const s2 = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+    
+    planningData.rows.push({
+      jour: dayNames[i] + ' ' + dateStr,
+      horaire: i === 4 ? '10h → 13h' : '14h → 18h',
+      zone: planningData.commune + ' ' + zones[i],
+      rues: s1 + (s1 !== s2 ? ' + ' + s2 : '')
+    });
+    
+    if (i === 0) planningData.range = date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+    if (i === 4) planningData.range += " au " + date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+  }
+
+  localStorage.setItem('gaele_planning', JSON.stringify(planningData));
+  renderPlanningTable(planningData);
+  showToast('🚀 Planning généré pour ' + planningData.commune);
+}
+
+function renderPlanningTable(data) {
+  const container = document.getElementById('planning-container');
+  container.innerHTML = `
+    <div class="planning-table-card">
+      <div class="planning-header">
+        <div class="planning-title">🗓️ Planning ${data.commune} — 50 maisons/jour</div>
+        <div class="planning-subtitle">Période : du ${data.range}</div>
+      </div>
+      <div class="table-scroll">
+        <table class="p-table">
+          <thead>
+            <tr>
+              <th>Jour</th>
+              <th>Horaire</th>
+              <th>Zone</th>
+              <th>Rues ciblées</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.rows.map(r => `
+              <tr>
+                <td class="day-cell">${r.jour}</td>
+                <td class="time-cell">${r.horaire}</td>
+                <td class="zone-cell">${r.zone}</td>
+                <td class="streets-cell">${r.rues}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="padding:0 14px;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="clearPlanning()" style="flex:1;border-color:var(--rouge);color:var(--rouge)">🗑️ Effacer</button>
+    </div>
+  `;
+}
+
+function clearPlanning() {
+  if (confirm('Effacer le planning actuel ?')) {
+    localStorage.removeItem('gaele_planning');
+    renderPlanning();
+  }
 }
 
 // ── SESSION TIMER ──────────────────────────────────────
