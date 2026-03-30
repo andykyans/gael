@@ -1117,8 +1117,9 @@ function loadB2BLeads() {
   xhr.onload = function() {
     if (xhr.status === 200 || (xhr.status === 0 && xhr.responseText)) {
       try {
-        state.b2bLeads = JSON.parse(xhr.responseText);
-        console.log(`✅ ${state.b2bLeads.length} leads B2B chargés`);
+        const rawData = JSON.parse(xhr.responseText);
+        state.b2bLeads = rawData.filter(e => !e.demo);
+        console.log(`✅ ${state.b2bLeads.length} leads B2B chargés (Filtrage démo: ${rawData.length - state.b2bLeads.length} supprimés)`);
         // Refresh B2B view if on CRM
         if (currentCrmTab === 'b2b') renderB2B();
         // Refresh map if active
@@ -1131,7 +1132,7 @@ function loadB2BLeads() {
     }
   };
   xhr.onerror = function() {
-    console.log('ℹ️ bce_wallonie.json absent — lance scripts/bce_scraper_node.js pour générer les leads B2B');
+    console.log('ℹ️ bce_wallonie.json absent — Voir REAL_DATA_GUIDE.md pour générer les leads B2B réels.');
   };
   try { xhr.send(); } catch(e) { /* silencieux en file:// */ }
 }
