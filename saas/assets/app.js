@@ -264,17 +264,18 @@ function renderB2B() {
     const badge = e.demo
       ? `<span class="prospect-badge s-nouveau" style="font-size:0.52rem">DÉMO</span>`
       : `<span class="prospect-badge s-nouveau">BCE</span>`;
+    const googleSearchUrl = `https://www.google.be/search?q=${encodeURIComponent(e.nom + ' ' + (e.commune || ''))}`;
     return `<div class="prospect-item b2b-item" onclick="showB2BDetail(${i})">
       <div class="prospect-avatar b2b-avatar">${ico}</div>
       <div class="prospect-info">
         <div class="prospect-name">${escHtml(e.nom)}</div>
         <div class="prospect-detail">
           📍 ${escHtml(e.commune)} ${e.cp}
-          ${e.province ? ` · <span style="color:var(--or2);font-size:0.6rem">${escHtml(e.province)}</span>` : ''}
         </div>
         <div style="font-size:0.62rem;color:var(--txt2);margin-top:2px">${ico} ${escHtml(e.nace)}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <a href="${googleSearchUrl}" target="_blank" onclick="event.stopPropagation()" class="prospect-badge" style="background:#4285f4;color:white;text-decoration:none;font-size:0.55rem;font-weight:bold">🔍 Google</a>
         ${e.tel
           ? `<a href="tel:${escHtml(e.tel)}" class="prospect-badge s-rdv" onclick="event.stopPropagation()" style="font-size:0.6rem;text-decoration:none">📞 ${escHtml(e.tel)}</a>`
           : badge}
@@ -372,7 +373,10 @@ function showB2BDetail(idx) {
   const e = _b2bFiltered[idx];
   if (!e) return;
   document.getElementById('modal-nom').textContent = e.nom;
-  document.getElementById('modal-content').innerHTML = `
+    const googleSearchUrl = `https://www.google.be/search?q=${encodeURIComponent(e.nom + ' ' + (e.commune || ''))}`;
+    const directionsUrl  = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent((e.rue || '') + ', ' + e.cp + ' ' + e.commune)}`;
+    
+    document.getElementById('modal-content').innerHTML = `
     <div style="display:grid;gap:8px;font-size:0.82rem">
       <div class="modal-row"><span>📍 Commune</span><span style="color:var(--or2);font-weight:700">${escHtml(e.commune)} ${e.cp}</span></div>
       ${e.province ? `<div class="modal-row"><span>🗺️ Province</span><span>${escHtml(e.province)}</span></div>` : ''}
@@ -385,9 +389,11 @@ function showB2BDetail(idx) {
       ${e.demo ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(201,168,76,.1);border-radius:8px;font-size:0.68rem;color:var(--txt2)">⚠️ Données de démonstration — Lance node bce_scraper_node.js pour les vraies données BCE</div>` : ''}
     </div>
     <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+      <a href="${googleSearchUrl}" target="_blank" class="btn btn-outline" style="flex:1;min-width:120px;text-align:center;text-decoration:none;font-size:0.8rem;border-color:#4285f4;color:#4285f4">🔍 Chercher sur Google</a>
+      <a href="${directionsUrl}" target="_blank" class="btn btn-outline" style="flex:1;min-width:120px;text-align:center;text-decoration:none;font-size:0.8rem;border-color:#34a853;color:#34a853">🗺️ Itinéraire</a>
       ${e.tel ? `<a href="tel:${escHtml(e.tel)}" class="btn btn-vert" style="flex:1;min-width:120px;text-align:center;text-decoration:none;font-size:0.8rem">📞 Appeler</a>` : ''}
-      <button class="btn btn-outline" onclick="focusB2BOnMap('${idx}')" style="flex:1;min-width:120px;font-size:0.8rem">📍 Voir sur la carte</button>
       <button class="btn btn-or" onclick="convertB2BToProspect('${idx}')" style="flex:1;min-width:120px;font-size:0.8rem">➕ Ajouter au CRM</button>
+      <button class="btn btn-outline" onclick="focusB2BOnMap('${idx}')" style="flex:1;width:100%;font-size:0.8rem">📍 Voir sur la carte interne</button>
     </div>`;
   document.getElementById('btn-delete-prospect').style.display = 'none';
   document.getElementById('modal-prospect').classList.add('open');
