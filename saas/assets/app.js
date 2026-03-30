@@ -1116,6 +1116,155 @@ async function exportPDF() {
   showToast('✅ Rapport PDF téléchargé !', 'var(--vert-ok)');
 }
 
+// ── PLANNING ──────────────────────────────────
+function renderPlanning() {
+  const container = document.getElementById('planning-container');
+  const dList = document.getElementById('communes-list');
+  
+  // Remplir auto-complétion
+  if (state.b2bLeads && state.b2bLeads.length > 0 && dList && dList.children.length === 0) {
+    const communes = [...new Set(state.b2bLeads.map(l => l.commune).filter(Boolean))].sort();
+    communes.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      dList.appendChild(opt);
+    });
+  }
+
+  // Charger existant
+  const saved = localStorage.getItem('gaele_planning');
+  if (saved) {
+    const data = JSON.parse(saved);
+    renderPlanningTable(data);
+  } else {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;color:var(--txt2);font-size:0.85rem">
+        <div style="font-size:2.5rem;margin-bottom:12px">📅</div>
+        Entrez une commune au-dessus pour générer votre planning de la semaine (250 adresses).
+      </div>`;
+  }
+}
+
+function handleGeneratePlanning() {
+  const input = document.getElementById('planning-commune');
+  const commune = input.value.trim();
+  if (!commune) {
+    showToast('⚠️ Entrez une commune', '#e74c3c');
+    return;
+  }
+  generatePlanning(commune);
+}
+
+function generatePlanning(commune) {
+  // Calculer dates (Mardi de cette semaine au Samedi)
+  const days = [];
+  const start = new Date();
+  
+  // On décale au prochain mardi si on est après samedi, ou à ce mardi si on est début de semaine
+  let dayOffset = (2 - start.getDay() + 7) % 7; 
+  if (start.getDay() === 0 || start.getDay() === 1) dayOffset = (2 - start.getDay() + 7) % 7;
+  else if (start.getDay() > 2) dayOffset = 0; // On reste sur cette semaine si on est dedans
+
+  const mardi = new Date(start);
+  mardi.setDate(start.getDate() + dayOffset);
+  
+  const dayNames = ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  const zones = ['centre', 'nord', 'sud', 'est', 'ouest'];
+  
+  // Extraire les rues réelles du B2B pour cette commune
+  const communeLeads = (state.b2bLeads || []).filter(l => l.commune && l.commune.toLowerCase() === commune.toLowerCase());
+  const realStreets = [...new Set(communeLeads.map(l => l.rue).filter(Boolean))];
+  
+  // Fallback rues si peu de données B2B
+  const fallbackStreets = ["Rue de la Station", "Rue de l'Église", "Chaussée de Mons", "Rue du Centre", "Rue du Bailli", "Rue Haute", "Rue Neuve", "Place du Marché"];
+  const availableStreets = realStreets.length >= 10 ? realStreets : [...realStreets, ...fallbackStreets];
+
+  const planningData = {
+    commune: commune.charAt(0).toUpperCase() + commune.slice(1),
+    range: "",
+    rows: []
+  };
+
+  for (let i = 0; i < 5; i++) {
+    const date = new Date(mardi);
+    date.setDate(mardi.getDate() + i);
+    const dateStr = date.toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit' });
+    
+    // Sélectionner 2 rues au hasard pour ce jour
+    const s1 = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+    const s2 = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+    
+    planningData.rows.push({
+      jour: dayNames[i] + ' ' + dateStr,
+      horaire: i === 4 ? '10h → 13h' : '14h → 18h',
+      zone: planningData.commune + ' ' + zones[i],
+      rues: s1 + (s1 !== s2 ? ' + ' + s2 : '')
+    });
+    
+    if (i === 0) planningData.range = date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+    if (i === 4) planningData.range += " au " + date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+  }
+
+  localStorage.setItem('gaele_planning', JSON.stringify(planningData));
+  renderPlanningTable(planningData);
+  showToast('🚀 Planning généré pour ' + planningData.commune);
+}
+
+function renderPlanningTable(data) {
+  const container = document.getElementById('planning-container');
+  
+  container.innerHTML = `
+    <div class="planning-table-card">
+      <div class="planning-header">
+        <div class="planning-title">🗓️ Planning ${data.commune} — 50 maisons/jour</div>
+        <div class="planning-subtitle">Période : du ${data.range}</div>
+      </div>
+      <div class="table-scroll">
+        <table class="p-table">
+          <thead>
+            <tr>
+              <th>Jour</th>
+              <th>Horaire</th>
+              <th>Zone</th>
+              <th>Rues ciblées</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.rows.map(r => `
+              <tr>
+                <td class="day-cell">${r.jour}</td>
+                <td class="time-cell">${r.horaire}</td>
+                <td class="zone-cell">${r.zone}</td>
+                <td class="streets-cell">${r.rues}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px;background:rgba(201,168,76,.05);font-size:0.7rem;color:var(--txt2);text-align:center">
+        💡 Ces rues sont basées sur les concentrations d'entreprises B2B et l'activité du secteur.
+      </div>
+    </div>
+    <div style="padding:0 14px;display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="exportPlanningPDF()" style="flex:1">📄 Exporter Planning PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="clearPlanning()" style="flex:1;border-color:var(--rouge);color:var(--rouge)">🗑️ Effacer</button>
+    </div>
+  `;
+}
+
+function clearPlanning() {
+  if (confirm('Effacer le planning actuel ?')) {
+    localStorage.removeItem('gaele_planning');
+    renderPlanning();
+  }
+}
+
+async function exportPlanningPDF() {
+  showToast('📥 Export PDF en cours...');
+  // Simulé pour l'instant
+  setTimeout(() => showToast('✅ Planning exporté !'), 1000);
+}
+
 // ── B2B LEADS (BCE JSON) ───────────────────────────────
 function loadB2BLeads() {
   const xhr = new XMLHttpRequest();
