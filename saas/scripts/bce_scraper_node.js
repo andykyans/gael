@@ -12,7 +12,8 @@ const path  = require('path');
 const zlib  = require('zlib');
 
 // ── CONFIGURATION ────────────────────────────────────────────
-const BCE_ZIP_URL  = 'https://economie.fgov.be/sites/default/files/Files/Entreprises/KBO/kbo-open-data-0120.zip';
+// Note: Le lien direct change souvent. Téléchargez manuellement le ZIP "Complet" sur:
+// https://kbopub.economie.fgov.be/kbo-open-data/login
 const OUTPUT_PATH  = path.join(__dirname, 'bce_wallonie.json');
 const DATA_DIR     = path.join(__dirname, 'bce_data');
 const MAX_LEADS    = 3000;
@@ -276,25 +277,17 @@ async function main() {
   const enterpriseFile  = path.join(DATA_DIR, 'enterprise.csv');
 
   // Vérifier si données déjà présentes
+  const enterpriseFile  = path.join(DATA_DIR, 'enterprise.csv');
   if (fs.existsSync(enterpriseFile)) {
-    console.log(`📂 Données BCE déjà téléchargées dans '${DATA_DIR}'`);
-    console.log(`   (Supprimez bce_data/ pour forcer le re-téléchargement)\n`);
+    console.log(`📂 Données BCE trouvées dans '${DATA_DIR}'`);
   } else {
-    // Télécharger
-    try {
-      await downloadFile(BCE_ZIP_URL, zipPath);
-      await extractZip(zipPath, DATA_DIR);
-      // Nettoyer le zip
-      try { fs.unlinkSync(zipPath); } catch(e) {}
-    } catch(e) {
-      console.error(`\n❌ Erreur téléchargement: ${e.message}`);
-      console.log('\n💡 Alternative:');
-      console.log('   1. Téléchargez manuellement depuis:');
-      console.log('      https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des-entreprises/data-de-la-bce/bce-open-data');
-      console.log('   2. Extrayez le contenu dans: scripts/bce_data/');
-      console.log('   3. Relancez: node bce_scraper_node.js\n');
-      process.exit(1);
-    }
+    console.error(`\n❌ Erreur : Fichiers BCE non trouvés dans ${DATA_DIR}`);
+    console.log('\n💡 Procédure manuelle INDISPENSABLE :');
+    console.log('   1. Allez sur: https://kbopub.economie.fgov.be/kbo-open-data/login');
+    console.log('   2. Créez un compte gratuit et téléchargez le fichier "Complet" (ZIP).');
+    console.log('   3. Extrayez les fichiers .csv dans: scripts/bce_data/');
+    console.log('   4. Relancez ce script sur votre ordinateur.\n');
+    process.exit(1);
   }
 
   // Traiter
