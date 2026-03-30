@@ -10,21 +10,56 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Gaele Pro — Prospection</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+<link rel="stylesheet" href="assets/style.css?v=1.2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<!-- TOAST -->
 <div class="toast hidden" id="toast">✅ Enregistré</div>
 
-<!-- HEADER -->
-<div class="header">
-  <div>
-    <div class="header-title">☀️ Gaele Pro</div>
-    <div class="header-sub" id="header-sub">Andy Kyambikwa · Gaele XL</div>
+<!-- AUTH PAGE -->
+<div id="page-auth" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:var(--bg);position:fixed;inset:0;z-index:1000">
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--or)">☀️ Gaele Pro</div>
+    <div style="font-size:0.75rem;color:var(--txt2);margin-top:2px">Gestion de prospection intelligente</div>
   </div>
-  <div class="header-badge" id="session-badge">Session OFF</div>
+  <div class="card" style="width:calc(100% - 40px);max-width:360px;margin-top:0">
+    <div class="card-title">🔑 Connexion privée</div>
+    <form onsubmit="handleLogin(event)" style="display:grid;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="auth-email" class="form-input" value="bmf.amk@gmail.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <input type="password" id="auth-password" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-or" id="btn-login" style="margin-top:8px">Déverrouiller l'accès</button>
+    </form>
+    <div id="auth-error" style="color:var(--rouge);font-size:0.7rem;margin-top:10px;text-align:center;display:none"></div>
+  </div>
+  <div style="margin-top:20px;font-size:0.65rem;color:var(--txt2)">
+    Gaele Advisor — Gaele XL & SFPIM
+  </div>
 </div>
+
+<div id="app-content" style="display:none">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="header-title">☀️ Gaele Pro <small style="font-size:0.6rem;opacity:0.5">v1.2</small></div>
+      <div class="header-sub" id="header-sub">Andy Kyambikwa · Gaele XL</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="notif-btn" id="notif-btn" onclick="requestNotifications()" title="Activer les rappels">🔔</button>
+      <div class="header-badge" id="session-badge">Session OFF</div>
+      <button onclick="handleLogout()" style="background:none;border:none;font-size:1.1rem;cursor:pointer;margin-left:5px" title="Déconnexion">🔓</button>
+    </div>
+  </div>
 
 <!-- PAGE TERRAIN -->
 <div class="page active" id="page-terrain">
@@ -51,7 +86,7 @@
 
     <div class="form-group">
       <label class="form-label">Adresse / N° de maison</label>
-      <input type="text" class="form-input" id="f-adresse" placeholder="Ex: Rue du Bailli 12" autocomplete="street-address">
+      <input type="text" class="form-input" id="f-adresse" placeholder="Ex: Rue du Bailli 12, Tubize" autocomplete="street-address">
     </div>
 
     <div class="form-group">
@@ -64,7 +99,7 @@
       <div class="choix-grid cols3">
         <button class="choix-btn" onclick="sel(this,'q1','oui','sel-vert')"   data-q="q1" data-v="oui">✅ Oui</button>
         <button class="choix-btn" onclick="sel(this,'q1','non','sel-rouge')"  data-q="q1" data-v="non">❌ Non</button>
-        <button class="choix-btn" onclick="sel(this,'q1','copro','sel-or')"  data-q="q1" data-v="copro">🤝 Co-proprio</button>
+        <button class="choix-btn" onclick="sel(this,'q1','copro','sel-or')"   data-q="q1" data-v="copro">🤝 Co-proprio</button>
       </div>
     </div>
 
@@ -80,9 +115,9 @@
     <div class="form-group">
       <label class="form-label">💬 Q3 — Intéressé ?</label>
       <div class="choix-grid cols3">
-        <button class="choix-btn" onclick="sel(this,'q3','oui','sel-vert')"  data-q="q3" data-v="oui">⭐ Oui !</button>
-        <button class="choix-btn" onclick="sel(this,'q3','peut','sel-or')"   data-q="q3" data-v="peut">🤔 Peut-être</button>
-        <button class="choix-btn" onclick="sel(this,'q3','non','sel-rouge')" data-q="q3" data-v="non">❌ Non</button>
+        <button class="choix-btn" onclick="sel(this,'q3','oui','sel-vert')"   data-q="q3" data-v="oui">⭐ Oui !</button>
+        <button class="choix-btn" onclick="sel(this,'q3','peut','sel-or')"    data-q="q3" data-v="peut">🤔 Peut-être</button>
+        <button class="choix-btn" onclick="sel(this,'q3','non','sel-rouge')"  data-q="q3" data-v="non">❌ Non</button>
       </div>
     </div>
 
@@ -97,6 +132,11 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">📅 Date de rappel (optionnel)</label>
+      <input type="datetime-local" class="form-input" id="f-rappel">
+    </div>
+
+    <div class="form-group">
       <label class="form-label">📞 Contact (si intéressé)</label>
       <input type="tel" class="form-input" id="f-tel" placeholder="GSM / Téléphone" autocomplete="tel">
     </div>
@@ -106,7 +146,7 @@
       <textarea class="form-input" id="f-notes" rows="2" placeholder="Infos utiles..." style="resize:none"></textarea>
     </div>
 
-    <button class="btn btn-or" onclick="saveVisite()" style="margin-top:4px">💾 Enregistrer la visite</button>
+    <button class="btn btn-or" onclick="saveVisite()" style="margin-top:10px;margin-bottom:20px">💾 Enregistrer la visite</button>
   </div>
 </div>
 
@@ -131,16 +171,49 @@
     <button class="choix-btn sel-rouge" onclick="filterProspects('non')"    style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">❌ Non</button>
   </div>
 
-  <!-- EXPORT CSV -->
-  <div style="padding:0 14px;margin-top:8px">
-    <button class="btn btn-bleu btn-sm" onclick="exportCSV()" style="width:100%;font-size:0.78rem">📤 Exporter en CSV (Excel)</button>
+  <!-- BOUTONS EXPORT -->
+  <div style="padding:0 14px;margin-top:8px;display:flex;gap:8px">
+    <button class="btn btn-bleu btn-sm" onclick="exportCSV()" style="flex:1;font-size:0.75rem">📤 CSV</button>
+    <button class="btn btn-outline btn-sm" onclick="exportPDF()" style="flex:1;font-size:0.75rem;border-color:var(--rouge);color:var(--rouge)">📄 PDF</button>
+  </div>
+
+  <!-- ONGLETS B2C / B2B -->
+  <div style="padding:8px 14px 0;display:flex;gap:6px">
+    <button class="crm-tab active" id="tab-b2c" onclick="switchCrmTab('b2c')">👥 Mes prospects</button>
+    <button class="crm-tab" id="tab-b2b" onclick="switchCrmTab('b2b')">🏢 B2B Wallonie</button>
   </div>
 
   <div id="prospects-list"></div>
+  <div id="b2b-list" style="display:none">
+    <!-- Recherche + filtres B2B -->
+    <div id="b2b-controls" style="padding:8px 14px;display:flex;flex-direction:column;gap:6px">
+      <input
+        type="search"
+        id="b2b-search"
+        class="form-input"
+        placeholder="🔍 Rechercher une entreprise, commune, secteur…"
+        oninput="searchB2B(this.value)"
+        style="font-size:0.8rem;padding:9px 12px"
+      >
+      <div style="display:flex;gap:6px">
+        <select id="b2b-commune-filter" class="form-input" onchange="filterB2BCommune(this.value)" style="flex:1;font-size:0.72rem;padding:7px 10px;color:var(--txt2)">
+          <option value="">📍 Toutes les communes</option>
+        </select>
+        <select id="b2b-secteur-filter" class="form-input" onchange="filterB2BSecteur(this.value)" style="flex:1;font-size:0.72rem;padding:7px 10px;color:var(--txt2)">
+          <option value="">🏭 Tous les secteurs</option>
+        </select>
+      </div>
+    </div>
+  </div>
   <div id="crm-empty" style="text-align:center;padding:40px 20px;color:var(--txt2);font-size:0.85rem;display:none">
     <div style="font-size:2rem;margin-bottom:8px">📭</div>
     Aucun prospect encore.<br>Commence ta prospection !
   </div>
+  <div id="b2b-empty" style="text-align:center;padding:40px 20px;color:var(--txt2);font-size:0.85rem;display:none">
+    <div style="font-size:2rem;margin-bottom:8px">📂</div>
+    Aucune donnée B2B.<br>Lance le script <code>bce_scraper_node.js</code> puis place<br><code>bce_wallonie.json</code> dans le dossier <code>scripts/</code>.
+  </div>
+
 </div>
 
 <!-- PAGE DASHBOARD -->
@@ -151,14 +224,13 @@
       <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">Dashboard</div>
       <div style="font-size:0.65rem;color:var(--txt2)">Toutes les sessions</div>
     </div>
-    <!-- Bouton objectifs -->
     <button class="btn btn-outline btn-sm" onclick="openObjectifsModal()" style="font-size:0.65rem;padding:6px 12px;border-color:var(--or);color:var(--or)">🎯 Objectifs</button>
   </div>
 
   <div class="stats-grid">
-    <div class="stat-box"><div class="stat-val or"   id="d-total">0</div><div class="stat-lbl">Maisons visitées</div></div>
-    <div class="stat-box"><div class="stat-val vert" id="d-signes">0</div><div class="stat-lbl">Contrats signés</div></div>
-    <div class="stat-box"><div class="stat-val bleu" id="d-rdv">0</div><div class="stat-lbl">RDV fixés</div></div>
+    <div class="stat-box"><div class="stat-val or"    id="d-total">0</div><div class="stat-lbl">Maisons visitées</div></div>
+    <div class="stat-box"><div class="stat-val vert"  id="d-signes">0</div><div class="stat-lbl">Contrats signés</div></div>
+    <div class="stat-box"><div class="stat-val bleu"  id="d-rdv">0</div><div class="stat-lbl">RDV fixés</div></div>
     <div class="stat-box"><div class="stat-val rouge" id="d-conv">0%</div><div class="stat-lbl">Taux conversion</div></div>
   </div>
 
@@ -174,7 +246,6 @@
       <span style="font-size:0.78rem;color:var(--or2)" id="obj-txt">0 / 210</span>
     </div>
     <div class="progress-wrap"><div class="progress-fill" id="obj-bar" style="width:0%"></div></div>
-
     <div style="margin-top:14px">
       <div style="display:flex;justify-content:space-between;margin-bottom:6px">
         <span style="font-size:0.78rem">Contrats signés</span>
@@ -194,9 +265,86 @@
     <div id="ai-tips" style="font-size:0.82rem;line-height:1.6;color:var(--txt2)"></div>
   </div>
 
+  <!-- RAPPORT PDF -->
+  <div style="padding:0 14px;margin-top:4px">
+    <button class="btn btn-outline" onclick="exportPDF()" style="border-color:var(--rouge);color:var(--rouge);font-size:0.8rem">📄 Exporter rapport PDF</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">☁️ Sauvegarde & Transfert</div>
+    <div style="font-size:0.75rem;color:var(--txt2);margin-bottom:12px;line-height:1.4">
+      Exportez vos prospects pour les sauvegarder ou les transférer sur un autre appareil.
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="exportDataJSON()" style="flex:1;font-size:0.75rem;padding:10px">📤 Exporter JSON</button>
+      <button class="btn btn-outline" onclick="document.getElementById('import-file').click()" style="flex:1;font-size:0.75rem;padding:10px">📥 Importer JSON</button>
+      <input type="file" id="import-file" style="display:none" accept=".json" onchange="importDataJSON(this)">
+    </div>
+  </div>
+
   <div style="padding:14px">
     <button class="btn btn-rouge" onclick="clearData()" style="opacity:.6;font-size:0.75rem">🗑️ Effacer toutes les données</button>
   </div>
+</div>
+
+<!-- PAGE CARTE -->
+<div class="page" id="page-carte">
+
+  <!-- TOOLBAR CARTE -->
+  <div class="map-toolbar">
+    <!-- Titre + statut -->
+    <div class="map-toolbar-top">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">🗺️ Carte Wallonie</div>
+        <div style="font-size:0.6rem;color:var(--txt2)" id="map-status">Chargement…</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span id="map-zoom-info" style="font-size:0.58rem;color:var(--txt2);margin-right:2px">Zoom 9</span>
+        <button class="map-ctrl-btn" id="btn-fit" onclick="MapModule.fitMarkers()" title="Ajuster la vue">⊕</button>
+        <button class="map-ctrl-btn" id="btn-reset" onclick="MapModule.resetView()" title="Wallonie">🇧🇪</button>
+        <button class="map-ctrl-btn" id="btn-refresh" onclick="MapModule.refreshMarkers()" title="Rafraîchir">🔄</button>
+      </div>
+    </div>
+
+    <!-- Filtres statuts -->
+    <div class="map-filters">
+      <span style="font-size:0.58rem;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Filtres</span>
+      <button class="map-filter-btn active" id="map-filter-signe"  onclick="MapModule.toggleFilter('signe')"  style="--fc:#27ae60">✅ Signés</button>
+      <button class="map-filter-btn active" id="map-filter-rdv"    onclick="MapModule.toggleFilter('rdv')"    style="--fc:#C9A84C">📅 RDV</button>
+      <button class="map-filter-btn active" id="map-filter-rappel" onclick="MapModule.toggleFilter('rappel')" style="--fc:#2980B9">📞 Rappel</button>
+      <button class="map-filter-btn active" id="map-filter-non"    onclick="MapModule.toggleFilter('non')"    style="--fc:#e74c3c">❌ Non</button>
+      <button class="map-filter-btn active" id="map-filter-b2b"    onclick="MapModule.toggleFilter('b2b')"    style="--fc:#2980B9">🏢 Entreprises</button>
+      <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(true)"  title="Tout afficher">✓</button>
+      <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(false)" title="Tout masquer">✗</button>
+    </div>
+
+    <!-- Contrôles avancés -->
+    <div class="map-advanced">
+      <!-- Fond de carte -->
+      <div class="map-style-group">
+        <button class="map-style-btn active" data-mode="dark"      onclick="MapModule.setTileLayer('dark')">🌑 Sombre</button>
+        <button class="map-style-btn"        data-mode="standard" onclick="MapModule.setTileLayer('standard')">🗺️ Carte</button>
+        <button class="map-style-btn"        data-mode="satellite" onclick="MapModule.setTileLayer('satellite')">🛰️ Satellite</button>
+      </div>
+      <!-- GPS + Heatmap -->
+      <div style="display:flex;gap:6px">
+        <button class="map-ctrl-btn map-ctrl-wide" id="btn-gps"     onclick="MapModule.toggleGPS()"     title="Ma position GPS">📍 GPS</button>
+        <button class="map-ctrl-btn map-ctrl-wide" id="btn-heatmap" onclick="MapModule.toggleHeatmap()" title="Heatmap densité">🔥 Densité</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP CONTAINER -->
+  <div id="map-container"></div>
+
+  <!-- PROGRESS GEOCODAGE -->
+  <div id="map-geocode-progress" style="display:none;align-items:center;gap:8px;padding:6px 14px;background:var(--card);border-top:1px solid var(--border)">
+    <div style="flex:1;background:var(--card2);border-radius:20px;height:4px;overflow:hidden">
+      <div class="gp-geocode-bar" style="height:100%;background:var(--or);border-radius:20px;transition:width .3s;width:0%"></div>
+    </div>
+    <span class="gp-geocode-text" style="font-size:0.6rem;color:var(--txt2);white-space:nowrap">Géocodage…</span>
+  </div>
+
 </div>
 
 <!-- PAGE PLANNING -->
@@ -246,7 +394,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title">🎯 Objectifs hebdomadaires</div>
     <div style="font-size:0.78rem;color:var(--txt2);margin-bottom:16px;line-height:1.5">
-      Ajuste tes objectifs selon ta semaine de travail. Ces valeurs sont sauvegardées dans ton appareil.
+      Ajuste tes objectifs selon ta semaine de travail.
     </div>
     <div class="obj-input-row">
       <label for="obj-visites-input">🏠 Maisons à visiter</label>
@@ -263,14 +411,26 @@
   </div>
 </div>
 
-<!-- NAV -->
-<div class="nav">
-  <button class="nav-btn active" onclick="showPage('terrain',this)"><span class="ico">🚪</span><span>Terrain</span></button>
-  <button class="nav-btn" onclick="showPage('crm',this)"><span class="ico">👥</span><span>CRM</span></button>
-  <button class="nav-btn" onclick="showPage('dashboard',this)"><span class="ico">📊</span><span>Stats</span></button>
-  <button class="nav-btn" onclick="showPage('planning',this)"><span class="ico">📅</span><span>Planning</span></button>
-</div>
 
+  <!-- NAV (5 onglets) -->
+  <div class="nav" id="main-nav" style="display:none">
+    <button class="nav-btn active" onclick="showPage('terrain',this)"><span class="ico">🚪</span><span>Terrain</span></button>
+    <button class="nav-btn" onclick="showPage('crm',this)"><span class="ico">👥</span><span>CRM</span></button>
+    <button class="nav-btn" onclick="showPage('dashboard',this)"><span class="ico">📊</span><span>Stats</span></button>
+    <button class="nav-btn" onclick="showPage('carte',this)"><span class="ico">🗺️</span><span>Carte</span></button>
+    <button class="nav-btn" onclick="showPage('planning',this)"><span class="ico">📅</span><span>Planning</span></button>
+  </div>
+
+</div> <!-- Fin app-content -->
+
+<!-- SCRIPTS (ordre important) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/map.js"></script>
 </body>
 </html>

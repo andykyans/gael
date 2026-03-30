@@ -7,14 +7,14 @@
   --bg:#0a1a0f;--card:#111f14;--card2:#162019;
   --txt:#e8f0e9;--txt2:#8aab8e;--border:#1e3a22;
 }
-html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--txt);overflow:hidden}
+html,body{height:100%;height:-webkit-fill-available;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--txt);overflow:hidden}
 
 /* ── NAV ──────────────────────────────────────────────── */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;transition:all .2s;gap:4px;border:none;background:none;color:var(--txt2);font-family:'DM Sans',sans-serif}
+.nav{background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);min-height:64px;height:auto;flex-shrink:0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px;cursor:pointer;transition:all .2s;gap:2px;border:none;background:none;color:var(--txt2);font-family:'DM Sans',sans-serif;min-width:0}
 .nav-btn.active{color:var(--or)}
-.nav-btn .ico{font-size:1.3rem}
-.nav-btn span{font-size:0.58rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.nav-btn .ico{font-size:1.1rem;line-height:1}
+.nav-btn span{font-size:0.5rem;font-weight:700;letter-spacing:0.01em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center;display:block}
 
 /* ── HEADER ───────────────────────────────────────────── */
 .header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 12px;display:flex;justify-content:space-between;align-items:center}
@@ -22,9 +22,12 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;colo
 .header-sub{font-size:0.65rem;color:var(--txt2);margin-top:1px}
 .header-badge{background:var(--or);color:var(--v);font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px}
 
-/* ── PAGES ────────────────────────────────────────────── */
-.page{display:none;height:calc(100vh - 64px);overflow-y:auto;padding-bottom:20px}
+/* ── LAYOUT ────────────────────────────────────────────── */
+#app-content{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:-webkit-fill-available;overflow:hidden}
+.page{display:none;flex:1;overflow-y:auto;min-height:0;padding-bottom:120px;position:relative;-webkit-overflow-scrolling:touch}
 .page.active{display:block}
+#page-carte{padding-bottom:0}
+#page-carte.active{display:flex;flex-direction:column}
 
 /* ── CARDS ────────────────────────────────────────────── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 14px 0}
@@ -117,6 +120,73 @@ select.form-input option{background:var(--card)}
 .obj-input-row label{font-size:0.72rem;color:var(--txt2);font-weight:600;flex:1;text-transform:uppercase;letter-spacing:.05em}
 .obj-input-row input{width:80px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;text-align:center;outline:none}
 .obj-input-row input:focus{border-color:var(--or)}
+
+/* ── CARTE INTERACTIVE AVANCÉE ───────────────────────── */
+#map-container{flex:1;width:100%;background:var(--card2);min-height:0}
+
+/* Toolbar */
+.map-toolbar{background:var(--card);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.map-toolbar-top{display:flex;justify-content:space-between;align-items:center}
+.map-filters{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.map-advanced{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+/* Boutons de contrôle */
+.map-ctrl-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:8px;color:var(--txt2);font-size:0.7rem;padding:5px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;transition:all .2s;white-space:nowrap}
+.map-ctrl-btn:hover,.map-ctrl-btn.active{border-color:var(--or);color:var(--or);background:rgba(201,168,76,.12)}
+.map-ctrl-wide{padding:5px 12px}
+
+/* Filtres statuts */
+.map-filter-btn{border:1.5px solid var(--border);border-radius:20px;background:var(--card2);color:var(--txt2);font-size:0.6rem;padding:4px 9px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;transition:all .2s;white-space:nowrap;opacity:.5}
+.map-filter-btn.active{border-color:var(--fc);background:color-mix(in srgb,var(--fc) 15%,transparent);color:var(--fc);opacity:1}
+
+/* Sélecteur de fond de carte */
+.map-style-group{display:flex;gap:4px}
+.map-style-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:8px;color:var(--txt2);font-size:0.62rem;padding:5px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;transition:all .2s;white-space:nowrap}
+.map-style-btn.active{border-color:var(--or);color:var(--or2);background:rgba(201,168,76,.12)}
+
+/* Marker personnalisé */
+.gp-marker{position:relative;display:flex;align-items:center;justify-content:center}
+.gp-marker-dot{width:14px;height:14px;border-radius:50%;background:var(--fill);border:2.5px solid white;box-shadow:0 0 0 3px var(--glow),0 2px 8px rgba(0,0,0,.6);transition:transform .2s}
+.gp-marker:hover .gp-marker-dot{transform:scale(1.3)}
+
+/* GPS pulse */
+.gps-pulse{position:relative;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.gps-dot{width:12px;height:12px;background:#5dade2;border-radius:50%;border:2px solid white;box-shadow:0 0 0 0 rgba(93,173,226,.4);animation:gps-ring 1.5s infinite}
+@keyframes gps-ring{0%{box-shadow:0 0 0 0 rgba(93,173,226,.5)}70%{box-shadow:0 0 0 10px rgba(93,173,226,.0)}100%{box-shadow:0 0 0 0 rgba(93,173,226,.0)}}
+
+/* Cluster icon */
+.cluster-icon{display:flex;align-items:center;justify-content:center;border-radius:50%;background:color-mix(in srgb,var(--c) 20%,#0a1a0f);border:2px solid var(--c);color:#fff;font-weight:800;font-size:0.72rem;font-family:'Syne',sans-serif;box-shadow:0 0 12px color-mix(in srgb,var(--c) 40%,transparent)}
+
+/* Popup enrichie */
+.leaflet-popup-content-wrapper.gp-popup{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:0;box-shadow:0 8px 30px rgba(0,0,0,.7);overflow:hidden}
+.leaflet-popup-tip-container{display:none}
+.gp-popup-inner{font-family:'DM Sans',sans-serif;min-width:200px;max-width:240px}
+.gp-popup-header{padding:10px 12px 8px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--col) 8%,var(--card))}
+.gp-popup-name{font-weight:700;font-size:0.88rem;color:#e8f0e9;margin-bottom:4px}
+.gp-popup-badge{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.gp-popup-body{padding:8px 12px;display:flex;flex-direction:column;gap:3px}
+.gp-popup-row{display:flex;gap:6px;font-size:0.72rem;color:#c8d8ca;align-items:flex-start}
+.gp-popup-row span:first-child{flex-shrink:0}
+.gp-popup-notes{font-size:0.68rem;color:#8aab8e;font-style:italic;border-top:1px solid var(--border);padding-top:5px;margin-top:3px}
+.gp-popup-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid var(--border)}
+.gp-popup-btn{flex:1;padding:6px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--card2);color:var(--txt2);font-size:0.68rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;display:block;transition:all .2s}
+.gp-popup-btn-call{border-color:#27ae60;color:#4ecb71;background:rgba(39,174,96,.1)}
+.gp-popup-btn-crm{border-color:var(--or);color:var(--or2);background:rgba(201,168,76,.08)}
+
+/* Override clusters Leaflet par défaut */
+.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large,.marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div{background:transparent !important;box-shadow:none !important}
+
+/* ── CRM TABS ─────────────────────────────────────────── */
+.crm-tab{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card2);color:var(--txt2);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.crm-tab.active{border-color:var(--or);background:rgba(201,168,76,.12);color:var(--or2)}
+
+/* ── NOTIFICATION BTN ────────────────────────────────── */
+.notif-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;padding:4px;color:var(--txt2);transition:color .2s;line-height:1}
+.notif-btn:hover{color:var(--or)}
+
+/* ── MODAL ROW ────────────────────────────────────────── */
+.modal-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.modal-row span:first-child{color:var(--txt2)}
 
 /* ── UTILS ────────────────────────────────────────────── */
 ::-webkit-scrollbar{width:0}
