@@ -1,0 +1,17 @@
+{
+  "name": "Gaele Pro",
+  "short_name": "Gaele Pro",
+  "description": "Outil de Prospection B2B/B2C",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a1a0f",
+  "theme_color": "#0a1a0f",
+  "icons": [
+    {
+      "src": "assets/icon.png",
+      "sizes": "1000x1000",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
