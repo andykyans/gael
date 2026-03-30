@@ -1145,17 +1145,56 @@ function renderPlanning() {
   }
 }
 
-function handleGeneratePlanning() {
+async function handleGeneratePlanning(btn) {
   const input = document.getElementById('planning-commune');
   const commune = input.value.trim();
   if (!commune) {
     showToast('⚠️ Entrez une commune', '#e74c3c');
     return;
   }
-  generatePlanning(commune);
+  
+  const targetBtn = btn || document.querySelector('button[onclick="handleGeneratePlanning()"]');
+  const oldText = targetBtn ? targetBtn.textContent : "Générer";
+  if (targetBtn) {
+    targetBtn.textContent = "Recherche...";
+    targetBtn.disabled = true;
+  }
+  
+  showToast(`🗺️ Recherche des rues résidentielles de ${commune}...`, 'var(--bleu)');
+  
+  let overpassStreets = [];
+  try {
+    const query = `[out:json][timeout:25];area["name"="${commune}"]->.searchArea;(way["building"~"house|detached|semi_detached|terrace"](area.searchArea););out tags;`;
+    const res = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'data=' + encodeURIComponent(query)
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      const streets = new Set();
+      if (data && data.elements) {
+        data.elements.forEach(e => {
+          if (e.tags && e.tags['addr:street']) streets.add(e.tags['addr:street']);
+        });
+      }
+      overpassStreets = Array.from(streets);
+    }
+  } catch (error) {
+    console.warn("Erreur Overpass API:", error);
+    showToast('❌ Erreur réseau. Utilisation des rues locales.', '#e74c3c');
+  } finally {
+    if (targetBtn) {
+      targetBtn.textContent = oldText;
+      targetBtn.disabled = false;
+    }
+  }
+
+  generatePlanning(commune, overpassStreets);
 }
 
-function generatePlanning(commune) {
+function generatePlanning(commune, overpassStreets = []) {
   // Calculer dates (Mardi de cette semaine au Samedi)
   const days = [];
   const start = new Date();
@@ -1171,12 +1210,15 @@ function generatePlanning(commune) {
   const dayNames = ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
   const zones = ['centre', 'nord', 'sud', 'est', 'ouest'];
   
-  // Extraire les rues réelles du B2B pour cette commune
+  // Extraire les rues réelles du B2B (si dispo) et d'Overpass
   const communeLeads = (state.b2bLeads || []).filter(l => l.commune && l.commune.toLowerCase() === commune.toLowerCase());
-  const realStreets = [...new Set(communeLeads.map(l => l.rue).filter(Boolean))];
+  const b2bStreets = communeLeads.map(l => l.rue).filter(Boolean);
+  const realStreets = [...new Set([...overpassStreets, ...b2bStreets])];
   
-  if (realStreets.length < 5) {
-    showToast(`⚠️ Rues génériques utilisées (Pas de données B2B pour ${commune.toUpperCase()})`, '#e74c3c');
+  if (realStreets.length >= 5 && overpassStreets.length > 0) {
+    showToast(`✅ ${overpassStreets.length} rues résidentielles trouvées pour ${commune.toUpperCase()}`, 'var(--vert-ok)');
+  } else if (realStreets.length < 5) {
+    showToast(`⚠️ Rues génériques utilisées (Pas assez de données pour ${commune.toUpperCase()})`, '#e74c3c');
   }
 
   // Fallback rues si peu de données B2B
