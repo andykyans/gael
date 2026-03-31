@@ -139,6 +139,7 @@
         <button class="choix-btn" onclick="sel(this,'statut','rdv','sel-or')"       data-q="statut" data-v="rdv">📅 RDV fixé</button>
         <button class="choix-btn" onclick="sel(this,'statut','rappel','sel-bleu')"  data-q="statut" data-v="rappel">📞 À rappeler</button>
         <button class="choix-btn" onclick="sel(this,'statut','non','sel-rouge')"    data-q="statut" data-v="non">❌ Pas intéressé</button>
+        <button class="choix-btn" onclick="sel(this,'statut','absent','sel-gris')"  data-q="statut" data-v="absent" style="grid-column: span 2;">🚪 Pas de réponse (Absent)</button>
       </div>
     </div>
 
@@ -180,6 +181,7 @@
     <button class="choix-btn sel-or"    onclick="filterProspects('rdv')"    style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">📅 RDV</button>
     <button class="choix-btn sel-bleu"  onclick="filterProspects('rappel')" style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">📞 Rappel</button>
     <button class="choix-btn sel-rouge" onclick="filterProspects('non')"    style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">❌ Non</button>
+    <button class="choix-btn sel-gris"  onclick="filterProspects('absent')" style="padding:5px 12px;font-size:0.65rem;white-space:nowrap">🚪 Absent</button>
   </div>
 
   <!-- BOUTONS EXPORT -->
@@ -324,6 +326,7 @@
       <button class="map-filter-btn active" id="map-filter-rdv"    onclick="MapModule.toggleFilter('rdv')"    style="--fc:#C9A84C">📅 RDV</button>
       <button class="map-filter-btn active" id="map-filter-rappel" onclick="MapModule.toggleFilter('rappel')" style="--fc:#2980B9">📞 Rappel</button>
       <button class="map-filter-btn active" id="map-filter-non"    onclick="MapModule.toggleFilter('non')"    style="--fc:#e74c3c">❌ Non</button>
+      <button class="map-filter-btn active" id="map-filter-absent" onclick="MapModule.toggleFilter('absent')" style="--fc:#95a5a6">🚪 Absent</button>
       <button class="map-filter-btn active" id="map-filter-b2b"    onclick="MapModule.toggleFilter('b2b')"    style="--fc:#2980B9">🏢 Entreprises</button>
       <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(true)"  title="Tout afficher">✓</button>
       <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(false)" title="Tout masquer">✗</button>
@@ -399,6 +402,7 @@
     <div id="modal-content"></div>
     <div style="margin-top:14px;display:flex;gap:8px">
       <button class="btn btn-or" onclick="closeModal()" style="flex:1">Fermer</button>
+      <button class="btn btn-bleu" id="btn-edit-prospect" style="flex:1">✏️ Modifier</button>
       <button class="btn btn-rouge btn-sm" id="btn-delete-prospect">🗑️</button>
     </div>
   </div>

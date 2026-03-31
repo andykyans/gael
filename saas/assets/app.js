@@ -98,6 +98,8 @@ function sel(btn, q, val, cls) {
 }
 
 // ── SAVE VISITE ────────────────────────────────────────
+let editingProspectId = null;
+
 function saveVisite() {
   const adresse = document.getElementById('f-adresse').value.trim();
   const nom     = document.getElementById('f-nom').value.trim();
@@ -110,7 +112,7 @@ function saveVisite() {
   if (!statut)  { showToast('⚠️ Sélectionnez un statut', '#e74c3c'); return; }
 
   const prospect = {
-    id: Date.now(),
+    id: editingProspectId || Date.now(),
     adresse, nom: nom || 'Inconnu', tel, notes, rappel,
     q1: q1 || '?', q2: q2 || '?', q3: q3 || '?', q4: q4 || '?',
     statut,
@@ -118,17 +120,28 @@ function saveVisite() {
     heure: new Date().toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })
   };
 
-  state.prospects.unshift(prospect);
+  if (editingProspectId) {
+    const idx = state.prospects.findIndex(p => p.id === editingProspectId);
+    if (idx !== -1) {
+      prospect.date = state.prospects[idx].date;
+      prospect.heure = state.prospects[idx].heure;
+      state.prospects[idx] = prospect;
+    }
+    editingProspectId = null;
+    let cardTitle = document.querySelector('#page-terrain .card-title');
+    if (cardTitle) cardTitle.textContent = "➕ Nouvelle visite";
+    showToast('✅ Visite modifiée !');
+  } else {
+    state.prospects.unshift(prospect);
+    state.session.visites++;
+    if (q3 === 'oui')      state.session.interesses++;
+    if (statut === 'rdv')  state.session.rdv++;
+    if (statut === 'signe')state.session.signes++;
+    updateSessionCounters();
+    showToast('✅ Visite enregistrée !');
+  }
+
   localStorage.setItem('gaele_prospects', JSON.stringify(state.prospects));
-
-  state.session.visites++;
-  if (q3 === 'oui')      state.session.interesses++;
-  if (statut === 'rdv')  state.session.rdv++;
-  if (statut === 'signe')state.session.signes++;
-  updateSessionCounters();
-
-  // Invalider le cache geocode pour cette adresse (nouvelle visite)
-  // (pas besoin, l'ID est nouveau)
 
   document.getElementById('f-adresse').value = '';
   document.getElementById('f-nom').value     = '';
@@ -138,12 +151,62 @@ function saveVisite() {
   document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
   state.selections = { q1: null, q2: null, q3: null, q4: null, statut: null };
 
-  showToast('✅ Visite enregistrée !');
+  // Invalider cache au besoin et refresh
+  if (window.MapModule) MapModule.refreshMarkers();
 
   // Programmer une notification si rappel défini
   if (rappel && Notification.permission === 'granted') {
     scheduleRappelNotif(prospect);
   }
+}
+
+function editProspect(id) {
+  const p = state.prospects.find(x => x.id === id);
+  if (!p) return;
+  closeModal();
+  showPage('terrain', document.querySelector('.nav-btn'));
+
+  document.getElementById('f-adresse').value = p.adresse || '';
+  document.getElementById('f-nom').value     = p.nom === 'Inconnu' ? '' : p.nom;
+  document.getElementById('f-tel').value     = p.tel || '';
+  document.getElementById('f-notes').value   = p.notes || '';
+  if (p.rappel) {
+    try {
+      const d = new Date(p.rappel);
+      const offset = d.getTimezoneOffset() * 60000;
+      document.getElementById('f-rappel').value = new Date(d.getTime() - offset).toISOString().slice(0,16);
+    } catch(e) {}
+  } else {
+    document.getElementById('f-rappel').value = '';
+  }
+  
+  state.selections = { q1: p.q1 !== '?' ? p.q1 : null, q2: p.q2 !== '?' ? p.q2 : null, q3: p.q3 !== '?' ? p.q3 : null, q4: p.q4 !== '?' ? p.q4 : null, statut: p.statut };
+  
+  document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
+  const restoreSel = (q, v) => {
+    if(!v) return;
+    const btn = document.querySelector(`[data-q="${q}"][data-v="${v}"]`);
+    if(btn) {
+      let cls = 'sel-vert';
+      if(v === 'non' && q !== 'q2') cls = 'sel-rouge';
+      if(v === 'non' && q === 'q2') cls = 'sel-vert';
+      if(v === 'oui' && q === 'q2') cls = 'sel-rouge';
+      if(v === 'copro' || v === 'ancien' || v === 'peut' || v === 'rdv') cls = 'sel-or';
+      if(v === 'rappel') cls = 'sel-bleu';
+      if(v === 'absent') cls = 'sel-gris';
+      btn.className = 'choix-btn ' + cls;
+    }
+  };
+  restoreSel('q1', p.q1);
+  restoreSel('q2', p.q2);
+  restoreSel('q3', p.q3);
+  restoreSel('q4', p.q4);
+  restoreSel('statut', p.statut);
+
+  editingProspectId = id;
+  let cardTitle = document.querySelector('#page-terrain .card-title');
+  if (cardTitle) cardTitle.textContent = "✏️ Modifier la visite";
+  showToast('✏️ Mode édition activé');
 }
 
 // ── CRM ────────────────────────────────────────────────
@@ -186,6 +249,7 @@ function renderCRM(filter) {
     rdv:    { label: 'RDV',    cls: 's-rdv',    bg: '5C4A1A' },
     rappel: { label: 'Rappel', cls: 's-rappel', bg: '1A3A5C' },
     non:    { label: 'Non',    cls: 's-non',    bg: '5C1A1A' },
+    absent: { label: 'Absent', cls: 's-absent', bg: '4b5563' },
     default:{ label: '?',      cls: 's-nouveau',bg: '2a2a2a' }
   };
 
@@ -457,7 +521,7 @@ function showProspect(id) {
   const q2l = { non:'✅ Pas de panneaux', oui:'⚠️ Déjà équipé', ancien:'🔄 Ancienne install.', '?':'—' };
   const q3l = { oui:'⭐ Intéressé', peut:'🤔 Peut-être', non:'❌ Non', '?':'—' };
   const q4l = { oui:'✅ Oui', non:'❌ Non', '?':'—' };
-  const sl  = { signe:'✅ Contrat signé', rdv:'📅 RDV fixé', rappel:'📞 À rappeler', non:'❌ Non intéressé' };
+  const sl  = { signe:'✅ Contrat signé', rdv:'📅 RDV fixé', rappel:'📞 À rappeler', non:'❌ Non intéressé', absent:'🚪 Absent' };
   document.getElementById('modal-content').innerHTML = `
     <div style="display:grid;gap:8px;font-size:0.82rem">
       <div class="modal-row"><span>Statut</span><span style="font-weight:700;color:var(--or2)">${sl[p.statut] || '—'}</span></div>
@@ -469,6 +533,8 @@ function showProspect(id) {
       ${p.tel ? `<div class="modal-row"><span>Téléphone</span><a href="tel:${escHtml(p.tel)}" style="color:var(--or2);text-decoration:none">${escHtml(p.tel)}</a></div>` : ''}
       ${p.notes ? `<div style="padding:8px 0"><span style="color:var(--txt2);display:block;margin-bottom:4px">Notes</span><span style="font-style:italic">${escHtml(p.notes)}</span></div>` : ''}
     </div>`;
+  const btnEdit = document.getElementById('btn-edit-prospect');
+  if (btnEdit) btnEdit.onclick = () => editProspect(id);
   document.getElementById('btn-delete-prospect').onclick = () => deleteProspect(id);
   document.getElementById('modal-prospect').classList.add('open');
 }
@@ -494,7 +560,7 @@ function exportCSV() {
   const q2l = { non:'Pas de panneaux', oui:'Déjà équipé', ancien:'Ancienne install.', '?':'' };
   const q3l = { oui:'Intéressé', peut:'Peut-être', non:'Non', '?':'' };
   const q4l = { oui:'Oui', non:'Non', '?':'' };
-  const sl  = { signe:'Signé', rdv:'RDV fixé', rappel:'À rappeler', non:'Non intéressé' };
+  const sl  = { signe:'Signé', rdv:'RDV fixé', rappel:'À rappeler', non:'Non intéressé', absent:'Absent' };
   const headers = ['Nom','Adresse','Téléphone','Statut','Propriétaire','Panneaux solaires','Intérêt','Coût kWh','Date rappel','Date','Heure','Notes'];
   const rows = state.prospects.map(p => [
     p.nom, p.adresse, p.tel,
@@ -592,8 +658,8 @@ function exportPDF() {
   doc.text('Date', 180, 124.5);
 
   let y = 130;
-  const sl = { signe:'Signé', rdv:'RDV', rappel:'Rappel', non:'Non' };
-  const statColors = { signe:[39,174,96], rdv:[201,168,76], rappel:[41,128,185], non:[231,76,60] };
+  const sl = { signe:'Signé', rdv:'RDV', rappel:'Rappel', non:'Non', absent:'Absent' };
+  const statColors = { signe:[39,174,96], rdv:[201,168,76], rappel:[41,128,185], non:[231,76,60], absent:[107,114,128] };
 
   ps.slice(0, 35).forEach((p, i) => {
     if (y > 275) { doc.addPage(); y = 20; }

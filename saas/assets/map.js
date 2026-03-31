@@ -11,7 +11,7 @@ const MapModule = (() => {
   let gpsMarker   = null;
   let gpsCircle   = null;
   let gpsWatch    = null;
-  let activeFilters = new Set(['signe', 'rdv', 'rappel', 'non', 'b2b']);
+  let activeFilters = new Set(['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b']);
   let mapMode     = 'standard'; // 'standard' | 'satellite' | 'dark'
   let showHeat    = false;
   let allMarkers  = new Map(); // id -> marker
@@ -39,7 +39,8 @@ const MapModule = (() => {
     signe:  { fill: '#27ae60', glow: 'rgba(39,174,96,0.4)',   label: 'Signé'  },
     rdv:    { fill: '#C9A84C', glow: 'rgba(201,168,76,0.4)',  label: 'RDV'    },
     rappel: { fill: '#2980B9', glow: 'rgba(41,128,185,0.4)',  label: 'Rappel' },
-    non:    { fill: '#e74c3c', glow: 'rgba(231,76,60,0.4)',   label: 'Non'    }
+    non:    { fill: '#e74c3c', glow: 'rgba(231,76,60,0.4)',   label: 'Non'    },
+    absent: { fill: '#95a5a6', glow: 'rgba(149,165,166,0.4)', label: 'Absent' }
   };
 
   // ── Initialisation ───────────────────────────────────
@@ -114,7 +115,7 @@ const MapModule = (() => {
     const count = cluster.getChildCount();
     const children = cluster.getAllChildMarkers();
     // Couleur dominante dans le cluster
-    const stats = { signe: 0, rdv: 0, rappel: 0, non: 0 };
+    const stats = { signe: 0, rdv: 0, rappel: 0, non: 0, absent: 0 };
     children.forEach(m => { if (m.options.statut) stats[m.options.statut]++; });
     const dominant = Object.entries(stats).sort((a,b) => b[1]-a[1])[0][0];
     const col = (COLORS[dominant] || COLORS.non).fill;
@@ -409,7 +410,7 @@ const MapModule = (() => {
   }
 
   function setAllFilters(on) {
-    ['signe', 'rdv', 'rappel', 'non', 'b2b'].forEach(s => {
+    ['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'].forEach(s => {
       if (on) activeFilters.add(s);
       else activeFilters.delete(s);
       const btn = document.getElementById('map-filter-' + s);
@@ -458,7 +459,7 @@ const MapModule = (() => {
 
   function renderMapOverlay() {
     // Déjà géré dans le HTML — on initialise juste les filtres
-    ['signe', 'rdv', 'rappel', 'non', 'b2b'].forEach(s => {
+    ['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'].forEach(s => {
       const btn = document.getElementById('map-filter-' + s);
       if (btn) btn.classList.add('active');
     });
