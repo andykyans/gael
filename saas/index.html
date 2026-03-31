@@ -125,6 +125,14 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">💡 Q4 — Connaissez-vous le coût de l'énergie au kWh ?</label>
+      <div class="choix-grid cols2">
+        <button class="choix-btn" onclick="sel(this,'q4','oui','sel-vert')"   data-q="q4" data-v="oui">✅ Oui</button>
+        <button class="choix-btn" onclick="sel(this,'q4','non','sel-rouge')"  data-q="q4" data-v="non">❌ Non</button>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">📊 Statut de la visite</label>
       <div class="choix-grid cols2">
         <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')"   data-q="statut" data-v="signe">✅ Contrat signé</button>

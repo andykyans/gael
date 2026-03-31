@@ -10,7 +10,7 @@ const state = {
   b2bLeads:  [],
   session:   { active: false, start: null, visites: 0, interesses: 0, rdv: 0, signes: 0, elapsed: 0 },
   timer:     null,
-  selections:{ q1: null, q2: null, q3: null, statut: null },
+  selections:{ q1: null, q2: null, q3: null, q4: null, statut: null },
   mapInstance: null,
   geocodeCache: JSON.parse(localStorage.getItem('gaele_geocache') || '{}'),
   b2bGeocache: JSON.parse(localStorage.getItem('gaele_b2b_geocache') || '{}'),
@@ -104,7 +104,7 @@ function saveVisite() {
   const tel     = document.getElementById('f-tel').value.trim();
   const notes   = document.getElementById('f-notes').value.trim();
   const rappel  = document.getElementById('f-rappel').value;
-  const { q1, q2, q3, statut } = state.selections;
+  const { q1, q2, q3, q4, statut } = state.selections;
 
   if (!adresse) { showToast('⚠️ Entrez une adresse', '#e74c3c'); return; }
   if (!statut)  { showToast('⚠️ Sélectionnez un statut', '#e74c3c'); return; }
@@ -112,7 +112,7 @@ function saveVisite() {
   const prospect = {
     id: Date.now(),
     adresse, nom: nom || 'Inconnu', tel, notes, rappel,
-    q1: q1 || '?', q2: q2 || '?', q3: q3 || '?',
+    q1: q1 || '?', q2: q2 || '?', q3: q3 || '?', q4: q4 || '?',
     statut,
     date:  new Date().toLocaleDateString('fr-BE'),
     heure: new Date().toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })
@@ -136,7 +136,7 @@ function saveVisite() {
   document.getElementById('f-notes').value   = '';
   document.getElementById('f-rappel').value  = '';
   document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
-  state.selections = { q1: null, q2: null, q3: null, statut: null };
+  state.selections = { q1: null, q2: null, q3: null, q4: null, statut: null };
 
   showToast('✅ Visite enregistrée !');
 
@@ -456,6 +456,7 @@ function showProspect(id) {
   const q1l = { oui:'✅ Propriétaire', non:'❌ Locataire', copro:'🤝 Co-proprio', '?':'—' };
   const q2l = { non:'✅ Pas de panneaux', oui:'⚠️ Déjà équipé', ancien:'🔄 Ancienne install.', '?':'—' };
   const q3l = { oui:'⭐ Intéressé', peut:'🤔 Peut-être', non:'❌ Non', '?':'—' };
+  const q4l = { oui:'✅ Oui', non:'❌ Non', '?':'—' };
   const sl  = { signe:'✅ Contrat signé', rdv:'📅 RDV fixé', rappel:'📞 À rappeler', non:'❌ Non intéressé' };
   document.getElementById('modal-content').innerHTML = `
     <div style="display:grid;gap:8px;font-size:0.82rem">
@@ -464,6 +465,7 @@ function showProspect(id) {
       <div class="modal-row"><span>Propriétaire</span><span>${q1l[p.q1] || '—'}</span></div>
       <div class="modal-row"><span>Panneaux</span><span>${q2l[p.q2] || '—'}</span></div>
       <div class="modal-row"><span>Intérêt</span><span>${q3l[p.q3] || '—'}</span></div>
+      <div class="modal-row"><span>Coût kWh</span><span>${q4l[p.q4] || '—'}</span></div>
       ${p.tel ? `<div class="modal-row"><span>Téléphone</span><a href="tel:${escHtml(p.tel)}" style="color:var(--or2);text-decoration:none">${escHtml(p.tel)}</a></div>` : ''}
       ${p.notes ? `<div style="padding:8px 0"><span style="color:var(--txt2);display:block;margin-bottom:4px">Notes</span><span style="font-style:italic">${escHtml(p.notes)}</span></div>` : ''}
     </div>`;
@@ -491,12 +493,13 @@ function exportCSV() {
   const q1l = { oui:'Propriétaire', non:'Locataire', copro:'Co-proprio', '?':'' };
   const q2l = { non:'Pas de panneaux', oui:'Déjà équipé', ancien:'Ancienne install.', '?':'' };
   const q3l = { oui:'Intéressé', peut:'Peut-être', non:'Non', '?':'' };
+  const q4l = { oui:'Oui', non:'Non', '?':'' };
   const sl  = { signe:'Signé', rdv:'RDV fixé', rappel:'À rappeler', non:'Non intéressé' };
-  const headers = ['Nom','Adresse','Téléphone','Statut','Propriétaire','Panneaux solaires','Intérêt','Date rappel','Date','Heure','Notes'];
+  const headers = ['Nom','Adresse','Téléphone','Statut','Propriétaire','Panneaux solaires','Intérêt','Coût kWh','Date rappel','Date','Heure','Notes'];
   const rows = state.prospects.map(p => [
     p.nom, p.adresse, p.tel,
     sl[p.statut] || p.statut,
-    q1l[p.q1] || p.q1, q2l[p.q2] || p.q2, q3l[p.q3] || p.q3,
+    q1l[p.q1] || p.q1, q2l[p.q2] || p.q2, q3l[p.q3] || p.q3, q4l[p.q4] || p.q4,
     p.rappel || '', p.date, p.heure, p.notes
   ].map(v => `"${(v || '').replace(/"/g, '""')}"`));
   const csv  = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
