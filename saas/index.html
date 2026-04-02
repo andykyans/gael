@@ -133,6 +133,16 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">🏠 Q5 — Mode de chauffage ?</label>
+      <div class="choix-grid cols2">
+        <button class="choix-btn" onclick="sel(this,'q5','gaz','sel-bleu')"   data-q="q5" data-v="gaz">🔥 Gaz</button>
+        <button class="choix-btn" onclick="sel(this,'q5','pac','sel-vert')"   data-q="q5" data-v="pac">🌬️ PAC</button>
+        <button class="choix-btn" onclick="sel(this,'q5','mixte','sel-or')"   data-q="q5" data-v="mixte">⚡ Élec + Gaz</button>
+        <button class="choix-btn" onclick="sel(this,'q5','elec','sel-rouge')" data-q="q5" data-v="elec">🔌 Pur Élec</button>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">📊 Statut de la visite</label>
       <div class="choix-grid cols3">
         <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')" data-q="statut" data-v="signe">✅ Contrat signé</button>

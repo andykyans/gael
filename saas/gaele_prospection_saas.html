@@ -310,6 +310,15 @@ select.form-input option{background:var(--card)}
         <button class="choix-btn" onclick="sel(this,'q3','non','sel-rouge')" data-q="q3" data-v="non">❌ Non</button>
       </div>
     </div>
+    <div class="form-group">
+      <label class="form-label">🏠 Q5 — Mode de chauffage ?</label>
+      <div class="choix-grid cols2">
+        <button class="choix-btn" onclick="sel(this,'q5','gaz','sel-bleu')"   data-q="q5" data-v="gaz">🔥 Gaz</button>
+        <button class="choix-btn" onclick="sel(this,'q5','pac','sel-vert')"   data-q="q5" data-v="pac">🌬️ PAC</button>
+        <button class="choix-btn" onclick="sel(this,'q5','mixte','sel-or')"   data-q="q5" data-v="mixte">⚡ Élec + Gaz</button>
+        <button class="choix-btn" onclick="sel(this,'q5','elec','sel-rouge')" data-q="q5" data-v="elec">🔌 Pur Élec</button>
+      </div>
+    </div>
 
     <div class="form-group">
       <label class="form-label">📊 Statut de la visite</label>
@@ -522,7 +531,7 @@ let state = {
   prospects: JSON.parse(localStorage.getItem('gaele_prospects')||'[]'),
   session: { active:false, start:null, visites:0, interesses:0, rdv:0, signes:0 },
   timer: null,
-  selections: { q1:null, q2:null, q3:null, statut:null }
+  selections: { q1:null, q2:null, q3:null, q4:null, q5:null, statut:null }
 };
 
 // ── NAVIGATION ─────────────────────────────────────────
@@ -598,11 +607,10 @@ function updateSessionCounters() {
 }
 
 // ── SELECTIONS ─────────────────────────────────────────
-function sel(btn, q, val, cls) {
-  document.querySelectorAll(`[data-q="${q}"]`).forEach(b=>{
-    b.className = 'choix-btn';
-  });
-  btn.className = 'choix-btn ' + cls;
+function sel(event, q, val, cls) {
+  const btn = event ? event.target : document.querySelector(`[data-q="${q}"][data-v="${val}"]`);
+  document.querySelectorAll(`[data-q="${q}"]`).forEach(b => b.className = 'choix-btn');
+  if(btn) btn.className = 'choix-btn ' + cls;
   state.selections[q] = val;
 }
 
@@ -612,16 +620,15 @@ function saveVisite() {
   const nom = document.getElementById('f-nom').value.trim();
   const tel = document.getElementById('f-tel').value.trim();
   const notes = document.getElementById('f-notes').value.trim();
-  const { q1, q2, q3, statut } = state.selections;
+  const { q1, q2, q3, q4, q5, statut } = state.selections;
 
-  if(!adresse) { showToast('⚠️ Entrez une adresse', '#e74c3c'); return; }
-  if(!statut) { showToast('⚠️ Sélectionnez un statut', '#e74c3c'); return; }
+  if(!adresse || !statut) { showToast('⚠️ Adresse et statut requis', '#e74c3c'); return; }
 
   const prospect = {
     id: Date.now(),
     adresse, nom: nom || 'Inconnu',
     tel, notes,
-    q1: q1||'?', q2: q2||'?', q3: q3||'?',
+    q1: q1||'?', q2: q2||'?', q3: q3||'?', q4: q4||'?', q5: q5||'?',
     statut,
     date: new Date().toLocaleDateString('fr-BE'),
     heure: new Date().toLocaleTimeString('fr-BE', {hour:'2-digit',minute:'2-digit'})
@@ -643,7 +650,7 @@ function saveVisite() {
   document.getElementById('f-tel').value = '';
   document.getElementById('f-notes').value = '';
   document.querySelectorAll('.choix-btn').forEach(b=>b.className='choix-btn');
-  state.selections = { q1:null, q2:null, q3:null, statut:null };
+  state.selections = { q1:null, q2:null, q3:null, q4:null, q5:null, statut:null };
 
   showToast('✅ Visite enregistrée !');
 }
