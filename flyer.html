@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flyer Gaele XL - Andy</title>
+  <title>Dépliant Gaele XL - Tri-fold</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,219 +15,177 @@
       --gold-d: #B8941A;
       --white: #FFFFFF;
       --muted: #6B7280;
+      --bg: #F9FAFB;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; color: var(--forest); background: #f0f0f0; }
+    body { font-family: 'Inter', sans-serif; background: #ddd; padding: 20px; }
     
-    .page {
-      width: 210mm;
-      height: 297mm;
-      padding: 15mm;
-      margin: 20px auto;
+    .panel-container {
+      width: 297mm;
+      height: 210mm;
       background: white;
-      box-shadow: 0 0 30px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      display: flex;
+      box-shadow: 0 0 40px rgba(0,0,0,0.2);
       position: relative;
-      overflow: hidden;
+    }
+
+    /* Lignes de pliage (visibles à l'écran, discrètes à l'impression) */
+    .fold-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+    .fold-1 { left: 99mm; }
+    .fold-2 { left: 198mm; }
+
+    .panel {
+      width: 99mm;
+      height: 100%;
+      padding: 10mm;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     @media print {
-      body { background: none; }
-      .page { margin: 0; box-shadow: none; page-break-after: always; }
+      body { padding: 0; background: none; }
+      .panel-container { margin: 0; box-shadow: none; width: 297mm; height: 210mm; }
       .no-print { display: none; }
+      @page { size: landscape; margin: 0; }
     }
 
-    /* FACE A - RECTO */
-    .recto {
-      background-image: linear-gradient(rgba(10, 46, 26, 0.75), rgba(10, 46, 26, 0.75)), url('assets/gaele-xl-panneaux-solaires-hero.png');
+    /* COLUMN 1 - VOLET GAUCHE (Intérieur / Technique) */
+    .panel-left { background: var(--bg); border-right: 1px solid #eee; }
+    .v-card { margin-bottom: 20px; }
+    .v-card-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
+    .v-card-title { font-size: 16px; font-weight: 800; color: var(--forest2); margin-bottom: 5px; font-family: 'Outfit'; }
+    .v-card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* COLUMN 2 - VOLET CENTRE (Détails / FAQ) */
+    .panel-center { padding: 10mm 12mm; }
+    .section-title { font-family: 'Outfit'; font-size: 20px; font-weight: 800; margin-bottom: 15px; text-align: center; color: var(--forest); }
+    .step-item { margin-bottom: 15px; display: flex; gap: 12px; }
+    .step-num { color: var(--gold); font-weight: 900; font-size: 20px; opacity: 0.5; }
+    .step-content b { display: block; font-size: 13px; margin-bottom: 2px; }
+    .step-content p { font-size: 11px; color: var(--muted); }
+    
+    .faq-box { margin-top: 20px; background: #fffbe6; padding: 10px; border-radius: 10px; border: 1px solid #ffe58f; }
+    .faq-q { font-size: 11px; font-weight: 800; margin-bottom: 3px; }
+    .faq-a { font-size: 10px; color: #856404; }
+
+    /* COLUMN 3 - VOLET DROIT (COUVERTURE) */
+    .panel-right { 
+      background-image: linear-gradient(rgba(10, 46, 26, 0.8), rgba(10, 46, 26, 0.8)), url('assets/gaele-xl-panneaux-solaires-hero.png');
       background-size: cover;
       background-position: center;
       color: white;
+      text-align: center;
+      justify-content: space-between;
     }
-    
-    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo svg { width: 50px; height: 50px; }
-    .logo-text { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; }
-    
-    .sfpim-badge {
-      background: white;
-      color: var(--forest);
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      border: 1.5px solid var(--forest2);
-    }
+    .cover-top { margin-top: 10px; }
+    .cover-logo { margin-bottom: 20px; }
+    .cover-title { font-family: 'Outfit'; font-size: 34px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: var(--gold); }
+    .cover-sub { font-size: 14px; opacity: 0.9; font-weight: 300; }
+    .cover-price { font-size: 20px; margin-top: 20px; font-weight: 700; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 100px; display: inline-block; }
 
-    .main-content { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; }
-    .hero-title { font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -0.02em; }
-    .hero-title span { color: var(--gold); }
-    
-    .key-price { font-size: 32px; font-weight: 400; margin-bottom: 40px; opacity: 0.9; }
-    .key-price strong { color: var(--gold); font-size: 48px; font-family: 'Outfit', sans-serif; }
-
-    .features-strip { display: flex; justify-content: center; gap: 30px; margin-bottom: 60px; }
-    .f-item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 15px 25px; border-radius: 16px; min-width: 180px; }
-    .f-val { font-size: 20px; font-weight: 800; color: var(--gold); display: block; }
-    .f-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
-
-    .footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 40px; }
-    .contact-info { text-align: left; }
-    .c-name { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 5px; color: var(--gold); }
-    .c-role { font-size: 14px; opacity: 0.8; margin-bottom: 15px; display: block; }
-    .c-detail { font-size: 16px; font-weight: 600; margin-bottom: 5px; display: block; }
-    
-    .qr-box { background: white; padding: 15px; border-radius: 16px; text-align: center; }
-    .qr-box img { width: 120px; height: 120px; }
-    .qr-box span { display: block; color: var(--forest); font-size: 10px; font-weight: 800; margin-top: 8px; text-transform: uppercase; }
-
-    /* FACE B - VERSO */
-    .verso { background: white; color: var(--forest); }
-    .v-title { font-family: 'Outfit', sans-serif; font-size: 42px; font-weight: 800; margin-bottom: 10px; text-align: center; }
-    .v-sub { text-align: center; color: var(--muted); font-size: 18px; margin-bottom: 50px; }
-
-    .equipment-row { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
-    .v-card { background: #f9fafb; border-radius: 20px; padding: 25px; border: 1px solid #eee; }
-    .v-card-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
-    .v-card-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 10px; color: var(--forest2); }
-    .v-card-desc { font-size: 14px; color: var(--muted); line-height: 1.5; }
-
-    .steps-section { background: var(--forest); color: white; border-radius: 24px; padding: 35px; margin-bottom: 50px; }
-    .steps-title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 30px; text-align: center; }
-    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .step { position: relative; }
-    .step-num { font-size: 48px; font-weight: 900; opacity: 0.2; position: absolute; top: -20px; left: -5px; }
-    .step-label { font-weight: 700; margin-bottom: 8px; display: block; position: relative; }
-    .step-txt { font-size: 13px; opacity: 0.7; position: relative; }
-
-    .faq-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-    .faq-mini { border-left: 3px solid var(--gold); padding-left: 20px; }
-    .faq-q { font-weight: 800; font-size: 15px; margin-bottom: 8px; }
-    .faq-a { font-size: 13px; color: var(--muted); }
-
-    .v-footer { margin-top: auto; text-align: center; border-top: 1px solid #eee; padding-top: 30px; display: flex; justify-content: space-between; align-items: center; }
-    .v-url { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--forest); }
+    .cover-bottom { margin-bottom: 10px; }
+    .qr-area { background: white; padding: 8px; border-radius: 12px; display: inline-block; margin-bottom: 15px; }
+    .qr-area img { width: 70px; height: 70px; display: block; }
+    .contact-block { font-size: 12px; }
+    .contact-block b { color: var(--gold); font-size: 16px; display: block; margin-bottom: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- RECTO -->
-  <div class="page recto">
-    <div class="header">
-      <div class="logo">
-        <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="38" height="38" rx="9" fill="#FFFFFF"/>
-          <path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#1A7A3A"/>
-        </svg>
-        <span class="logo-text">Gaele Advisor</span>
-      </div>
-      <div class="sfpim-badge">🏛️ SFPIM · État Belge</div>
-    </div>
+  <div class="panel-container">
+    <div class="fold-line fold-1"></div>
+    <div class="fold-line fold-2"></div>
 
-    <div class="main-content">
-      <h1 class="hero-title">Votre énergie à<br><span>0€ INVESTI</span></h1>
-      <p class="key-price">Seulement <strong>0,2703 €/kWh</strong><br>TVAC · Tarif fixe garanti 25 ans</p>
-      
-      <div class="features-strip">
-        <div class="f-item">
-          <span class="f-val">0€</span>
-          <span class="f-label">D'investissement</span>
-        </div>
-        <div class="f-item">
-          <span class="f-val">25 ANS</span>
-          <span class="f-label">Tarif garanti</span>
-        </div>
-        <div class="f-item">
-          <span class="f-val">Inclus</span>
-          <span class="f-label">Batterie & Entretien</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <div class="contact-info">
-        <span class="c-name">Andy</span>
-        <span class="c-role">Votre conseiller Gaele / Gaele XL</span>
-        <span class="c-detail">📞 +32 470 43 22 11</span>
-        <span class="c-detail">✉️ infos@gaele-advisor.be</span>
-      </div>
-      <div class="qr-box">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://gaele-advisor.be/" alt="QR Code Gaele Advisor">
-        <span>Scannez pour un RDV</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- VERSO -->
-  <div class="page verso">
-    <h2 class="v-title">Pourquoi choisir <span style="color:var(--forest2)">Gaele XL ?</span></h2>
-    <p class="v-sub">Une solution complète, sans stress et sans frais cachés.</p>
-
-    <div class="equipment-row">
+    <!-- PANNEAU 1 (Gauche - Intérieur gauche) -->
+    <div class="panel panel-left">
+      <h3 class="section-title">Technologie Officielle</h3>
       <div class="v-card">
         <img src="assets/gaele-xl-panneaux-solaires-hero.png" class="v-card-img" alt="Panneaux AIKO">
-        <h3 class="v-card-title">Panneaux AIKO 455Wp</h3>
-        <p class="v-card-desc">Le top du marché (Technologie N-Type). Certifiés <strong>DNV GL</strong> pour une performance optimale pendant plus de 25 ans.</p>
+        <h4 class="v-card-title">Panneaux AIKO 455Wp</h4>
+        <p class="v-card-desc">Technologie N-Type ABC ultra-puissante. Certifiés <strong>DNV GL</strong> pour une performance garantie 25 ans.</p>
       </div>
       <div class="v-card">
         <img src="assets/gaele-xl-batterie.png" class="v-card-img" alt="Batterie Sigenergy">
-        <h3 class="v-card-title">Stockage Sigenergy</h3>
-        <p class="v-card-desc">Le système <strong>SigenStor</strong> intelligent gère votre consommation pour vous offrir le tarif le plus bas garanti.</p>
+        <h4 class="v-card-title">Stockage Sigenergy</h4>
+        <p class="v-card-desc">Le cerveau **SigenStor** optimise votre énergie pour vous offrir le tarif le plus bas, même la nuit.</p>
+      </div>
+      <div style="margin-top:auto; padding:10px; border:1px solid #ddd; border-radius:10px; font-size:10px;">
+        🏛️ Soutenu par la <b>SFPIM (État Belge)</b>. La sécurité d'un partenaire institutionnel pour votre maison.
       </div>
     </div>
 
-    <div class="steps-section">
-      <h3 class="steps-title">Votre parcours vers l'indépendance</h3>
-      <div class="steps-grid">
-        <div class="step">
-          <span class="step-num">01</span>
-          <span class="step-label">Analyse Gratuite</span>
-          <p class="step-txt">Nous étudions votre éligibilité et vos économies potentielles sans engagement.</p>
+    <!-- PANNEAU 2 (Centre - Verso central) -->
+    <div class="panel panel-center">
+      <h3 class="section-title">Comment ça marche ?</h3>
+      <div class="step-item">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <b>Étude d'éligibilité</b>
+          <p>Analyse gratuite de votre toit et calcul de vos économies sur 25 ans.</p>
         </div>
-        <div class="step">
-          <span class="step-num">02</span>
-          <span class="step-label">Visite Technique</span>
-          <p class="step-txt">Un expert vérifie votre toiture et prépare l'installation sur-mesure.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <b>Visite & Simulation</b>
+          <p>Un expert valide la pose et confirme votre tarif fixe garanti.</p>
         </div>
-        <div class="step">
-          <span class="step-num">03</span>
-          <span class="step-label">Installation & Pose</span>
-          <p class="step-txt">En 8 à 12 semaines, vous produisez votre propre énergie gratuite.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <b>Pose & Économies</b>
+          <p>Installation complète en 8 à 12 semaines. Payez moins dès le jour 1.</p>
+        </div>
+      </div>
+
+      <div class="faq-box">
+        <p class="faq-q">Pourquoi 0€ investi ?</p>
+        <p class="faq-a">Gaele finance l'installation. Vous ne payez que le kWh à prix fixe ultra-bas.</p>
+      </div>
+      <div class="faq-box" style="margin-top:10px">
+        <p class="faq-q">Et après le contrat ?</p>
+        <p class="faq-a">L'installation vous appartient totalement. Votre énergie devient 100% gratuite.</p>
+      </div>
+    </div>
+
+    <!-- PANNEAU 3 (Droit - Couverture) -->
+    <div class="panel panel-right">
+      <div class="cover-top">
+        <div class="cover-logo">
+          <svg width="40" height="40" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="9" fill="#FFF"/><path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#1A7A3A"/></svg>
+        </div>
+        <h1 class="cover-title">Énergie Solaire<br>À 0€ INVESTI</h1>
+        <p class="cover-sub">Installation gratuite de vos panneaux et batterie en Belgique.</p>
+        <div class="cover-price">0,2703 € / kWh</div>
+      </div>
+
+      <div class="cover-bottom">
+        <div class="qr-area">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://gaele-advisor.be/" alt="QR Code">
+        </div>
+        <div class="contact-block">
+          <b>Andy</b>
+          <span>Votre conseiller Gaele Advisor</span><br>
+          <span>📞 +32 470 43 22 11</span><br>
+          <span style="font-weight:700">gaele-advisor.be</span>
         </div>
       </div>
     </div>
 
-    <div class="faq-summary">
-      <div class="faq-mini">
-        <p class="faq-q">Pourquoi est-ce gratuit ?</p>
-        <p class="faq-a">Nous finançons l'installation. En échange, vous bénéficiez d'un tarif d'électricité ultra-compétitif et bloqué 25 ans.</p>
-      </div>
-      <div class="faq-mini">
-        <p class="faq-q">Et après 25 ans ?</p>
-        <p class="faq-a">L'installation (panneaux + batterie) vous appartient totalement. Vous produisez alors votre électricité 100% gratuitement.</p>
-      </div>
-      <div class="faq-mini">
-        <p class="faq-q">Suis-je assuré ?</p>
-        <p class="faq-a">OUI. Le contrat Gaele XL inclut l'assurance complète (incendie, grêle, vol) et la maintenance préventive.</p>
-      </div>
-      <div class="faq-mini">
-        <p class="faq-q">Qui est derrière Gaele ?</p>
-        <p class="faq-a">Le groupe Gridlink, dont l'État Belge (via la SFPIM) est actionnaire, garantissant une solidité totale.</p>
-      </div>
-    </div>
-
-    <div class="v-footer">
-      <span style="font-weight:700; color:var(--muted)">Andy · Conseiller Gaele Advisor</span>
-      <span class="v-url">gaele-advisor.be</span>
-    </div>
   </div>
 
-  <div class="no-print" style="position:fixed; top:20px; right:20px; display:flex; gap:10px;">
-    <button onclick="window.print()" style="background:var(--forest2); color:white; border:none; padding:15px 25px; border-radius:100px; font-weight:800; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1)">🖨️ Imprimer / Enregistrer PDF</button>
+  <div class="no-print" style="position:fixed; top:20px; right:20px;">
+    <button onclick="window.print()" style="background:var(--forest2); color:white; border:none; padding:15px 30px; border-radius:100px; font-weight:800; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1)">🖨️ Imprimer en PAYSAGE</button>
   </div>
 
 </body>
