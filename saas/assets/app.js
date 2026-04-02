@@ -35,7 +35,37 @@ function showPage(id, btn) {
   if (id === 'dashboard') renderDashboard();
   if (id === 'planning')  renderPlanning();
   if (id === 'carte')     { if (window.MapModule) MapModule.init(); }
+  
+  // Masquer la sidebar mobile si on change de page
+  const sidebar = document.getElementById('crm-sidebar');
+  if (sidebar) sidebar.classList.remove('open');
 }
+
+// ── SIDEBAR TOGGLE ─────────────────────────────────────
+function toggleSidebar() {
+    const sidebar = document.getElementById('crm-sidebar');
+    sidebar.classList.toggle('collapsed');
+    const btn = sidebar.querySelector('.toggle-btn');
+    btn.textContent = sidebar.classList.contains('collapsed') ? '❯' : '❮';
+    localStorage.setItem('gaele_sidebar_collapsed', sidebar.classList.contains('collapsed'));
+}
+
+function toggleSidebarMobile() {
+    const sidebar = document.getElementById('crm-sidebar');
+    sidebar.classList.toggle('open');
+}
+
+// Init sidebar state
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('gaele_sidebar_collapsed') === 'true') {
+        const sidebar = document.getElementById('crm-sidebar');
+        if (sidebar) {
+            sidebar.classList.add('collapsed');
+            const btn = sidebar.querySelector('.toggle-btn');
+            if (btn) btn.textContent = '❯';
+        }
+    }
+});
 
 // ── SESSION TIMER ──────────────────────────────────────
 function toggleSession() {
@@ -143,6 +173,13 @@ function saveVisite() {
 
   localStorage.setItem('gaele_prospects', JSON.stringify(state.prospects));
 
+  // Sync avec Supabase
+  if (supabaseClient) {
+    supabaseClient.from('prospects').upsert([prospect]).then(({error}) => {
+      if(error) console.error("Erreur sauvegarde Supabase:", error);
+    });
+  }
+
   document.getElementById('f-adresse').value = '';
   document.getElementById('f-nom').value     = '';
   document.getElementById('f-tel').value     = '';
@@ -185,15 +222,19 @@ function editProspect(id) {
   document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
   const restoreSel = (q, v) => {
     if(!v) return;
-    const btn = document.querySelector(`[data-q="${q}"][data-v="${v}"]`);
+    const btn = document.querySelector(`[data-q="${q}"][data-v="${v}"]`) || 
+                (q === 'statut' && v === 'rappel' ? document.querySelector(`[data-q="statut"][data-v="appel"]`) : null) ||
+                (q === 'statut' && v === 'non' ? document.querySelector(`[data-q="statut"][data-v="perdu"]`) : null) ||
+                (q === 'statut' && v === 'absent' ? document.querySelector(`[data-q="statut"][data-v="nouveau"]`) : null);
+                
     if(btn) {
       let cls = 'sel-vert';
-      if(v === 'non' && q !== 'q2') cls = 'sel-rouge';
+      if((v === 'non' || v === 'perdu') && q !== 'q2') cls = 'sel-rouge';
       if(v === 'non' && q === 'q2') cls = 'sel-vert';
       if(v === 'oui' && q === 'q2') cls = 'sel-rouge';
       if(v === 'copro' || v === 'ancien' || v === 'peut' || v === 'rdv') cls = 'sel-or';
-      if(v === 'rappel') cls = 'sel-bleu';
-      if(v === 'absent') cls = 'sel-gris';
+      if(v === 'rappel' || v === 'appel') cls = 'sel-bleu';
+      if(v === 'absent' || v === 'nouveau') cls = 'sel-gris';
       btn.className = 'choix-btn ' + cls;
     }
   };
@@ -229,11 +270,31 @@ function renderCRM(filter) {
   const empty = document.getElementById('crm-empty');
   const count = document.getElementById('crm-count');
 
+  // Mettre à jour les compteurs de la sidebar
+  updateSidebarCounts();
+
   let data = state.prospects;
+  
+  // Mapping pour compatibilité anciens statuts
+  const mapStatut = (s) => {
+    if (s === 'rappel') return 'appel';
+    if (s === 'non')    return 'perdu';
+    if (s === 'absent') return 'nouveau';
+    return s;
+  };
+
   if (filter && filter !== 'all') {
-    if (filter === 'chaud') data = data.filter(p => p.statut === 'rdv' || p.statut === 'signe');
-    else                    data = data.filter(p => p.statut === filter);
+    if (filter === 'chaud') {
+        data = data.filter(p => p.statut === 'rdv' || p.statut === 'signe');
+    } else {
+        data = data.filter(p => mapStatut(p.statut) === filter);
+    }
   }
+
+  // Mettre à jour l'état actif dans la sidebar
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.toggle('active', item.id === (filter ? `filter-${filter}` : 'filter-all'));
+  });
 
   count.textContent = data.length + ' prospect' + (data.length > 1 ? 's' : '');
 
@@ -245,12 +306,15 @@ function renderCRM(filter) {
   empty.style.display = 'none';
 
   const statutInfo = {
-    signe:  { label: 'Signé',  cls: 's-signe',  bg: '1A5C3A' },
-    rdv:    { label: 'RDV',    cls: 's-rdv',    bg: '5C4A1A' },
-    rappel: { label: 'Rappel', cls: 's-rappel', bg: '1A3A5C' },
-    non:    { label: 'Non',    cls: 's-non',    bg: '5C1A1A' },
-    absent: { label: 'Absent', cls: 's-absent', bg: '4b5563' },
-    default:{ label: '?',      cls: 's-nouveau',bg: '2a2a2a' }
+    signe:   { label: 'Signé',  cls: 's-signe',  bg: '1A5C3A' },
+    rdv:     { label: 'RDV',    cls: 's-rdv',    bg: '5C4A1A' },
+    appel:   { label: 'Appel',  cls: 's-rappel', bg: '1A3A5C' },
+    rappel:  { label: 'Appel',  cls: 's-rappel', bg: '1A3A5C' },
+    perdu:   { label: 'Perdu',  cls: 's-non',    bg: '5C1A1A' },
+    non:     { label: 'Perdu',  cls: 's-non',    bg: '5C1A1A' },
+    nouveau: { label: 'Nouveau',cls: 's-nouveau',bg: '2a2a2a' },
+    absent:  { label: 'Nouveau',cls: 's-nouveau',bg: '2a2a2a' },
+    default: { label: '?',      cls: 's-nouveau',bg: '2a2a2a' }
   };
 
   list.innerHTML = data.map(p => {
@@ -269,9 +333,42 @@ function renderCRM(filter) {
   }).join('');
 }
 
+function updateSidebarCounts() {
+    const data = state.prospects;
+    const mapStatut = (s) => {
+        if (s === 'rappel') return 'appel';
+        if (s === 'non')    return 'perdu';
+        if (s === 'absent') return 'nouveau';
+        return s;
+    };
+
+    const counts = {
+        all: data.length,
+        nouveau: 0,
+        appel: 0,
+        rdv: 0,
+        signe: 0,
+        perdu: 0
+    };
+
+    data.forEach(p => {
+        const s = mapStatut(p.statut);
+        if (counts[s] !== undefined) counts[s]++;
+        else counts.nouveau++; // Si statut inconnu, on met dans nouveau
+    });
+
+    for (const [id, count] of Object.entries(counts)) {
+        const el = document.getElementById(`count-${id}`);
+        if (el) el.textContent = count;
+    }
+}
+
 function filterProspects(f) {
   switchCrmTab('b2c');
   renderCRM(f);
+  // Fermer la sidebar mobile si on clique sur un filtre
+  const sidebar = document.getElementById('crm-sidebar');
+  if (sidebar) sidebar.classList.remove('open');
 }
 
 // ── B2B STATE ─────────────────────────────────────────
@@ -531,12 +628,34 @@ function showProspect(id) {
       <div class="modal-row"><span>Intérêt</span><span>${q3l[p.q3] || '—'}</span></div>
       <div class="modal-row"><span>Coût kWh</span><span>${q4l[p.q4] || '—'}</span></div>
       ${p.tel ? `<div class="modal-row"><span>Téléphone</span><a href="tel:${escHtml(p.tel)}" style="color:var(--or2);text-decoration:none">${escHtml(p.tel)}</a></div>` : ''}
-      ${p.notes ? `<div style="padding:8px 0"><span style="color:var(--txt2);display:block;margin-bottom:4px">Notes</span><span style="font-style:italic">${escHtml(p.notes)}</span></div>` : ''}
-    </div>`;
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn ${p.tel ? 'btn-bleu' : 'btn-outline'}" 
+              onclick="${p.tel ? `sendThankYouSMS(${id})` : ''}" 
+              style="width:100%;font-size:0.85rem;${!p.tel ? 'opacity:0.5;cursor:not-allowed' : ''}">
+        💬 SMS de Remerciement ${!p.tel ? '(N° manquant)' : ''}
+      </button>
+    </div>
+  `;
   const btnEdit = document.getElementById('btn-edit-prospect');
   if (btnEdit) btnEdit.onclick = () => editProspect(id);
   document.getElementById('btn-delete-prospect').onclick = () => deleteProspect(id);
   document.getElementById('modal-prospect').classList.add('open');
+}
+
+function sendThankYouSMS(id) {
+    const p = state.prospects.find(x => x.id === id);
+    if (!p || !p.tel) { showToast('⚠️ Numéro de téléphone manquant', '#e74c3c'); return; }
+    
+    // Le texte validé par l'utilisateur
+    const msg = `Merci pour votre temps aujourd'hui. Je vous recontacte très bientôt afin de fixer un rendez-vous pour vous expliquer plus en détails les actions mises en place par l'État belge, pour vous permettre de réduire votre coût d'énergie grâce à l'installation de panneaux solaires. Bien à vous, Kyambikwa Andy.`;
+    
+    // Détection de l'OS pour le séparateur de body (iOS utilise amp; tandis que Android/Desktop non)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const separator = isIOS ? '&' : '?';
+    
+    window.location.href = `sms:${p.tel}${separator}body=${encodeURIComponent(msg)}`;
+    showToast('📨 Application SMS ouverte');
 }
 
 function deleteProspect(id) {
@@ -546,6 +665,14 @@ function deleteProspect(id) {
   delete state.geocodeCache[id];
   localStorage.setItem('gaele_geocache', JSON.stringify(state.geocodeCache));
   localStorage.setItem('gaele_prospects', JSON.stringify(state.prospects));
+  
+  // Supprimer de Supabase
+  if (supabaseClient) {
+    supabaseClient.from('prospects').delete().eq('id', id).then(({error}) => {
+      if(error) console.error("Erreur suppression Supabase:", error);
+    });
+  }
+
   closeModal();
   renderCRM();
   showToast('🗑️ Supprimé');
@@ -606,7 +733,7 @@ function exportPDF() {
   // --- Stats ---
   const signes  = ps.filter(p => p.statut === 'signe').length;
   const rdv     = ps.filter(p => p.statut === 'rdv').length;
-  const rappels = ps.filter(p => p.statut === 'rappel').length;
+  const rappels = ps.filter(p => p.statut === 'rappel' || p.statut === 'appel').length;
   const conv    = ps.length > 0 ? Math.round((signes / ps.length) * 100) : 0;
 
   doc.setFillColor(17, 31, 20);
@@ -658,8 +785,8 @@ function exportPDF() {
   doc.text('Date', 180, 124.5);
 
   let y = 130;
-  const sl = { signe:'Signé', rdv:'RDV', rappel:'Rappel', non:'Non', absent:'Absent' };
-  const statColors = { signe:[39,174,96], rdv:[201,168,76], rappel:[41,128,185], non:[231,76,60], absent:[107,114,128] };
+  const sl = { signe:'Signé', rdv:'RDV', appel:'Appel', rappel:'Appel', perdu:'Perdu', non:'Perdu', nouveau:'Nouveau', absent:'Nouveau' };
+  const statColors = { signe:[39,174,96], rdv:[201,168,76], appel:[41,128,185], rappel:[41,128,185], perdu:[231,76,60], non:[231,76,60], nouveau:[107,114,128], absent:[107,114,128] };
 
   ps.slice(0, 35).forEach((p, i) => {
     if (y > 275) { doc.addPage(); y = 20; }
@@ -1527,10 +1654,106 @@ function initAppAfterAuth() {
   // Charger leads B2B
   loadB2BLeads();
   
+  // Synchroniser avec Supabase
+  loadSupabaseProspects();
+  
   // Rendu initial
   renderDashboard();
   if (state.prospects.length > 0 && window.MapModule) {
     MapModule.refreshMarkers();
+  }
+}
+
+async function loadSupabaseProspects() {
+  if (!supabaseClient) return;
+  try {
+    const { data, error } = await supabaseClient.from('prospects').select('*').order('id', { ascending: false });
+    if (error) throw error;
+    if (data && data.length > 0) {
+      state.prospects = data;
+      localStorage.setItem('gaele_prospects', JSON.stringify(state.prospects));
+      // Rafraichir les vues
+      if (document.getElementById('page-crm').classList.contains('active')) renderCRM();
+      if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+      if (window.MapModule && document.getElementById('page-carte').classList.contains('active')) MapModule.refreshMarkers();
+      
+      showToast('☁️ Données synchronisées', 'var(--bleu)');
+    }
+    // Lancer l'écoute temps réel après avoir chargé la liste
+    subscribeToSupabaseChanges();
+  } catch(e) {
+    console.warn("Impossible de synchroniser depuis Supabase:", e);
+    showToast('⚠️ Mode hors ligne', 'var(--or)');
+  }
+}
+
+let realtimeSubscription = null;
+
+function subscribeToSupabaseChanges() {
+  if (!supabaseClient) return;
+  
+  // Eviter les abonnements multiples
+  if (realtimeSubscription) {
+    supabaseClient.removeChannel(realtimeSubscription);
+  }
+  
+  realtimeSubscription = supabaseClient
+    .channel('gaele-realtime')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'prospects' },
+      handleRealtimeEvent
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('🔗 Connecté au Realtime Supabase');
+      }
+    });
+}
+
+function handleRealtimeEvent(payload) {
+  const { eventType, new: newRec, old: oldRec } = payload;
+  let updated = false;
+
+  if (eventType === 'INSERT') {
+    const exists = state.prospects.find(p => p.id === newRec.id);
+    if (!exists) {
+      state.prospects.unshift(newRec);
+      updated = true;
+      showToast('📥 Nouveau prospect synchronisé', 'var(--bleu)');
+    }
+  } else if (eventType === 'UPDATE') {
+    const idx = state.prospects.findIndex(p => p.id === newRec.id);
+    if (idx !== -1) {
+      // Pour éviter des re-rendus si les données sont identiques
+      if (JSON.stringify(state.prospects[idx]) !== JSON.stringify(newRec)) {
+        state.prospects[idx] = newRec;
+        updated = true;
+        showToast('🔄 Prospect mis à jour à distance', 'var(--bleu)');
+      }
+    } else {
+      state.prospects.unshift(newRec);
+      updated = true;
+    }
+    if (updated) state.prospects.sort((a,b) => b.id - a.id);
+  } else if (eventType === 'DELETE') {
+    const idx = state.prospects.findIndex(p => p.id === oldRec.id);
+    if (idx !== -1) {
+      state.prospects.splice(idx, 1);
+      if (state.geocodeCache && state.geocodeCache[oldRec.id]) {
+        delete state.geocodeCache[oldRec.id];
+        localStorage.setItem('gaele_geocache', JSON.stringify(state.geocodeCache));
+      }
+      updated = true;
+      showToast('🗑️ Prospect supprimé à distance', 'var(--bleu)');
+    }
+  }
+
+  if (updated) {
+    localStorage.setItem('gaele_prospects', JSON.stringify(state.prospects));
+    if (document.getElementById('page-crm').classList.contains('active')) renderCRM();
+    if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+    if (window.MapModule && document.getElementById('page-carte').classList.contains('active')) MapModule.refreshMarkers();
   }
 }
 
