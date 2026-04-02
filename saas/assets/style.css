@@ -185,7 +185,7 @@ select.form-input option{background:var(--card)}
 
 /* ── CRM SIDEBAR LAYOUT ───────────────────────────────── */
 #page-crm { display: none; }
-#page-crm.active { display: flex; flex-direction: column; }
+#page-crm.active { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
 .crm-layout { display: flex; flex: 1; min-height: 0; position: relative; overflow: hidden; }
 
 .crm-sidebar {
@@ -278,20 +278,58 @@ select.form-input option{background:var(--card)}
 .active .menu-badge { background: #fff; color: var(--v-dark); }
 .collapsed .menu-badge { position: absolute; top: 4px; right: 4px; padding: 2px 5px; font-size: 0.55rem; }
 
-.crm-main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg); }
+.crm-main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg); overflow-y: auto; padding-bottom: 100px; }
 
 @media (max-width: 768px) {
     .crm-sidebar {
-        position: absolute;
+        position: fixed;
         left: 0;
         top: 0;
         bottom: 0;
+        height: 100dvh;
         transform: translateX(-100%);
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+        z-index: 1001; 
+        background: #fff;
     }
     .crm-sidebar.open { transform: translateX(0); }
     .crm-sidebar.collapsed { width: 240px; transform: translateX(-100%); }
     .crm-sidebar.collapsed.open { transform: translateX(0); }
+    
+    /* Overlay mobile */
+    .crm-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: none;
+    }
+    .sidebar-open .crm-overlay { display: block; }
+    
+    /* Bouton mobile flottant */
+    .mobile-folder-btn {
+        display: flex;
+        position: fixed;
+        bottom: 85px;
+        right: 16px;
+        background: var(--v-dark);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 99;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid var(--or);
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-folder-btn { display: none; }
+    .crm-overlay { display: none; }
 }
 
 /* ── NOTIFICATION BTN ────────────────────────────────── */

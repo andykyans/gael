@@ -51,8 +51,12 @@ function toggleSidebar() {
 }
 
 function toggleSidebarMobile() {
-    const sidebar = document.getElementById('crm-sidebar');
-    sidebar.classList.toggle('open');
+  const sb = document.getElementById('crm-sidebar');
+  const crmPage = document.getElementById('page-crm');
+  if (sb) {
+    sb.classList.toggle('open');
+    if (crmPage) crmPage.classList.toggle('sidebar-open');
+  }
 }
 
 // Init sidebar state
@@ -265,6 +269,12 @@ function switchCrmTab(tab) {
   document.getElementById('b2b-empty').style.display      = 'none';
   if (tab === 'b2c') renderCRM();
   if (tab === 'b2b') renderB2B();
+  
+  // Fermer sidebar si mobile et ouvert
+  const sb = document.getElementById('crm-sidebar');
+  if (window.innerWidth <= 768 && sb && sb.classList.contains('open')) {
+    toggleSidebarMobile();
+  }
 }
 
 function renderCRM(filter) {

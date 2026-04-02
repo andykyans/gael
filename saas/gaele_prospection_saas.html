@@ -142,19 +142,6 @@ select.form-input option{background:var(--card)}
 
 /* ── CRM SIDEBAR LAYOUT ───────────────────────────────── */
 #page-crm { display: none; }
-#page-crm.active { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
-.crm-layout { display: flex; flex: 1; min-height: 0; position: relative; overflow: hidden; }
-
-.crm-sidebar {
-    width: 220px;
-    background: var(--card);
-    border-right: 1px solid var(--border);
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    z-index: 10;
-}
 
 .crm-sidebar.collapsed { width: 60px; }
 
@@ -358,6 +345,7 @@ select.form-input option{background:var(--card)}
 <!-- PAGE CRM -->
 <div class="page" id="page-crm">
   <div class="crm-layout">
+    <div class="crm-overlay" onclick="toggleSidebarMobile()"></div>
     <!-- SIDEBAR -->
     <aside class="crm-sidebar" id="crm-sidebar">
       <div class="sidebar-header">
@@ -416,6 +404,9 @@ select.form-input option{background:var(--card)}
       </div>
     </main>
   </div>
+  <button class="mobile-folder-btn" onclick="toggleSidebarMobile()">
+    <span>📂 Dossiers</span>
+  </button>
 </div>
 
 <!-- PAGE DASHBOARD -->
@@ -562,6 +553,15 @@ function toggleSidebar() {
     const btn = sidebar.querySelector('.toggle-btn');
     btn.textContent = sidebar.classList.contains('collapsed') ? '❯' : '❮';
     localStorage.setItem('gaele_sidebar_collapsed', sidebar.classList.contains('collapsed'));
+}
+
+function toggleSidebarMobile() {
+  const sb = document.getElementById('crm-sidebar');
+  const crmPage = document.getElementById('page-crm');
+  if (sb) {
+    sb.classList.toggle('open');
+    if (crmPage) crmPage.classList.toggle('sidebar-open');
+  }
 }
 
 // ── SESSION TIMER ──────────────────────────────────────
@@ -744,7 +744,13 @@ function updateSidebarCounts() {
     }
 }
 
-function filterProspects(f) { renderCRM(f); }
+function filterProspects(f) { 
+  renderCRM(f);
+  const sb = document.getElementById('crm-sidebar');
+  if (window.innerWidth <= 768 && sb && sb.classList.contains('open')) {
+    toggleSidebarMobile();
+  }
+}
 
 function showProspect(id) {
   const p = state.prospects.find(x=>x.id===id);
