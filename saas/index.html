@@ -143,6 +143,16 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">⚡ Q6 — Raccordement Électrique ?</label>
+      <div class="choix-grid cols2">
+        <button class="choix-btn" onclick="sel(this,'q6','mono','sel-bleu')"  data-q="q6" data-v="mono">🔌 Mono (230V)</button>
+        <button class="choix-btn" onclick="sel(this,'q6','tri400','sel-vert')" data-q="q6" data-v="tri400">🔌 Tri (400V+N)</button>
+        <button class="choix-btn" onclick="sel(this,'q6','tri230','sel-or')"   data-q="q6" data-v="tri230">🔌 Tri (230V)</button>
+        <button class="choix-btn" onclick="sel(this,'q6','?','sel-gris')"     data-q="q6" data-v="?">❓ Inconnu</button>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">📊 Statut de la visite</label>
       <div class="choix-grid cols3">
         <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')" data-q="statut" data-v="signe">✅ Contrat signé</button>

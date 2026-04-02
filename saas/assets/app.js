@@ -10,7 +10,7 @@ const state = {
   b2bLeads:  [],
   session:   { active: false, start: null, visites: 0, interesses: 0, rdv: 0, signes: 0, elapsed: 0 },
   timer:     null,
-  selections:{ q1: null, q2: null, q3: null, q4: null, q5: null, statut: null },
+  selections:{ q1: null, q2: null, q3: null, q4: null, q5: null, q6: null, statut: null },
   mapInstance: null,
   geocodeCache: JSON.parse(localStorage.getItem('gaele_geocache') || '{}'),
   b2bGeocache: JSON.parse(localStorage.getItem('gaele_b2b_geocache') || '{}'),
@@ -136,7 +136,7 @@ function saveVisite() {
   const tel     = document.getElementById('f-tel').value.trim();
   const notes   = document.getElementById('f-notes').value.trim();
   const rappel  = document.getElementById('f-rappel').value;
-  const { q1, q2, q3, q4, q5, statut } = state.selections;
+  const { q1, q2, q3, q4, q5, q6, statut } = state.selections;
 
   if (!adresse) { showToast('⚠️ Entrez une adresse', '#e74c3c'); return; }
   if (!statut)  { showToast('⚠️ Sélectionnez un statut', '#e74c3c'); return; }
@@ -144,7 +144,7 @@ function saveVisite() {
   const prospect = {
     id: editingProspectId || Date.now(),
     adresse, nom: nom || 'Inconnu', tel, notes, rappel,
-    q1: q1 || '?', q2: q2 || '?', q3: q3 || '?', q4: q4 || '?', q5: q5 || '?',
+    q1: q1 || '?', q2: q2 || '?', q3: q3 || '?', q4: q4 || '?', q5: q5 || '?', q6: q6 || '?',
     statut,
     date:  new Date().toLocaleDateString('fr-BE'),
     heure: new Date().toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })
@@ -186,7 +186,7 @@ function saveVisite() {
   document.getElementById('f-notes').value   = '';
   document.getElementById('f-rappel').value  = '';
   document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
-  state.selections = { q1: null, q2: null, q3: null, q4: null, q5: null, statut: null };
+  state.selections = { q1: null, q2: null, q3: null, q4: null, q5: null, q6: null, statut: null };
 
   // Invalider cache au besoin et refresh
   if (window.MapModule) MapModule.refreshMarkers();
@@ -217,7 +217,7 @@ function editProspect(id) {
     document.getElementById('f-rappel').value = '';
   }
   
-  state.selections = { q1: p.q1 !== '?' ? p.q1 : null, q2: p.q2 !== '?' ? p.q2 : null, q3: p.q3 !== '?' ? p.q3 : null, q4: p.q4 !== '?' ? p.q4 : null, q5: p.q5 !== '?' ? p.q5 : null, statut: p.statut };
+  state.selections = { q1: p.q1 !== '?' ? p.q1 : null, q2: p.q2 !== '?' ? p.q2 : null, q3: p.q3 !== '?' ? p.q3 : null, q4: p.q4 !== '?' ? p.q4 : null, q5: p.q5 !== '?' ? p.q5 : null, q6: p.q6 !== '?' ? p.q6 : null, statut: p.statut };
   
   document.querySelectorAll('.choix-btn').forEach(b => b.className = 'choix-btn');
   const restoreSel = (q, v) => {
@@ -243,6 +243,7 @@ function editProspect(id) {
   restoreSel('q3', p.q3);
   restoreSel('q4', p.q4);
   restoreSel('q5', p.q5);
+  restoreSel('q6', p.q6);
   restoreSel('statut', p.statut);
 
   editingProspectId = id;
@@ -620,6 +621,7 @@ function showProspect(id) {
   const q3l = { oui:'⭐ Intéressé', peut:'🤔 Peut-être', non:'❌ Non', '?':'—' };
   const q4l = { oui:'✅ Oui', non:'❌ Non', '?':'—' };
   const q5l = { gaz:'🔥 Gaz', pac:'🌬️ PAC', mixte:'⚡ Élec + Gaz', elec:'🔌 Pur Élec', '?':'—' };
+  const q6l = { mono:'🔌 Mono (230V)', tri400:'🔌 Tri (400V+N)', tri230:'🔌 Tri (230V)', '?':'—' };
   const sl  = { signe:'✅ Contrat signé', rdv:'📅 RDV fixé', rappel:'📞 À rappeler', non:'❌ Non intéressé', absent:'🚪 Absent' };
   document.getElementById('modal-content').innerHTML = `
     <div style="display:grid;gap:8px;font-size:0.82rem">
@@ -630,6 +632,7 @@ function showProspect(id) {
       <div class="modal-row"><span>Intérêt</span><span>${q3l[p.q3] || '—'}</span></div>
       <div class="modal-row"><span>Coût kWh</span><span>${q4l[p.q4] || '—'}</span></div>
       <div class="modal-row"><span>Chauffage</span><span>${q5l[p.q5] || '—'}</span></div>
+      <div class="modal-row"><span>Raccord.</span><span>${q6l[p.q6] || '—'}</span></div>
       ${p.tel ? `<div class="modal-row"><span>Téléphone</span><a href="tel:${escHtml(p.tel)}" style="color:var(--or2);text-decoration:none">${escHtml(p.tel)}</a></div>` : ''}
     </div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
@@ -691,12 +694,13 @@ function exportCSV() {
   const q3l = { oui:'Intéressé', peut:'Peut-être', non:'Non', '?':'' };
   const q4l = { oui:'Oui', non:'Non', '?':'' };
   const q5l = { gaz:'Gaz', pac:'Pompe à chaleur', mixte:'Élec + Gaz', elec:'Pure Électrique', '?':'' };
+  const q6l = { mono:'Mono (230V)', tri400:'Tri (400V+N)', tri230:'Tri (230V)', '?':'' };
   const sl  = { signe:'Signé', rdv:'RDV fixé', rappel:'À rappeler', non:'Non intéressé', absent:'Absent' };
-  const headers = ['Nom','Adresse','Téléphone','Statut','Propriétaire','Panneaux solaires','Intérêt','Coût kWh','Chauffage','Date rappel','Date','Heure','Notes'];
+  const headers = ['Nom','Adresse','Téléphone','Statut','Propriétaire','Panneaux solaires','Intérêt','Coût kWh','Chauffage','Raccordement','Date rappel','Date','Heure','Notes'];
   const rows = state.prospects.map(p => [
     p.nom, p.adresse, p.tel,
     sl[p.statut] || p.statut,
-    q1l[p.q1] || p.q1, q2l[p.q2] || p.q2, q3l[p.q3] || p.q3, q4l[p.q4] || p.q4, q5l[p.q5] || p.q5,
+    q1l[p.q1] || p.q1, q2l[p.q2] || p.q2, q3l[p.q3] || p.q3, q4l[p.q4] || p.q4, q5l[p.q5] || p.q5, q6l[p.q6] || p.q6,
     p.rappel || '', p.date, p.heure, p.notes
   ].map(v => `"${(v || '').replace(/"/g, '""')}"`));
   const csv  = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
