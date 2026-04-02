@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dépliant Gaele XL - Tri-fold</title>
+  <title>Dépliant Énergie Solaire XL - Tri-fold</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --forest: #0A2E1A;
-      --forest2: #0F3D23;
-      --gold: #D4A73A;
-      --gold-d: #B8941A;
+      --forest: #000000;
+      --forest2: #000000;
+      --gold: #000000;
+      --gold-d: #000000;
       --white: #FFFFFF;
-      --muted: #6B7280;
-      --bg: #F9FAFB;
+      --muted: #4B5563;
+      --bg: #FFFFFF;
+      --border-std: 1.5px solid #000000;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #ddd; padding: 20px; }
@@ -26,7 +27,7 @@
       background: white;
       margin: 0 auto;
       display: flex;
-      box-shadow: 0 0 40px rgba(0,0,0,0.2);
+      border: 1px solid #000;
       position: relative;
     }
 
@@ -59,17 +60,18 @@
     }
 
     /* COLUMN 1 - VOLET GAUCHE (Intérieur / Technique) */
-    .panel-left { background: var(--bg); border-right: 1px solid #eee; padding-bottom: 50px; }
-    .v-card { margin-bottom: 25px; }
-    .v-card-img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
-    .v-card-title { font-size: 17px; font-weight: 800; color: var(--forest2); margin-bottom: 5px; font-family: 'Outfit'; }
-    .v-card-desc { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
-    .v-card-desc b { color: var(--forest); }
+    .panel-left { background: #FFFFFF; border-right: var(--border-std); padding-bottom: 50px; }
+    .v-card { margin-bottom: 25px; border-bottom: 1px dashed #000; padding-bottom: 15px; }
+    .v-card:last-child { border-bottom: none; }
+    .v-card-img { width: 100%; height: 110px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; filter: grayscale(100%) contrast(1.2); border: 1px solid #000; }
+    .v-card-title { font-size: 17px; font-weight: 800; color: #000; margin-bottom: 5px; font-family: 'Outfit'; }
+    .v-card-desc { font-size: 11.5px; color: #000; line-height: 1.5; }
+    .v-card-desc b { color: #000; text-decoration: underline; }
     
-    .trust-box { background: white; padding: 15px; border: 1.5px solid var(--forest); border-radius: 16px; margin-top: 20px; position: relative; }
-    .trust-tag { position: absolute; top: -10px; left: 15px; background: var(--forest); color: white; font-size: 9px; font-weight: 800; padding: 2px 10px; border-radius: 5px; text-transform: uppercase; }
-    .trust-txt { font-size: 11px; line-height: 1.4; color: var(--forest); }
-    .trust-txt b { color: var(--gold-d); }
+    .trust-box { background: #FFFFFF; padding: 15px; border: 2px solid #000; border-radius: 8px; margin-top: 20px; position: relative; }
+    .trust-tag { position: absolute; top: -10px; left: 15px; background: #000; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 10px; border-radius: 0; text-transform: uppercase; }
+    .trust-txt { font-size: 11px; line-height: 1.4; color: #000; }
+    .trust-txt b { color: #000; text-decoration: underline; }
 
     /* COLUMN 2 - VOLET CENTRE (Détails / FAQ) */
     .panel-center { padding: 10mm 12mm; }
@@ -79,36 +81,34 @@
     .step-content b { display: block; font-size: 14px; margin-bottom: 2px; }
     .step-content p { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
     
-    .pack-serenite { background: #EBF7F0; border-radius: 16px; padding: 15px; margin: 20px 0; }
-    .pack-title { font-size: 13px; font-weight: 800; color: #15572F; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .pack-serenite { background: #FFFFFF; border: 2px solid #000; border-radius: 8px; padding: 15px; margin: 20px 0; }
+    .pack-title { font-size: 13px; font-weight: 800; color: #000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
     .pack-list { list-style: none; }
-    .pack-list li { font-size: 11px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; color: #15572F; }
-    .pack-list li::before { content: "✓"; font-weight: 900; color: #1A7A3A; }
+    .pack-list li { font-size: 11px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; color: #000; }
+    .pack-list li::before { content: "■"; font-size: 8px; margin-top: 2px; }
     
-    .faq-box { margin-top: 20px; background: #fffbe6; padding: 10px; border-radius: 10px; border: 1px solid #ffe58f; }
+    .faq-box { margin-top: 20px; background: #FFFFFF; padding: 10px; border-radius: 0; border: 1px solid #000; border-left: 5px solid #000; }
     .faq-q { font-size: 11px; font-weight: 800; margin-bottom: 3px; }
-    .faq-a { font-size: 10px; color: #856404; }
+    .faq-a { font-size: 10px; color: #000; }
 
     /* COLUMN 3 - VOLET DROIT (COUVERTURE) */
     .panel-right { 
-      background-image: linear-gradient(rgba(10, 46, 26, 0.8), rgba(10, 46, 26, 0.8)), url('assets/gaele-xl-panneaux-solaires-hero.png');
-      background-size: cover;
-      background-position: center;
+      background: #000000;
       color: white;
       text-align: center;
       justify-content: space-between;
     }
     .cover-top { margin-top: 10px; }
     .cover-logo { margin-bottom: 20px; }
-    .cover-title { font-family: 'Outfit'; font-size: 34px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: var(--gold); }
+    .cover-title { font-family: 'Outfit'; font-size: 34px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: #FFFFFF; }
     .cover-sub { font-size: 14px; opacity: 0.9; font-weight: 300; }
-    .cover-price { font-size: 20px; margin-top: 20px; font-weight: 700; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 100px; display: inline-block; }
+    .cover-price { font-size: 22px; margin-top: 20px; font-weight: 800; border: 2px solid #FFFFFF; padding: 10px 20px; display: inline-block; }
 
     .cover-bottom { margin-bottom: 10px; }
-    .qr-area { background: white; padding: 8px; border-radius: 12px; display: inline-block; margin-bottom: 15px; }
-    .qr-area img { width: 70px; height: 70px; display: block; }
+    .qr-area { background: #FFFFFF; padding: 8px; border-radius: 4px; display: inline-block; margin-bottom: 15px; }
+    .qr-area img { width: 80px; height: 80px; display: block; filter: contrast(1.5); }
     .contact-block { font-size: 12px; }
-    .contact-block b { color: var(--gold); font-size: 16px; display: block; margin-bottom: 4px; }
+    .contact-block b { font-size: 18px; display: block; margin-bottom: 4px; color: #FFF; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -123,7 +123,7 @@
       <div class="v-card">
         <img src="assets/gaele-xl-panneaux-solaires-hero.png" class="v-card-img" alt="Panneaux AIKO">
         <h4 class="v-card-title">Panneaux AIKO 455Wp</h4>
-        <p class="v-card-desc">Technologie <b>All-Back-Contact</b> ultra-puissante. Certifiés <strong>DNV GL</strong> pour une performance garantie et une esthétique <b>Full Black</b> haut de gamme.</p>
+        <p class="v-card-desc">Technologie <b>All-Back-Contact</b> ultra-puissante. Certifiés <b>DNV GL</b> pour une performance garantie et une esthétique <b>Full Black</b> haut de gamme.</p>
       </div>
       <div class="v-card">
         <img src="assets/gaele-xl-batterie.png" class="v-card-img" alt="Batterie Sigenergy">
@@ -172,9 +172,9 @@
         </ul>
       </div>
 
-      <div class="faq-box" style="background:#fff7ed; border-color:#fdba74">
-        <p class="faq-q" style="color:#c2410c">Que se passe-t-il après 25 ans ?</p>
-        <p class="faq-a" style="color:#9a3412">L'installation vous est cédée pour 1€. Elle vous appartient totalement et continue de produire gratuitement.</p>
+      <div class="faq-box" style="background:#FFFFFF; border:1px solid #000; border-left: 5px solid #000;">
+        <p class="faq-q">Que se passe-t-il après 25 ans ?</p>
+        <p class="faq-a">L'installation vous est cédée pour 1€. Elle vous appartient totalement et continue de produire gratuitement.</p>
       </div>
     </div>
 
@@ -182,7 +182,7 @@
     <div class="panel panel-right">
       <div class="cover-top">
         <div class="cover-logo">
-          <svg width="40" height="40" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="9" fill="#FFF"/><path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#1A7A3A"/></svg>
+          <svg width="40" height="40" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="4" fill="#FFF"/><path d="M21 8L14 20H19.5L17 30L24 18H18.5L21 8Z" fill="#000"/></svg>
         </div>
         <h1 class="cover-title">Énergie Solaire<br>À 0€ INVESTI</h1>
         <p class="cover-sub">Installation gratuite de vos panneaux et batterie en Belgique.</p>
@@ -195,7 +195,7 @@
         </div>
         <div class="contact-block">
           <b>Andy</b>
-          <span>Votre conseiller Gaele Advisor</span><br>
+          <span>Votre conseiller XL</span><br>
           <span>📞 +32 470 43 22 11</span><br>
           <span style="font-weight:700">gaele-advisor.be</span>
         </div>
