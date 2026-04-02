@@ -141,6 +141,7 @@ select.form-input option{background:var(--card)}
 .p-table tr:hover{background:rgba(201,168,76,.03)}
 
 /* ── CRM SIDEBAR LAYOUT ───────────────────────────────── */
+#page-crm { display: none; }
 #page-crm.active { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 .crm-layout { display: flex; flex: 1; min-height: 0; position: relative; overflow: hidden; }
 
@@ -312,12 +313,12 @@ select.form-input option{background:var(--card)}
 
     <div class="form-group">
       <label class="form-label">📊 Statut de la visite</label>
-      <div class="choix-grid cols2">
-        <button class="choix-btn" onclick="sel(this,'statut','nouveau','sel-gris')" data-q="statut" data-v="nouveau">📥 Nouveau / Absent</button>
-        <button class="choix-btn" onclick="sel(this,'statut','appel','sel-bleu')"   data-q="statut" data-v="appel">📞 Appel fait</button>
+      <div class="choix-grid cols3">
+        <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')" data-q="statut" data-v="signe">✅ Contrat signé</button>
         <button class="choix-btn" onclick="sel(this,'statut','rdv','sel-or')"       data-q="statut" data-v="rdv">📅 RDV fixé</button>
-        <button class="choix-btn" onclick="sel(this,'statut','signe','sel-vert')"   data-q="statut" data-v="signe">✅ Signé / Contrat</button>
-        <button class="choix-btn" onclick="sel(this,'statut','perdu','sel-rouge')"  data-q="statut" data-v="perdu" style="grid-column: span 2;">❌ Perdu / Pas intéressé</button>
+        <button class="choix-btn" onclick="sel(this,'statut','rappel','sel-bleu')"  data-q="statut" data-v="rappel">📞 À rappeler</button>
+        <button class="choix-btn" onclick="sel(this,'statut','non','sel-rouge')"   data-q="statut" data-v="non">❌ Pas intéressé</button>
+        <button class="choix-btn" onclick="sel(this,'statut','absent','sel-gris')" data-q="statut" data-v="absent">🚪 Pas de réponse</button>
       </div>
     </div>
 
