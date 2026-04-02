@@ -59,19 +59,31 @@
     }
 
     /* COLUMN 1 - VOLET GAUCHE (Intérieur / Technique) */
-    .panel-left { background: var(--bg); border-right: 1px solid #eee; }
-    .v-card { margin-bottom: 20px; }
-    .v-card-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
-    .v-card-title { font-size: 16px; font-weight: 800; color: var(--forest2); margin-bottom: 5px; font-family: 'Outfit'; }
-    .v-card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .panel-left { background: var(--bg); border-right: 1px solid #eee; padding-bottom: 50px; }
+    .v-card { margin-bottom: 25px; }
+    .v-card-img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
+    .v-card-title { font-size: 17px; font-weight: 800; color: var(--forest2); margin-bottom: 5px; font-family: 'Outfit'; }
+    .v-card-desc { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+    .v-card-desc b { color: var(--forest); }
+    
+    .trust-box { background: white; padding: 15px; border: 1.5px solid var(--forest); border-radius: 16px; margin-top: 20px; position: relative; }
+    .trust-tag { position: absolute; top: -10px; left: 15px; background: var(--forest); color: white; font-size: 9px; font-weight: 800; padding: 2px 10px; border-radius: 5px; text-transform: uppercase; }
+    .trust-txt { font-size: 11px; line-height: 1.4; color: var(--forest); }
+    .trust-txt b { color: var(--gold-d); }
 
     /* COLUMN 2 - VOLET CENTRE (Détails / FAQ) */
     .panel-center { padding: 10mm 12mm; }
-    .section-title { font-family: 'Outfit'; font-size: 20px; font-weight: 800; margin-bottom: 15px; text-align: center; color: var(--forest); }
-    .step-item { margin-bottom: 15px; display: flex; gap: 12px; }
-    .step-num { color: var(--gold); font-weight: 900; font-size: 20px; opacity: 0.5; }
-    .step-content b { display: block; font-size: 13px; margin-bottom: 2px; }
-    .step-content p { font-size: 11px; color: var(--muted); }
+    .section-title { font-family: 'Outfit'; font-size: 21px; font-weight: 800; margin-bottom: 18px; text-align: center; color: var(--forest); }
+    .step-item { margin-bottom: 18px; display: flex; gap: 12px; }
+    .step-num { color: var(--gold); font-weight: 900; font-size: 22px; opacity: 0.6; }
+    .step-content b { display: block; font-size: 14px; margin-bottom: 2px; }
+    .step-content p { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+    
+    .pack-serenite { background: #EBF7F0; border-radius: 16px; padding: 15px; margin: 20px 0; }
+    .pack-title { font-size: 13px; font-weight: 800; color: #15572F; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .pack-list { list-style: none; }
+    .pack-list li { font-size: 11px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; color: #15572F; }
+    .pack-list li::before { content: "✓"; font-weight: 900; color: #1A7A3A; }
     
     .faq-box { margin-top: 20px; background: #fffbe6; padding: 10px; border-radius: 10px; border: 1px solid #ffe58f; }
     .faq-q { font-size: 11px; font-weight: 800; margin-bottom: 3px; }
@@ -111,50 +123,58 @@
       <div class="v-card">
         <img src="assets/gaele-xl-panneaux-solaires-hero.png" class="v-card-img" alt="Panneaux AIKO">
         <h4 class="v-card-title">Panneaux AIKO 455Wp</h4>
-        <p class="v-card-desc">Technologie N-Type ABC ultra-puissante. Certifiés <strong>DNV GL</strong> pour une performance garantie 25 ans.</p>
+        <p class="v-card-desc">Technologie <b>All-Back-Contact</b> ultra-puissante. Certifiés <strong>DNV GL</strong> pour une performance garantie et une esthétique <b>Full Black</b> haut de gamme.</p>
       </div>
       <div class="v-card">
         <img src="assets/gaele-xl-batterie.png" class="v-card-img" alt="Batterie Sigenergy">
-        <h4 class="v-card-title">Stockage Sigenergy</h4>
-        <p class="v-card-desc">Le cerveau **SigenStor** optimise votre énergie pour vous offrir le tarif le plus bas, même la nuit.</p>
+        <h4 class="v-card-title">Solution SigenStor</h4>
+        <p class="v-card-desc">Système hybride 5-en-1 intelligent. Gère automatiquement votre stockage pour vous garantir <b>l'énergie la moins chère</b> du marché 24h/24.</p>
       </div>
-      <div style="margin-top:auto; padding:10px; border:1px solid #ddd; border-radius:10px; font-size:10px;">
-        🏛️ Soutenu par la <b>SFPIM (État Belge)</b>. La sécurité d'un partenaire institutionnel pour votre maison.
+      
+      <div class="trust-box">
+        <span class="trust-tag">Solidité institutionnelle</span>
+        <p class="trust-txt">Le groupe <b>Gridlink</b> est détenu à 33% par la <b>SFPIM</b> (Fonds souverain de l'État Belge). Une garantie de sérieux et de pérennité pour votre contrat de 25 ans.</p>
       </div>
     </div>
 
     <!-- PANNEAU 2 (Centre - Verso central) -->
     <div class="panel panel-center">
-      <h3 class="section-title">Comment ça marche ?</h3>
+      <h3 class="section-title">L'Indépendance en 3 étapes</h3>
       <div class="step-item">
         <span class="step-num">1</span>
         <div class="step-content">
-          <b>Étude d'éligibilité</b>
-          <p>Analyse gratuite de votre toit et calcul de vos économies sur 25 ans.</p>
+          <b>Étude de faisabilité</b>
+          <p>Analyse gratuite de votre toiture, historique de consommation et calcul des économies.</p>
         </div>
       </div>
       <div class="step-item">
         <span class="step-num">2</span>
         <div class="step-content">
-          <b>Visite & Simulation</b>
-          <p>Un expert valide la pose et confirme votre tarif fixe garanti.</p>
+          <b>Visite & Validation</b>
+          <p>Un expert technique valide la configuration et prépare votre dossier administratif.</p>
         </div>
       </div>
       <div class="step-item">
         <span class="step-num">3</span>
         <div class="step-content">
-          <b>Pose & Économies</b>
-          <p>Installation complète en 8 à 12 semaines. Payez moins dès le jour 1.</p>
+          <b>Installation & Activation</b>
+          <p>Installation certifiée en 1 jour. Vous commencez à épargner dès l'activation.</p>
         </div>
       </div>
 
-      <div class="faq-box">
-        <p class="faq-q">Pourquoi 0€ investi ?</p>
-        <p class="faq-a">Gaele finance l'installation. Vous ne payez que le kWh à prix fixe ultra-bas.</p>
+      <div class="pack-serenite">
+        <div class="pack-title">🛡️ Pack Sérénité Inclus</div>
+        <ul class="pack-list">
+          <li><b>Maintenance & Supervision</b> 24/7 incluse.</li>
+          <li><b>Assurance complète</b> (Incendie, Grêle, Vol).</li>
+          <li><b>Remplacement du matériel</b> (Onduleur/Batterie) sans frais s'ils faiblissent durant le contrat.</li>
+          <li><b>Valorisation Immobilière</b> : Amélioration immédiate de votre certificat <b>PEB</b>.</li>
+        </ul>
       </div>
-      <div class="faq-box" style="margin-top:10px">
-        <p class="faq-q">Et après le contrat ?</p>
-        <p class="faq-a">L'installation vous appartient totalement. Votre énergie devient 100% gratuite.</p>
+
+      <div class="faq-box" style="background:#fff7ed; border-color:#fdba74">
+        <p class="faq-q" style="color:#c2410c">Que se passe-t-il après 25 ans ?</p>
+        <p class="faq-a" style="color:#9a3412">L'installation vous est cédée pour 1€. Elle vous appartient totalement et continue de produire gratuitement.</p>
       </div>
     </div>
 
