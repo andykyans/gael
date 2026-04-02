@@ -149,7 +149,28 @@ body::after{display:none}
 .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(15,61,35,0.3)}
 
 /* ── HERO (light) ── */
-.hero{min-height:100vh;background:#FFFFFF;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:0;padding:80px 72px;max-width:1400px;margin:0 auto}
+/* ── HERO (Visual Update) ── */
+.hero{
+  min-height:90vh;
+  position: relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:0;
+  padding:120px 72px;
+  max-width:100%;
+  margin:0 auto;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(rgba(10, 30, 15, 0.7), rgba(10, 30, 15, 0.7)), url('assets/gaele-xl-panneaux-solaires-hero.png');
+  color: white;
+}
+.hero h1, .hero p, .hero-eyebrow-text { color: white !important; }
+.hero-desc { color: rgba(255,255,255,0.9) !important; }
+.hero-eyebrow { border-color: rgba(255,255,255,0.2) !important; background: rgba(0,0,0,0.2); }
+
 @media(max-width:1024px){.hero{grid-template-columns:1fr;padding:40px 20px 48px;gap:40px}}
 @media(max-width:480px){.hero{padding-top:20px}}
 
@@ -1318,3 +1339,64 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
     max-width: none;
   }
 }
+
+/* ── EQUIPMENT SECTION (New) ── */
+.equipment-section {
+  padding: 100px 0;
+  background: #FFFFFF;
+  text-align: center;
+}
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+}
+.equipment-card {
+  background: #F9FAFB;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  text-align: left;
+  box-shadow: var(--shadow-md);
+}
+.equipment-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--forest2);
+}
+.equipment-img-box {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  position: relative;
+}
+.equipment-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.equipment-card:hover .equipment-img-box img {
+  transform: scale(1.1);
+}
+.equipment-content {
+  padding: 30px;
+}
+.equipment-card-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--forest);
+  margin-bottom: 12px;
+}
+.equipment-card-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+@media (max-width: 992px) {
+  .equipment-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+}
+
