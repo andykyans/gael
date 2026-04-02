@@ -184,7 +184,7 @@ select.form-input option{background:var(--card)}
 .crm-tab.active{border-color:var(--or);background:rgba(201,168,76,.12);color:var(--or2)}
 
 /* ── CRM SIDEBAR LAYOUT ───────────────────────────────── */
-#page-crm { display: flex; flex-direction: column; }
+#page-crm.active { display: flex; flex-direction: column; }
 .crm-layout { display: flex; flex: 1; min-height: 0; position: relative; overflow: hidden; }
 
 .crm-sidebar {
