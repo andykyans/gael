@@ -184,76 +184,33 @@
 
 <!-- PAGE CRM -->
 <div class="page" id="page-crm">
-  <div class="crm-layout">
-    <div class="crm-overlay" onclick="toggleSidebarMobile()"></div>
-    <!-- SIDEBAR -->
-    <aside class="crm-sidebar" id="crm-sidebar">
-      <div class="sidebar-header">
-        <span class="sidebar-title">Dossiers</span>
-        <button class="toggle-btn" onclick="toggleSidebar()" title="Réduire/Agrandir">❮</button>
-      </div>
-      <div class="sidebar-menu">
-        <div class="menu-item active" id="filter-all" onclick="filterProspects('all')">
-          <div class="menu-icon">📂</div>
-          <span class="menu-label">Tous</span>
-          <span class="menu-badge" id="count-all">0</span>
-        </div>
-        <div class="menu-item" id="filter-nouveau" onclick="filterProspects('nouveau')">
-          <div class="menu-icon">📥</div>
-          <span class="menu-label">Nouveau</span>
-          <span class="menu-badge" id="count-nouveau">0</span>
-        </div>
-        <div class="menu-item" id="filter-appel" onclick="filterProspects('appel')">
-          <div class="menu-icon">📞</div>
-          <span class="menu-label">Appel fait</span>
-          <span class="menu-badge" id="count-appel">0</span>
-        </div>
-        <div class="menu-item" id="filter-rdv" onclick="filterProspects('rdv')">
-          <div class="menu-icon">📅</div>
-          <span class="menu-label">RDV fixé</span>
-          <span class="menu-badge" id="count-rdv">0</span>
-        </div>
-        <div class="menu-item" id="filter-signe" onclick="filterProspects('signe')">
-          <div class="menu-icon">🟢</div>
-          <span class="menu-label">Signés</span>
-          <span class="menu-badge" id="count-signe">0</span>
-        </div>
-        <div class="menu-item" id="filter-perdu" onclick="filterProspects('perdu')">
-          <div class="menu-icon">🔴</div>
-          <span class="menu-label">Perdus</span>
-          <span class="menu-badge" id="count-perdu">0</span>
-        </div>
-        
-        <div class="sep" style="margin: 10px 8px"></div>
-        
-        <div class="menu-item" id="filter-chaud" onclick="filterProspects('chaud')">
-          <div class="menu-icon">🔥</div>
-          <span class="menu-label">Chauds</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="crm-main">
-      <div style="padding:14px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <header class="crm-header">
+      <div class="crm-header-top">
         <div>
-          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--or)">CRM Prospects</div>
-          <div style="font-size:0.65rem;color:var(--txt2)" id="crm-count">0 prospects</div>
+          <h1 class="crm-header-title">CRM Prospects</h1>
+          <div class="crm-header-subtitle" id="crm-count">0 prospects</div>
         </div>
-        <button class="btn btn-outline btn-sm sidebar-toggle-mobile" onclick="toggleSidebarMobile()" style="display:none">☰</button>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-bleu btn-sm" onclick="exportCSV()" style="font-size:0.65rem; padding:6px 12px; border-radius:6px;">📤 CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="exportPDF()" style="font-size:0.65rem; padding:6px 12px; border-radius:6px; border-color:var(--rouge); color:var(--rouge);">📄 PDF</button>
+        </div>
       </div>
 
-      <!-- BOUTONS EXPORT -->
-      <div style="padding:0 14px;margin-top:8px;display:flex;gap:8px">
-        <button class="btn btn-bleu btn-sm" onclick="exportCSV()" style="flex:1;font-size:0.75rem">📤 CSV</button>
-        <button class="btn btn-outline btn-sm" onclick="exportPDF()" style="flex:1;font-size:0.75rem;border-color:var(--rouge);color:var(--rouge)">📄 PDF</button>
+      <div class="crm-tabs">
+        <button class="crm-tab active" id="tab-b2c" onclick="switchCrmTab('b2c')">👥 Mes Prospects</button>
+        <button class="crm-tab" id="tab-b2b" onclick="switchCrmTab('b2b')">🏢 B2B BCE</button>
       </div>
 
-      <!-- ONGLETS B2C / B2B -->
-      <div style="padding:8px 14px 0;display:flex;gap:6px">
-        <button class="crm-tab active" id="tab-b2c" onclick="switchCrmTab('b2c')">👥 Mes prospects</button>
-        <button class="crm-tab" id="tab-b2b" onclick="switchCrmTab('b2b')">🏢 B2B</button>
+      <div class="chip-row" id="crm-chips-container">
+        <button class="chip active" id="crm-filter-all"     onclick="setGlobalFilters(true)"   style="--c:var(--or)">📂 Tous</button>
+        <button class="chip active" id="crm-filter-nouveau" onclick="toggleGlobalFilter('nouveau')" style="--c:#95a5a6">📥 Nouveau</button>
+        <button class="chip active" id="crm-filter-signe"   onclick="toggleGlobalFilter('signe')"   style="--c:#27ae60">✅ Signés</button>
+        <button class="chip active" id="crm-filter-rdv"     onclick="toggleGlobalFilter('rdv')"     style="--c:#C9A84C">📅 RDV</button>
+        <button class="chip active" id="crm-filter-rappel"  onclick="toggleGlobalFilter('rappel')"  style="--c:#2980B9">📞 Rappel</button>
+        <button class="chip active" id="crm-filter-non"     onclick="toggleGlobalFilter('non')"     style="--fc:#e74c3c; --c:#e74c3c">❌ Non</button>
+        <button class="chip active" id="crm-filter-absent"  onclick="toggleGlobalFilter('absent')"  style="--fc:#95a5a6; --c:#95a5a6">🚪 Absent</button>
       </div>
+    </header>
 
       <div id="prospects-list" style="flex:1;overflow-y:auto;padding-bottom:20px"></div>
       
@@ -277,10 +234,6 @@
       </div>
     </main>
   </div>
-  
-  <button class="mobile-folder-btn" onclick="toggleSidebarMobile()">
-    <span>📂 Dossiers</span>
-  </button>
 </div>
 
 <!-- PAGE DASHBOARD -->
@@ -373,18 +326,7 @@
       </div>
     </div>
 
-    <!-- Filtres statuts -->
-    <div class="map-filters">
-      <span style="font-size:0.58rem;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Filtres</span>
-      <button class="map-filter-btn active" id="map-filter-signe"  onclick="MapModule.toggleFilter('signe')"  style="--fc:#27ae60">✅ Signés</button>
-      <button class="map-filter-btn active" id="map-filter-rdv"    onclick="MapModule.toggleFilter('rdv')"    style="--fc:#C9A84C">📅 RDV</button>
-      <button class="map-filter-btn active" id="map-filter-rappel" onclick="MapModule.toggleFilter('rappel')" style="--fc:#2980B9">📞 Rappel</button>
-      <button class="map-filter-btn active" id="map-filter-non"    onclick="MapModule.toggleFilter('non')"    style="--fc:#e74c3c">❌ Non</button>
-      <button class="map-filter-btn active" id="map-filter-absent" onclick="MapModule.toggleFilter('absent')" style="--fc:#95a5a6">🚪 Absent</button>
-      <button class="map-filter-btn active" id="map-filter-b2b"    onclick="MapModule.toggleFilter('b2b')"    style="--fc:#2980B9">🏢 Entreprises</button>
-      <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(true)"  title="Tout afficher">✓</button>
-      <button class="map-ctrl-btn" onclick="MapModule.setAllFilters(false)" title="Tout masquer">✗</button>
-    </div>
+    <!-- Filtres statuts déplacés au CRM -->
 
     <!-- Contrôles avancés -->
     <div class="map-advanced">

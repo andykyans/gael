@@ -14,7 +14,8 @@ const state = {
   mapInstance: null,
   geocodeCache: JSON.parse(localStorage.getItem('gaele_geocache') || '{}'),
   b2bGeocache: JSON.parse(localStorage.getItem('gaele_b2b_geocache') || '{}'),
-  geocodingActive: false
+  geocodingActive: false,
+  activeFilters: new Set(['nouveau', 'signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'])
 };
 
 // ── OBJECTIFS ──────────────────────────────────────────
@@ -41,35 +42,8 @@ function showPage(id, btn) {
   if (sidebar) sidebar.classList.remove('open');
 }
 
-// ── SIDEBAR TOGGLE ─────────────────────────────────────
-function toggleSidebar() {
-    const sidebar = document.getElementById('crm-sidebar');
-    sidebar.classList.toggle('collapsed');
-    const btn = sidebar.querySelector('.toggle-btn');
-    btn.textContent = sidebar.classList.contains('collapsed') ? '❯' : '❮';
-    localStorage.setItem('gaele_sidebar_collapsed', sidebar.classList.contains('collapsed'));
-}
+// Init sidebar state (removed)
 
-function toggleSidebarMobile() {
-  const sb = document.getElementById('crm-sidebar');
-  const crmPage = document.getElementById('page-crm');
-  if (sb) {
-    sb.classList.toggle('open');
-    if (crmPage) crmPage.classList.toggle('sidebar-open');
-  }
-}
-
-// Init sidebar state
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('gaele_sidebar_collapsed') === 'true') {
-        const sidebar = document.getElementById('crm-sidebar');
-        if (sidebar) {
-            sidebar.classList.add('collapsed');
-            const btn = sidebar.querySelector('.toggle-btn');
-            if (btn) btn.textContent = '❯';
-        }
-    }
-});
 
 // ── SESSION TIMER ──────────────────────────────────────
 function toggleSession() {
@@ -270,43 +244,35 @@ function switchCrmTab(tab) {
   if (tab === 'b2c') renderCRM();
   if (tab === 'b2b') renderB2B();
   
-  // Fermer sidebar si mobile et ouvert
-  const sb = document.getElementById('crm-sidebar');
-  if (window.innerWidth <= 768 && sb && sb.classList.contains('open')) {
-    toggleSidebarMobile();
+function switchCrmTab(tab) {
+  currentCrmTab = tab;
+  document.getElementById('tab-b2c').classList.toggle('active', tab === 'b2c');
+  document.getElementById('tab-b2b').classList.toggle('active', tab === 'b2b');
+  document.getElementById('prospects-list').style.display = tab === 'b2c' ? '' : 'none';
+  document.getElementById('b2b-list').style.display       = tab === 'b2b' ? '' : 'none';
+  document.getElementById('crm-empty').style.display      = 'none';
+  document.getElementById('b2b-empty').style.display      = 'none';
+  if (tab === 'b2c') {
+    document.getElementById('crm-chips-container').style.display = 'flex';
+    renderCRM();
+  }
+  if (tab === 'b2b') {
+    document.getElementById('crm-chips-container').style.display = 'none';
+    renderB2B();
   }
 }
 
-function renderCRM(filter) {
+function renderCRM() {
   const list  = document.getElementById('prospects-list');
   const empty = document.getElementById('crm-empty');
   const count = document.getElementById('crm-count');
 
-  // Mettre à jour les compteurs de la sidebar
-  updateSidebarCounts();
-
   let data = state.prospects;
-  
-  // Mapping pour compatibilité anciens statuts
-  const mapStatut = (s) => {
-    if (s === 'rappel') return 'appel';
-    if (s === 'non')    return 'perdu';
-    if (s === 'absent') return 'nouveau';
-    return s;
-  };
 
-  if (filter && filter !== 'all') {
-    if (filter === 'chaud') {
-        data = data.filter(p => p.statut === 'rdv' || p.statut === 'signe');
-    } else {
-        data = data.filter(p => mapStatut(p.statut) === filter);
-    }
-  }
+  // Appliquer les nouveaux filtres rapides (multi-toggles)
+  data = data.filter(p => state.activeFilters.has(p.statut));
 
-  // Mettre à jour l'état actif dans la sidebar
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.classList.toggle('active', item.id === (filter ? `filter-${filter}` : 'filter-all'));
-  });
+  // Mettre à jour l'état actif (sidebar supprimée)
 
   count.textContent = data.length + ' prospect' + (data.length > 1 ? 's' : '');
 
@@ -345,42 +311,41 @@ function renderCRM(filter) {
   }).join('');
 }
 
-function updateSidebarCounts() {
-    const data = state.prospects;
-    const mapStatut = (s) => {
-        if (s === 'rappel') return 'appel';
-        if (s === 'non')    return 'perdu';
-        if (s === 'absent') return 'nouveau';
-        return s;
-    };
+// ── GLOBAL FILTERS (Migrés de la carte) ────────────────
+function toggleGlobalFilter(statut) {
+  if (state.activeFilters.has(statut)) state.activeFilters.delete(statut);
+  else state.activeFilters.add(statut);
 
-    const counts = {
-        all: data.length,
-        nouveau: 0,
-        appel: 0,
-        rdv: 0,
-        signe: 0,
-        perdu: 0
-    };
+  const btn = document.getElementById('crm-filter-' + statut);
+  if (btn) btn.classList.toggle('active', state.activeFilters.has(statut));
+  
+  // Update "Tous" button state
+  const allBtn = document.getElementById('crm-filter-all');
+  const allActive = ['nouveau','signe','rdv','rappel','non','absent'].every(s => state.activeFilters.has(s));
+  if (allBtn) allBtn.classList.toggle('active', allActive);
 
-    data.forEach(p => {
-        const s = mapStatut(p.statut);
-        if (counts[s] !== undefined) counts[s]++;
-        else counts.nouveau++; // Si statut inconnu, on met dans nouveau
-    });
-
-    for (const [id, count] of Object.entries(counts)) {
-        const el = document.getElementById(`count-${id}`);
-        if (el) el.textContent = count;
-    }
+  if (currentCrmTab === 'b2c') renderCRM();
+  else if (currentCrmTab === 'b2b') renderB2B();
+  
+  if (window.MapModule) MapModule.refreshMarkers();
 }
 
-function filterProspects(f) {
-  switchCrmTab('b2c');
-  renderCRM(f);
-  // Fermer la sidebar mobile si on clique sur un filtre
-  const sidebar = document.getElementById('crm-sidebar');
-  if (sidebar) sidebar.classList.remove('open');
+function setGlobalFilters(on) {
+  const statuses = ['nouveau', 'signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'];
+  statuses.forEach(s => {
+    if (on) state.activeFilters.add(s);
+    else state.activeFilters.delete(s);
+    const btn = document.getElementById('crm-filter-' + s);
+    if (btn) btn.classList.toggle('active', on);
+  });
+  
+  const allBtn = document.getElementById('crm-filter-all');
+  if (allBtn) allBtn.classList.toggle('active', on);
+  
+  if (currentCrmTab === 'b2c') renderCRM();
+  else if (currentCrmTab === 'b2b') renderB2B();
+  
+  if (window.MapModule) MapModule.refreshMarkers();
 }
 
 // ── B2B STATE ─────────────────────────────────────────
@@ -409,6 +374,11 @@ function renderB2B() {
 
   // Appliquer les filtres
   data = filterB2B(data);
+  
+  // Appliquer filtre global B2B toggle
+  if (!state.activeFilters.has('b2b')) {
+    data = [];
+  }
 
   const total   = data.length;
   const endIdx  = (b2bState.page + 1) * b2bState.pageSize;

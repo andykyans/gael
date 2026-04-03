@@ -11,7 +11,6 @@ const MapModule = (() => {
   let gpsMarker   = null;
   let gpsCircle   = null;
   let gpsWatch    = null;
-  let activeFilters = new Set(['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b']);
   let mapMode     = 'standard'; // 'standard' | 'satellite' | 'dark'
   let showHeat    = false;
   let allMarkers  = new Map(); // id -> marker
@@ -150,7 +149,12 @@ const MapModule = (() => {
 
     // 1. Prospect B2C
     prospects.forEach(p => {
-      if (!activeFilters.has(p.statut)) return;
+      let s = p.statut;
+      if (s === 'rappel') s = 'rappel';
+      if (s === 'absent') s = 'absent';
+      if (s === 'non')    s = 'non';
+      
+      if (!state.activeFilters.has(s)) return;
       if (cache[p.id]) {
         addMarker(p, cache[p.id]);
         placed++;
@@ -160,7 +164,7 @@ const MapModule = (() => {
     });
 
     // 2. Leads B2B
-    if (activeFilters.has('b2b')) {
+    if (state.activeFilters.has('b2b')) {
       b2bLeads.forEach(e => {
         if (b2bCache[e.num]) {
           addB2BMarker(e, b2bCache[e.num]);
@@ -306,11 +310,11 @@ const MapModule = (() => {
           if (isB2B) {
             window.state.b2bGeocache[p.num] = coords;
             localStorage.setItem('gaele_b2b_geocache', JSON.stringify(window.state.b2bGeocache));
-            if (activeFilters.has('b2b')) addB2BMarker(p, coords);
+            if (window.state.activeFilters.has('b2b')) addB2BMarker(p, coords);
           } else {
             window.state.geocodeCache[p.id] = coords;
             localStorage.setItem('gaele_geocache', JSON.stringify(window.state.geocodeCache));
-            if (activeFilters.has(p.statut)) addMarker(p, coords);
+            if (window.state.activeFilters.has(p.statut)) addMarker(p, coords);
           }
           updateMapStatus(allMarkers.size, 0);
         }
@@ -398,25 +402,13 @@ const MapModule = (() => {
     }
   }
 
-  // ── Filtres ──────────────────────────────────────────
+  // ── Filtres (Désormais gérés par app.js) ────────────
   function toggleFilter(statut) {
-    if (activeFilters.has(statut)) activeFilters.delete(statut);
-    else activeFilters.add(statut);
-
-    const btn = document.getElementById('map-filter-' + statut);
-    if (btn) btn.classList.toggle('active', activeFilters.has(statut));
-
-    refreshMarkers();
+    if (window.toggleGlobalFilter) window.toggleGlobalFilter(statut);
   }
 
   function setAllFilters(on) {
-    ['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'].forEach(s => {
-      if (on) activeFilters.add(s);
-      else activeFilters.delete(s);
-      const btn = document.getElementById('map-filter-' + s);
-      if (btn) btn.classList.toggle('active', on);
-    });
-    refreshMarkers();
+    if (window.setGlobalFilters) window.setGlobalFilters(on);
   }
 
   // ── Centre sur un prospect ───────────────────────────
@@ -458,11 +450,7 @@ const MapModule = (() => {
   }
 
   function renderMapOverlay() {
-    // Déjà géré dans le HTML — on initialise juste les filtres
-    ['signe', 'rdv', 'rappel', 'non', 'absent', 'b2b'].forEach(s => {
-      const btn = document.getElementById('map-filter-' + s);
-      if (btn) btn.classList.add('active');
-    });
+    // Initialisation synchrone des boutons si nécessaire
     updateZoomInfo();
   }
 
