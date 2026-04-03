@@ -241,17 +241,6 @@ function switchCrmTab(tab) {
   document.getElementById('b2b-list').style.display       = tab === 'b2b' ? '' : 'none';
   document.getElementById('crm-empty').style.display      = 'none';
   document.getElementById('b2b-empty').style.display      = 'none';
-  if (tab === 'b2c') renderCRM();
-  if (tab === 'b2b') renderB2B();
-  
-function switchCrmTab(tab) {
-  currentCrmTab = tab;
-  document.getElementById('tab-b2c').classList.toggle('active', tab === 'b2c');
-  document.getElementById('tab-b2b').classList.toggle('active', tab === 'b2b');
-  document.getElementById('prospects-list').style.display = tab === 'b2c' ? '' : 'none';
-  document.getElementById('b2b-list').style.display       = tab === 'b2b' ? '' : 'none';
-  document.getElementById('crm-empty').style.display      = 'none';
-  document.getElementById('b2b-empty').style.display      = 'none';
   if (tab === 'b2c') {
     document.getElementById('crm-chips-container').style.display = 'flex';
     renderCRM();
