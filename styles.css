@@ -24,13 +24,15 @@
   --border:  rgba(0,0,0,0.08);
   --border2: rgba(0,0,0,0.12);
 
-  --r: 16px;
+  --r: 20px;
   --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Inter', 'Plus Jakarta Sans', sans-serif;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 20px -1px rgba(0, 0, 0, 0.05), 0 2px 10px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 30px -3px rgba(15, 61, 35, 0.05), 0 4px 15px -2px rgba(15, 61, 35, 0.03);
+  --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.08);
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
 }
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -134,11 +136,8 @@ body::after{display:none}
   text-decoration: none;
   box-shadow: 0 2px 10px rgba(15, 61, 35, 0.15);
 }
-.nav-gaele-tag:hover {
-  background: var(--forest3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(15, 61, 35, 0.25);
-  cursor: pointer;
+.nav-gaele-tag:active {
+  transform: scale(0.95);
 }
 .nav-gaele-tag img {
   height: 14px;
@@ -153,25 +152,34 @@ body::after{display:none}
 .hero{
   min-height:90vh;
   position: relative;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  gap:0;
-  padding:120px 72px;
-  max-width:100%;
-  margin:0 auto;
+  padding:120px 24px;
   overflow: hidden;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-image: linear-gradient(rgba(10, 30, 15, 0.7), rgba(10, 30, 15, 0.7)), url('assets/gaele-xl-panneaux-solaires-hero.png');
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 80px;
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
 }
 .hero h1, .hero p, .hero-eyebrow-text { color: white !important; }
 .hero-desc { color: rgba(255,255,255,0.9) !important; }
 .hero-eyebrow { border-color: rgba(255,255,255,0.2) !important; background: rgba(0,0,0,0.2); }
 
-@media(max-width:1024px){.hero{grid-template-columns:1fr;padding:40px 20px 48px;gap:40px}}
+@media(max-width:1024px){
+  .hero { padding: 60px 20px; }
+  .hero-container { grid-template-columns: 1fr; gap: 40px; }
+}
 @media(max-width:480px){.hero{padding-top:20px}}
 
 .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;border:1px solid #E5E7EB;border-radius:100px;padding:6px 16px 6px 10px;margin-bottom:32px}
@@ -192,8 +200,10 @@ h1 em{font-style:normal;color:var(--gold)}
 .hero-btns > * { margin-right: 14px; margin-bottom: 14px; }
 .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--forest);font-weight:700;font-size:14px;padding:16px 34px;border-radius:100px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;box-shadow:0 6px 28px rgba(201,168,76,0.35);letter-spacing:.01em}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,168,76,0.5)}
+.btn-gold:active{transform:scale(0.96)}
 .btn-ghost{background:transparent;border:1.5px solid #D1D5DB;color:var(--forest);font-weight:500;font-size:14px;padding:15px 28px;border-radius:100px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
 .btn-ghost:hover{border-color:var(--forest2);color:var(--forest2)}
+.btn-ghost:active{transform:scale(0.96)}
 
 .hero-stats{display:flex;gap:36px;flex-wrap:wrap}
 .hstat{border-left:2px solid #E5E7EB;padding-left:16px}
@@ -201,8 +211,9 @@ h1 em{font-style:normal;color:var(--gold)}
 .hstat-l{font-size:12px;color:#6B7280;margin-top:3px;font-weight:400;letter-spacing:.02em}
 
 /* Hero right — region cards */
-.hero-r{display:flex;flex-direction:column;gap:14px}
-.rcard{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:var(--r);padding:24px 26px;transition:all .25s;position:relative;overflow:hidden}
+.hero-r{display:flex;flex-direction:column;gap:14px; align-items: flex-end;}
+@media(max-width:1024px){ .hero-r { align-items: stretch; } }
+.rcard{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:var(--r);padding:24px 26px;transition:all .25s;position:relative;overflow:hidden; max-width: 480px; width: 100%;}
 .rcard::before{display:none}
 .rcard-inner{position:relative;z-index:1}
 .rcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -633,7 +644,11 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
 
 .m-nav-item.active {
   color: var(--forest2);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+}
+
+.m-nav-item:active {
+  transform: scale(0.9);
 }
 
 .m-nav-ico {
@@ -675,16 +690,17 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
   
   /* App-view card styling on mobile */
   .app-view {
-    margin: 12px;
-    padding: 32px 16px !important;
-    border-radius: 24px !important;
+    margin: 16px;
+    padding: 40px 20px !important;
+    border-radius: 28px !important;
     background: #fff;
-    border: 1px solid rgba(0,0,0,0.04) !important;
-    box-shadow: var(--shadow-md) !important;
+    border: 1px solid rgba(0,0,0,0.03) !important;
+    box-shadow: var(--shadow-xl) !important;
+    overflow: hidden;
   }
   
   body {
-    background: #F3F4F6 !important;
+    background: #F7F8FA !important;
     padding-bottom: 120px;
   }
   
@@ -696,13 +712,26 @@ footer{background:#F9FAFB;padding:52px 0 32px;border-top:1px solid #E5E7EB}
 
 .app-view {
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translateY(30px) scale(0.98);
+  filter: blur(10px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity, filter;
 }
 
 .app-view.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* Stagger entries */
+.app-view.visible > * {
+  animation: entryStagger 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes entryStagger {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── WELCOME WALL (PROPOSITION 1) ── */

@@ -384,15 +384,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     wall.classList.add('active'); 
     lockBody(); 
     
-    let countdown = 5;
+    let countdown = 1;
     const cdEl = document.getElementById('welcome-countdown');
-    if (cdEl) cdEl.innerText = `Le site s'ouvre dans ${countdown}s...`;
+    if (cdEl) cdEl.innerText = `L'expertise Gaele arrive...`;
     
     const interval = setInterval(() => {
       countdown--;
-      if (countdown > 0) {
-        if (cdEl) cdEl.innerText = `Le site s'ouvre dans ${countdown}s...`;
-      } else {
+      if (countdown <= 0) {
         clearInterval(interval);
         closeWelcomeWall();
       }
