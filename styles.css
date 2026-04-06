@@ -283,6 +283,80 @@ h1 em{font-style:normal;color:var(--gold)}
 .htb-title { font-size: 14px; font-weight: 800; color: var(--forest); }
 .htb-sub { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
 
+/* ── KEY INFO SECTION (Who, What, Why) ── */
+#key-info {
+  padding: 40px 0;
+  background: transparent;
+}
+.key-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media(max-width:900px) {
+  .key-info-grid { grid-template-columns: 1fr; }
+}
+.ki-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: var(--shadow-md);
+}
+.ki-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.ki-ico {
+  width: 48px;
+  height: 48px;
+  background: var(--forest2);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.ki-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--forest);
+  line-height: 1.2;
+}
+.ki-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4B5563;
+}
+.ki-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--forest2);
+  text-decoration: none;
+  margin-top: auto;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.ki-link:hover { opacity: 1; text-decoration: underline; }
+.ki-badge {
+  display: inline-block;
+  background: #FEF3C7;
+  color: #B45309;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 100px;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* ── QUALIFICATION ── */
 #qualification{background:#FFFFFF;padding:96px 0}
 #qualification .section-title{color:var(--forest) !important}
