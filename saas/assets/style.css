@@ -1,34 +1,26 @@
 /* ── RESET & ROOT ─────────────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root {
-  /* Palettes Sombre Premium (UI/UX Pro Max) */
-  --bg-deep:   #020617;
-  --bg-card:   rgba(15, 23, 42, 0.65);
-  --glass:     rgba(15, 23, 42, 0.85);
-
-  /* Neons & Accents */
-  --neon-green: #22C55E;
-  --neon-gold:  #FACC15;
-  --neon-glow:  rgba(34, 197, 94, 0.15);
-
-  /* Héritage Gaele (Modernisé) */
-  --v:         #020617;
-  --v2:        #22C55E;
-  --v3:        #166534;
-  --or:        #FACC15;
-  --or2:       #EAB308;
-  --or3:       #FEF08A;
+  --forest:    #0F3D23;
+  --forest2:   #1A7A3A;
+  --forest3:   #114B2C;
+  --gold:      #C9A84C;
+  --gold-d:    #B5933A;
+  
+  --bg-deep:   #F8FAFC;
+  --bg-card:   #FFFFFF;
+  --glass:     rgba(255, 255, 255, 0.95);
 
   --rouge:     #EF4444;
-  --vert-ok:   #22C55E;
+  --vert-ok:   #1A7A3A;
   --bleu:      #3B82F6;
 
-  --bg:        #020617;
-  --card:      rgba(30, 41, 59, 0.5);
-  --card2:     rgba(255, 255, 255, 0.03);
-  --txt:       #F8FAFC;
-  --txt2:      #94A3B8;
-  --border:    rgba(255, 255, 255, 0.08);
+  --bg:        #F8FAFC;
+  --card:      #FFFFFF;
+  --card2:     #F3F4F6;
+  --txt:       #0F3D23;
+  --txt2:      #64748B;
+  --border:    rgba(0,0,0,0.08);
 }
 html,body{height:100%;height:-webkit-fill-available;background:var(--bg-deep);font-family:'Inter',sans-serif;color:var(--txt);overflow:hidden; -webkit-font-smoothing: antialiased;}
 
@@ -36,13 +28,13 @@ html,body{height:100%;height:-webkit-fill-available;background:var(--bg-deep);fo
 .nav{
   position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
   width:calc(100% - 32px);max-width:450px;
-  background:var(--glass);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);
+  background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border:1px solid var(--border);border-radius:30px;
   display:flex;z-index:900;height:70px;flex-shrink:0;
-  box-shadow:0 15px 40px rgba(0,0,0,0.4);
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px;cursor:pointer;transition:all .3s;gap:4px;border:none;background:none;color:var(--txt2);font-family:'Inter',sans-serif;min-width:0}
-.nav-btn.active{color:var(--neon-green);transform:translateY(-2px)}
+.nav-btn.active{color:var(--forest2);transform:translateY(-1px)}
 .nav-btn .ico{font-size:1.4rem;line-height:1;margin-bottom:2px}
 .nav-btn span{font-size:0.6rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;width:100%;text-align:center;display:block;opacity:0.7}
 .nav-btn.active span{opacity:1}
@@ -53,9 +45,9 @@ html,body{height:100%;height:-webkit-fill-available;background:var(--bg-deep);fo
   padding:20px 16px;display:flex;justify-content:space-between;align-items:center;
   backdrop-filter:blur(10px);
 }
-.header-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--neon-green);text-shadow:0 0 10px rgba(34, 197, 94, 0.2)}
+.header-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--forest)}
 .header-sub{font-size:0.7rem;color:var(--txt2);margin-top:2px;font-weight:500}
-.header-badge{background:rgba(34, 197, 94, 0.1);color:var(--neon-green);border:1px solid var(--neon-green);font-size:0.65rem;font-weight:800;padding:4px 12px;border-radius:20px}
+.header-badge{background:white;color:var(--forest);border:1px solid var(--border);font-size:0.65rem;font-weight:800;padding:4px 12px;border-radius:20px}
 
 /* ── LAYOUT ────────────────────────────────────────────── */
 #app-content{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:-webkit-fill-available;overflow:hidden}
@@ -66,30 +58,32 @@ html,body{height:100%;height:-webkit-fill-available;background:var(--bg-deep);fo
 
 /* ── CARDS ────────────────────────────────────────────── */
 .card{
-  background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);
+  background:var(--bg-card);
   border:1px solid var(--border);border-radius:20px;
   padding:20px;margin:16px 14px 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
-.card:hover { border-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
-.card-title{font-size:0.7rem;font-weight:800;color:var(--neon-green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card:hover { border-color: var(--forest2); }
+.card-title{font-size:0.7rem;font-weight:800;color:var(--forest);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 
 /* ── STATS GRID ───────────────────────────────────────── */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 14px 0}
 .stat-box{
-  background:rgba(255, 255, 255, 0.03);border:1px solid var(--border);
+  background:white;border:1px solid var(--border);
   border-radius:16px;padding:16px;text-align:center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 .stat-val{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.02em}
-.stat-val.or{color:var(--neon-gold)}
-.stat-val.vert{color:var(--neon-green)}
+.stat-val.or{color:var(--gold)}
+.stat-val.vert{color:var(--forest2)}
 .stat-val.rouge{color:var(--rouge)}
 .stat-val.bleu{color:var(--bleu)}
 .stat-lbl{font-size:0.65rem;color:var(--txt2);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
 
 /* ── BOUTONS ──────────────────────────────────────────── */
 .btn{width:100%;padding:14px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:0.04em}
-.btn-or{background:var(--or);color:var(--v)}
+.btn-or{background:var(--gold);color:white}
 .btn-vert{background:var(--vert-ok);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--txt2)}
 .btn-rouge{background:var(--rouge);color:#fff}
