@@ -1,0 +1,40 @@
+<svg width="1200" height="628" viewBox="0 0 1200 628" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F3D23" />
+      <stop offset="100%" stop-color="#1A7A3A" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F9D67E" />
+      <stop offset="100%" stop-color="#C9A84C" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="628" rx="32" fill="#F6F2E8" />
+  <rect x="40" y="40" width="1120" height="548" rx="28" fill="url(#grad1)" opacity="0.88" />
+  <rect x="80" y="80" width="520" height="468" rx="24" fill="#FFFFFF" />
+  <rect x="620" y="80" width="480" height="468" rx="24" fill="#122E1D" />
+
+  <g transform="translate(120 135)">
+    <rect x="0" y="0" width="420" height="280" rx="22" fill="#E8F1E7" />
+    <path d="M52 100 L82 60 L122 70 L142 40 L182 88 L152 128 L132 118 L112 148 L72 122 Z" fill="#F9D67E" />
+    <rect x="40" y="220" width="220" height="20" rx="10" fill="#C9A84C" />
+    <rect x="40" y="180" width="300" height="28" rx="14" fill="#1A7A3A" />
+  </g>
+
+  <text x="120" y="240" fill="#122E1D" font-family="Inter, sans-serif" font-size="52" font-weight="700">587€ économisés</text>
+  <text x="120" y="320" fill="#122E1D" font-family="Inter, sans-serif" font-size="44" font-weight="600">par an sur votre facture énergie</text>
+  <text x="120" y="400" fill="#122E1D" font-family="Inter, sans-serif" font-size="32">Panneaux + batterie installés gratuitement</text>
+  <text x="120" y="450" fill="#122E1D" font-family="Inter, sans-serif" font-size="28">Offre Propriétaires Wallonie/Flandre</text>
+
+  <rect x="120" y="490" width="420" height="76" rx="38" fill="url(#grad2)" />
+  <text x="140" y="540" fill="#122E1D" font-family="Inter, sans-serif" font-size="32" font-weight="700">Je calcule mon économie</text>
+
+  <text x="660" y="160" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="28" font-weight="600">SFPIM / Gaele XL</text>
+  <text x="660" y="220" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="48" font-weight="800">Étude gratuite</text>
+  <text x="660" y="300" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="30">Tarif fixe 25 ans</text>
+  <text x="660" y="350" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="26">0€ investi</text>
+
+  <circle cx="820" cy="420" r="70" fill="#F9D67E" opacity="0.24" />
+  <path d="M760 430 L820 330 L880 430 L820 370 Z" fill="#F9D67E" />
+  <text x="740" y="520" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="26" font-weight="700">Wallonie / Flandre</text>
+</svg>

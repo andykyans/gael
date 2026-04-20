@@ -1,0 +1,32 @@
+name: Prospecting Automation (Andy)
+
+on:
+  workflow_dispatch:
+    inputs:
+      lead_name:
+        description: 'Nom du prospect'
+        required: true
+      lead_contact:
+        description: 'Contact (Email/WhatsApp)'
+        required: true
+      lead_notes:
+        description: 'Notes de qualification'
+        required: false
+
+jobs:
+  create_lead_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Issue for Lead
+        uses: imjohnbo/ok-to-test@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        # Note: In a real scenario, we would use an action to create an issue
+        # with the labels 'lead-qualifie' and 'andy-advisor'
+
+      - name: Create CRM Entry
+        run: |
+          echo "Nouveau prospect détecté : ${{ github.event.inputs.lead_name }}"
+          echo "Contact : ${{ github.event.inputs.lead_contact }}"
+          echo "Qualification : ${{ github.event.inputs.lead_notes }}"
+          # Ici on pourrait ajouter un script Python pour insérer dans Supabase

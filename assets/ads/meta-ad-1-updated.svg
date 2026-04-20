@@ -1,0 +1,31 @@
+<svg width="1200" height="628" viewBox="0 0 1200 628" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#BFE3C3" />
+      <stop offset="100%" stop-color="#F6F2E8" />
+    </linearGradient>
+    <linearGradient id="btn1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F9D67E" />
+      <stop offset="100%" stop-color="#C9A84C" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="628" rx="32" fill="url(#bg1)" />
+  <rect x="80" y="80" width="1040" height="468" rx="36" fill="#FFF" opacity="0.96" />
+  <path d="M420 220 H1020 V520 H420 Z" fill="#1A7A3A" opacity="0.1" rx="28" />
+  <rect x="850" y="60" width="290" height="120" rx="60" fill="#000" opacity="0.96" />
+  <text x="930" y="125" fill="#FFF" font-family="Inter, sans-serif" font-size="42" font-weight="800">0€</text>
+  <text x="872" y="175" fill="#FFF" font-family="Inter, sans-serif" font-size="24" font-weight="700">d'investissement</text>
+  <g transform="translate(120 140)">
+    <rect x="0" y="0" width="620" height="360" rx="32" fill="#EFE0C0" />
+    <path d="M60 320 L200 160 L340 320 Z" fill="#1A7A3A" opacity="0.12" />
+    <rect x="48" y="56" width="524" height="210" rx="28" fill="#C7E9C4" />
+    <path d="M100 90 H520 v120 H100 Z" fill="#1A7A3A" opacity="0.05" />
+    <circle cx="100" cy="140" r="36" fill="#1A7A3A" opacity="0.1" />
+    <circle cx="520" cy="150" r="28" fill="#C9A84C" opacity="0.65" />
+    <path d="M500 120 L520 90 L540 120 Z" fill="#FFF" />
+  </g>
+  <text x="140" y="440" fill="#122E1D" font-family="Inter, sans-serif" font-size="60" font-weight="800">587€ économisés/an</text>
+  <text x="140" y="520" fill="#122E1D" font-family="Inter, sans-serif" font-size="36">Sur votre facture énergie. Panneaux + batterie gratuits.</text>
+  <rect x="140" y="558" width="360" height="56" rx="28" fill="url(#btn1)" />
+  <text x="170" y="595" fill="#122E1D" font-family="Inter, sans-serif" font-size="28" font-weight="700">Je calcule mon économie</text>
+</svg>

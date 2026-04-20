@@ -1,0 +1,27 @@
+<svg width="1200" height="628" viewBox="0 0 1200 628" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F4F0E9" />
+      <stop offset="100%" stop-color="#E8E1CC" />
+    </linearGradient>
+    <linearGradient id="btn3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F9D67E" />
+      <stop offset="100%" stop-color="#C9A84C" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="628" rx="32" fill="url(#bg3)" />
+  <rect x="70" y="70" width="1060" height="488" rx="36" fill="#121F17" opacity="0.92" />
+  <rect x="120" y="130" width="420" height="360" rx="32" fill="#FFF" />
+  <path d="M140 300 L240 200 L360 260 L470 190 L540 320" fill="#C9A84C" opacity="0.12" />
+  <rect x="760" y="160" width="320" height="120" rx="24" fill="#000" opacity="0.85" />
+  <text x="790" y="235" fill="#FFF" font-family="Inter, sans-serif" font-size="42" font-weight="800">Wallonie / Flandre</text>
+  <text x="790" y="285" fill="#FFF" font-family="Inter, sans-serif" font-size="32" font-weight="700">Tarif énergie fixe</text>
+  <path d="M160 350 L240 270 L340 360 L430 260 L520 360" fill="#1A7A3A" opacity="0.08" />
+  <text x="170" y="530" fill="#FFF" font-family="Inter, sans-serif" font-size="56" font-weight="800">Facture +35% ?</text>
+  <text x="170" y="600" fill="#FFF" font-family="Inter, sans-serif" font-size="32">Passez au solaire sans frais initiaux.</text>
+  <rect x="170" y="620" width="420" height="56" rx="28" fill="url(#btn3)" />
+  <text x="220" y="656" fill="#122E1D" font-family="Inter, sans-serif" font-size="28" font-weight="700">Obtenir mon étude</text>
+  <circle cx="1040" cy="420" r="58" fill="#F9D67E" />
+  <text x="1006" y="430" fill="#122E1D" font-family="Inter, sans-serif" font-size="32" font-weight="800">587€</text>
+  <text x="1000" y="465" fill="#122E1D" font-family="Inter, sans-serif" font-size="20" font-weight="700">économisés/an</text>
+</svg>

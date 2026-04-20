@@ -1,0 +1,33 @@
+<svg width="1200" height="628" viewBox="0 0 1200 628" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F3D23" />
+      <stop offset="100%" stop-color="#163F28" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F9D67E" />
+      <stop offset="100%" stop-color="#C9A84C" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="628" rx="32" fill="#F7F3E9" />
+  <rect x="60" y="60" width="1080" height="508" rx="28" fill="url(#g1)" opacity="0.92" />
+
+  <g transform="translate(100 100)">
+    <rect x="0" y="0" width="420" height="420" rx="28" fill="#FFFFFF" />
+    <path d="M90 360 L150 240 L210 300 L270 200 L330 360 Z" fill="#1A7A3A" opacity="0.18" />
+    <rect x="40" y="220" width="340" height="160" rx="20" fill="#F9D67E" />
+    <text x="65" y="310" fill="#0F3D23" font-family="Inter, sans-serif" font-size="40" font-weight="700">0€ investi</text>
+  </g>
+
+  <text x="560" y="180" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="52" font-weight="700">Zéro euro à investir</text>
+  <text x="560" y="250" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="40">Installation solaire gratuite</text>
+  <text x="560" y="320" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="32">Propriétaires 35-65 ans, Wallonie/Flandre</text>
+  <text x="560" y="375" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="28">Offre Gaele XL : étude gratuite sans engagement.</text>
+
+  <rect x="560" y="420" width="420" height="78" rx="39" fill="url(#g2)" />
+  <text x="590" y="475" fill="#122E1D" font-family="Inter, sans-serif" font-size="32" font-weight="700">Voir mon offre gratuite</text>
+
+  <rect x="620" y="124" width="320" height="112" rx="24" fill="#F6F2E8" opacity="0.12" />
+  <text x="640" y="168" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="26" font-weight="600">SFPIM + Gaele XL</text>
+  <text x="640" y="205" fill="#F6F2E8" font-family="Inter, sans-serif" font-size="22">Installation prise en charge</text>
+</svg>
