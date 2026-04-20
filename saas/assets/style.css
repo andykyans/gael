@@ -103,11 +103,11 @@ select.form-input option{background:var(--card)}
 .choix-grid.cols2{grid-template-columns:1fr 1fr}
 .choix-grid.cols3{grid-template-columns:1fr 1fr 1fr}
 .choix-btn{padding:10px 8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card2);color:var(--txt2);font-size:0.75rem;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif}
-.choix-btn.sel-vert{border-color:var(--vert-ok);background:rgba(39,174,96,.15);color:#4ecb71}
-.choix-btn.sel-rouge{border-color:var(--rouge);background:rgba(231,76,60,.12);color:#e74c3c}
-.choix-btn.sel-or{border-color:var(--or);background:rgba(201,168,76,.12);color:var(--or2)}
-.choix-btn.sel-bleu{border-color:var(--bleu);background:rgba(41,128,185,.12);color:#5dade2}
-.choix-btn.sel-gris{border-color:var(--txt2);background:rgba(107,114,128,.12);color:var(--txt2)}
+.choix-btn.sel-vert{border-color:var(--vert-ok);background:rgba(39,174,96,.08);color:var(--vert-ok)}
+.choix-btn.sel-rouge{border-color:var(--rouge);background:rgba(231,76,60,.08);color:var(--rouge)}
+.choix-btn.sel-or{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold-d)}
+.choix-btn.sel-bleu{border-color:var(--bleu);background:rgba(41,128,185,.08);color:var(--bleu)}
+.choix-btn.sel-gris{border-color:var(--txt2);background:rgba(107,114,128,.08);color:var(--txt2)}
 
 /* ── PROSPECTS LIST ───────────────────────────────────── */
 .prospect-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin:8px 14px 0;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
@@ -132,15 +132,15 @@ select.form-input option{background:var(--card)}
 
 /* ── SESSION LIVE ─────────────────────────────────────── */
 .session-live{
-  background:rgba(34, 197, 94, 0.05);
-  border:1px solid var(--neon-green);
+  background: white;
+  border:1px solid var(--border);
   border-radius:24px;padding:24px;margin:16px 14px 0;text-align:center;
-  box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
-.session-timer{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--white);text-shadow:0 0 20px rgba(255,255,255,0.1)}
+.session-timer{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--forest)}
 .session-compteur{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
-.compteur-box{background:rgba(255,255,255,.05);border-radius:12px;padding:10px 4px;text-align:center;border:1px solid rgba(255,255,255,0.05)}
-.compteur-val{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--white)}
+.compteur-box{background:var(--bg-deep);border-radius:12px;padding:10px 4px;text-align:center;border:1px solid var(--border)}
+.compteur-val{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--forest)}
 .compteur-lbl{font-size:0.55rem;color:var(--txt2);text-transform:uppercase;letter-spacing:0.08em;font-weight:700}
 
 /* ── MODAL ────────────────────────────────────────────── */
