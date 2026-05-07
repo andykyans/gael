@@ -114,6 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
   setupNavigation();
   setupInputs();
+  setupProspectionInputs();
+  updateProspectionLabels();
   updateEntretien();
   
   const btn = document.querySelector('.advanced-toggle');
@@ -229,6 +231,103 @@ function setupInputs() {
     });
   });
 }
+
+function setupProspectionInputs() {
+  const prosInputs = ['pros-keyword', 'pros-country', 'pros-max'];
+  prosInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateProspectionLabels);
+  });
+}
+
+window.updateProspectionLabels = function() {
+  const keyword = document.getElementById('pros-keyword')?.value || '';
+  const countryInput = document.getElementById('pros-country');
+  const country = (countryInput?.value || 'BE').toUpperCase();
+  const max = parseInt(document.getElementById('pros-max')?.value || 20);
+
+  if (document.getElementById('val-pros-keyword')) document.getElementById('val-pros-keyword').textContent = keyword || '...';
+  if (document.getElementById('val-pros-country')) document.getElementById('val-pros-country').textContent = country;
+  if (document.getElementById('val-pros-max')) document.getElementById('val-pros-max').textContent = max;
+  if (countryInput) countryInput.value = country;
+};
+
+window.buildProspectionUrl = function() {
+  const keyword = (document.getElementById('pros-keyword')?.value || '').trim();
+  const country = (document.getElementById('pros-country')?.value || 'BE').trim().toUpperCase();
+  if (!keyword || !country.match(/^[A-Z]{2}$/)) return '';
+  const query = encodeURIComponent(keyword);
+  return `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=${country}&q=${query}&search_type=keyword_unordered&media_type=all`;
+};
+
+window.openProspectionSearch = function() {
+  const url = window.buildProspectionUrl();
+  if (!url) {
+    window.showProspectionMessage('Veuillez renseigner un mot-clé et un code pays valide.', true);
+    return;
+  }
+  window.showProspectionMessage('Recherche prête. Ouverture de Facebook Ads Library...', false, url);
+  window.open(url, '_blank');
+};
+
+window.runProspection = async function() {
+  const keyword = (document.getElementById('pros-keyword')?.value || '').trim();
+  const country = (document.getElementById('pros-country')?.value || 'BE').trim().toUpperCase();
+  const max = parseInt(document.getElementById('pros-max')?.value || 20);
+  const url = window.buildProspectionUrl();
+
+  if (!keyword) {
+    window.showProspectionMessage('Le mot-clé est requis pour lancer la prospection.', true);
+    return;
+  }
+  if (!country.match(/^[A-Z]{2}$/)) {
+    window.showProspectionMessage('Le code pays doit être un code ISO à 2 lettres.', true);
+    return;
+  }
+  if (!url) {
+    window.showProspectionMessage('Impossible de générer l’URL Facebook Ads Library.', true);
+    return;
+  }
+
+  window.showProspectionMessage('Envoi de la demande au backend…', false, url, []);
+
+  try {
+    const response = await fetch('/api/prospection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keyword, country, max })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error || 'Erreur lors de l’appel au backend.';
+      window.showProspectionMessage(errorMessage, true, url, []);
+      return;
+    }
+
+    const data = await response.json();
+    const message = data.message || 'Prospection backend terminée.';
+    const prospects = Array.isArray(data.prospects) ? data.prospects : [];
+    window.showProspectionMessage(message, false, data.search_url || url, prospects);
+  } catch (error) {
+    window.showProspectionMessage(`Erreur réseau: ${error.message}`, true, url, []);
+  }
+};
+
+window.showProspectionMessage = function(message, isError = false, url = '', leads = []) {
+  const container = document.getElementById('pros-results');
+  if (!container) return;
+
+  const linkHTML = url ? `<div class="prospection-summary"><strong>URL de recherche :</strong> <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></div>` : '';
+  const statusHTML = `<div class="prospection-summary" style="border-color: ${isError ? 'rgba(192, 57, 43, 0.25)' : 'rgba(0,0,0,0.08)'}; background: ${isError ? 'rgba(255,235,230,0.9)' : 'rgba(255,255,255,0.85)'};"><strong>${isError ? 'Erreur' : 'Info'} :</strong> ${message}</div>`;
+
+  let leadsHTML = '';
+  if (leads.length) {
+    leadsHTML = `<div class="prospection-list">${leads.map(lead => `<div class="prospection-item"><strong>${lead.title}</strong><div>${lead.description}</div></div>`).join('')}</div>`;
+  }
+
+  container.innerHTML = `${statusHTML}${linkHTML}${leadsHTML}`;
+};
 
 // --- CORE UPDATER ---
 window.update = function() {

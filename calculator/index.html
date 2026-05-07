@@ -135,6 +135,7 @@
       <nav class="desktop-nav">
         <div class="nav-item active" data-tab="calcul" onclick="showTab('calcul')">Calcul</div>
         <div class="nav-item" data-tab="comparatif" onclick="showTab('comparatif')">Situations</div>
+        <div class="nav-item" data-tab="prospection" onclick="showTab('prospection')">Prospection</div>
         <div class="nav-item" data-tab="graphique" onclick="showTab('graphique')">Graphique</div>
         <div class="nav-item" data-tab="entretien" onclick="showTab('entretien')">Entretien</div>
       </nav>
@@ -508,6 +509,53 @@
         <p><strong>Note sur la méthodologie :</strong> Les coûts d'investissement sont estimés sur une base de 1,1 €/Wc (moyenne marché Belgique 2024-2025). La provision d'entretien inclut le nettoyage annuel (125 €), le remplacement périodique de l'onduleur (1 200 € env. tous les 10-12 ans) et l'assurance (75 €/an). <em>Sources : Observatoire du Photovoltaïque (BE), Données Marché Premium.</em></p>
       </div>
     </section>
+
+    <section class="tab-content" id="tab-prospection">
+      <div class="grid-layout">
+        <div class="card glass-card side-panel">
+          <div class="card-header-flex">
+            <h2 class="card-title">🎯 Prospection Meta</h2>
+            <p class="pitch-text" style="margin-top:8px; color:var(--text-muted); font-size:0.95rem;">
+              Génère une recherche Facebook Ads Library et prépare un plan de leads pour ta prospection automatique.
+            </p>
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label>Mot-clé</label>
+              <span class="value-badge" id="val-pros-keyword">marketing énergétique</span>
+            </div>
+            <input type="text" id="pros-keyword" value="marketing énergétique" oninput="updateProspectionLabels()" style="width:100%; border-radius:14px; border:1px solid rgba(0,0,0,0.08); padding:12px; font-family:inherit; font-size:0.95rem;">
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label>Pays (code ISO)</label>
+              <span class="value-badge" id="val-pros-country">BE</span>
+            </div>
+            <input type="text" id="pros-country" value="BE" maxlength="2" oninput="updateProspectionLabels()" style="width:100%; border-radius:14px; border:1px solid rgba(0,0,0,0.08); padding:12px; font-family:inherit; font-size:0.95rem; text-transform:uppercase;">
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label>Nombre de prospects</label>
+              <span class="value-badge" id="val-pros-max">20</span>
+            </div>
+            <input type="range" min="5" max="100" step="5" value="20" id="pros-max" class="premium-range" oninput="updateProspectionLabels()">
+          </div>
+
+          <button class="apply-btn" type="button" onclick="runProspection()">Lancer la prospection</button>
+          <button class="apply-btn" type="button" onclick="openProspectionSearch()" style="margin-top: 10px;">Ouvrir Facebook Ads Library</button>
+        </div>
+
+        <div class="card glass-card results-panel">
+          <div class="card-title">Résultats de prospection</div>
+          <div id="pros-results" class="prospection-results">
+            <p style="margin-top:0.5rem; color:var(--text-muted)">Cliquez sur « Lancer la prospection » pour générer la recherche et voir un plan de leads.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- MOBILE FOOTER NAV -->
@@ -519,6 +567,10 @@
     <div class="nav-btn" data-tab="comparatif" onclick="showTab('comparatif')">
       <span class="nav-icon">🏠</span>
       <span class="nav-text">Situs</span>
+    </div>
+    <div class="nav-btn" data-tab="prospection" onclick="showTab('prospection')">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-text">Prospection</span>
     </div>
     <div class="nav-btn" data-tab="graphique" onclick="showTab('graphique')">
       <span class="nav-icon">📈</span>

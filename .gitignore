@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+# Ignore dotenv files but keep example configuration
+.env.*
+!.env.example
+.vscode/
+.idea/
+node_modules/
+.DS_Store
