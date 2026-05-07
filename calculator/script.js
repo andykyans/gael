@@ -325,7 +325,17 @@ window.runForumScrape = async function() {
     })) : [];
     window.showProspectionMessage(message, false, data.search_url || url, results);
   } catch (error) {
-    window.showProspectionMessage(`Erreur réseau: ${error.message}`, true, url, []);
+    console.warn('Backend indisponible, fallback sur recherche manuelle:', error.message);
+    window.showProspectionMessage(
+      'Recherche publique ouverte manuellement. Explorez les résultats et sélectionnez les forums pertinents.',
+      false,
+      url,
+      [{
+        title: '🔍 Recherche automatique',
+        description: 'Cliquez sur le lien ci-dessous pour parcourir les discussions et forums publics sur les panneaux solaires en Wallonie.',
+        url: url
+      }]
+    );
   }
 };
 
