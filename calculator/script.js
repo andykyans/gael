@@ -270,6 +270,65 @@ window.openProspectionSearch = function() {
   window.open(url, '_blank');
 };
 
+window.buildPublicSearchUrl = function() {
+  const keyword = (document.getElementById('pros-keyword')?.value || '').trim();
+  const country = (document.getElementById('pros-country')?.value || 'BE').trim().toUpperCase();
+  if (!keyword || !country.match(/^[A-Z]{2}$/)) return '';
+
+  let query = keyword;
+  if (!/wallonie/i.test(query)) query += ' wallonie';
+  if (!/forum|discussion|groupe/i.test(query)) query += ' forum';
+  return `https://html.duckduckgo.com/html?q=${encodeURIComponent(query)}&kl=fr-fr`;
+};
+
+window.runForumScrape = async function() {
+  const keyword = (document.getElementById('pros-keyword')?.value || '').trim();
+  const country = (document.getElementById('pros-country')?.value || 'BE').trim().toUpperCase();
+  const max = parseInt(document.getElementById('pros-max')?.value || 20);
+  const url = window.buildPublicSearchUrl();
+
+  if (!keyword) {
+    window.showProspectionMessage('Le mot-clé est requis pour lancer le scraping public.', true);
+    return;
+  }
+  if (!country.match(/^[A-Z]{2}$/)) {
+    window.showProspectionMessage('Le code pays doit être un code ISO à 2 lettres.', true);
+    return;
+  }
+  if (!url) {
+    window.showProspectionMessage('Impossible de générer l’URL de recherche publique.', true);
+    return;
+  }
+
+  window.showProspectionMessage('Envoi de la demande au backend de scraping public…', false, url, []);
+
+  try {
+    const response = await fetch('/api/public-scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keyword, country, max })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error || 'Erreur lors de l’appel au backend de scraping public.';
+      window.showProspectionMessage(errorMessage, true, url, []);
+      return;
+    }
+
+    const data = await response.json();
+    const message = data.message || 'Scraping public terminé.';
+    const results = Array.isArray(data.results) ? data.results.map(item => ({
+      title: item.title || item.page_name || item.pageName || item.url || 'Résultat public',
+      description: item.description || item.ad_text || item.adText || '',
+      url: item.url || item.page_url || item.pageUrl || ''
+    })) : [];
+    window.showProspectionMessage(message, false, data.search_url || url, results);
+  } catch (error) {
+    window.showProspectionMessage(`Erreur réseau: ${error.message}`, true, url, []);
+  }
+};
+
 window.runProspection = async function() {
   const keyword = (document.getElementById('pros-keyword')?.value || '').trim();
   const country = (document.getElementById('pros-country')?.value || 'BE').trim().toUpperCase();
@@ -307,7 +366,11 @@ window.runProspection = async function() {
 
     const data = await response.json();
     const message = data.message || 'Prospection backend terminée.';
-    const prospects = Array.isArray(data.prospects) ? data.prospects : [];
+    const prospects = Array.isArray(data.prospects) ? data.prospects.map(item => ({
+      title: item.title || item.page_name || item.pageName || item.page_url || item.pageUrl || 'Prospect',
+      description: item.description || item.ad_text || item.adText || item.ad_text || '',
+      url: item.page_url || item.pageUrl || item.url || ''
+    })) : [];
     window.showProspectionMessage(message, false, data.search_url || url, prospects);
   } catch (error) {
     window.showProspectionMessage(`Erreur réseau: ${error.message}`, true, url, []);
@@ -323,7 +386,7 @@ window.showProspectionMessage = function(message, isError = false, url = '', lea
 
   let leadsHTML = '';
   if (leads.length) {
-    leadsHTML = `<div class="prospection-list">${leads.map(lead => `<div class="prospection-item"><strong>${lead.title}</strong><div>${lead.description}</div></div>`).join('')}</div>`;
+    leadsHTML = `<div class="prospection-list">${leads.map(lead => `<div class="prospection-item"><strong>${lead.title}</strong><div>${lead.description || ''}</div>${lead.url ? `<div style="margin-top: 8px;"><a href="${lead.url}" target="_blank" rel="noopener noreferrer">${lead.url}</a></div>` : ''}</div>`).join('')}</div>`;
   }
 
   container.innerHTML = `${statusHTML}${linkHTML}${leadsHTML}`;
